@@ -29,10 +29,11 @@ model Customer {
 }
 model Item {
   id       String @id @default(uuid())
-  name     String
-  quantity Int
-  rate     Float
-  tax      Float
+  name     String @unique
+  brand     String?
+  quantity Int?
+  rate     Float?
+  tax      Float?
   quotations QuotationItem[]
 }
 model Quotation {
