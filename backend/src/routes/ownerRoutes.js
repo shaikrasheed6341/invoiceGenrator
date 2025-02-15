@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 // Create a new owner
+//http://localhost:5000/owners/insertownerdata
 router.post("/insertownerdata", async (req, res) => {
   try {
     const { name, email,phone,gstNumber } = req.body;
@@ -24,8 +25,9 @@ router.post("/insertownerdata", async (req, res) => {
   }
 });
 
-//get with id
-router.get("/ownerdata/:id",async(req,res)=>{
+//get with 
+//http://localhost:5000/owners/b91c7ff3-6920-4609-a55a-126ec3733509
+router.get("/:id",async(req,res)=>{
     const{id} = req.params;
     try{
         const owner = await prisma.owner.findUnique({
@@ -39,11 +41,12 @@ router.get("/ownerdata/:id",async(req,res)=>{
         console.log("error find ing owner",err);
         res.status(500).json({message:"server error"})
     }
-    
+      
 
 })
 
 // Get all owners
+//http://localhost:5000/owners/allownerdata
 router.get("/allownerdata", async (req, res) => {
   try {
     const owners = await prisma.owner.findMany();

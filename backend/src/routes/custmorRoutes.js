@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const router = express.Router();
-
-router.post("/",async(req,res)=>{
+//http://localhost:5000/custmor/custmor
+router.post("/custmor",async(req,res)=>{
     try{
     const{name,address,phone} = req.body;
     
@@ -30,18 +30,40 @@ router.post("/",async(req,res)=>{
     }
 })
 
-router.get('/getallcustomersdata',async(req,res)=>{
-   try{
-       const custmor =  await prisma.customer.findMany();
-       if(!custmor){
-        res.json({message:"custmor is not found"})
-       }
-       res.json(custmor);
-   }catch(err){
-      console.log(err);
-      res.json({message:"something went wrong with geting custmor data",custmor});
-   }
-})
+
+//http://localhost:5000/custmor/475879
+router.get("/:phone", async (req, res) => {
+    const { phone } = req.params;
+    try {
+        const customer = await prisma.customer.findUnique({
+            where: {phone:String(phone) }
+        });
+
+        if (!customer) {
+            return res.status(404).json({ message: "Customer is not found" });
+        }
+
+        res.status(200).json(customer);
+
+    } catch (err) {
+        console.error("Error fetching customer:", err);
+        res.status(500).json({ message: `An error occurred: ${err.message}`,  err });
+    }
+});
+
+
+//http://localhost:5000/custmor/
+router.get("/", async(req, res) => {
+    try {
+      const custmor = await prisma.customer.findMany();
+      res.json(custmor);
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+
+)
+
 
 
 
