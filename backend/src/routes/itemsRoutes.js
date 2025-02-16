@@ -64,7 +64,7 @@ router.get("/findbrand/:brand",async(req,res)=>{
         res.status(400).json({message:`error occur in iteam search ${err}`,err})
     }
 })
-
+//http://localhost:5000/iteam/update/Intel Core i5-10400F Processor
 router.put("/update/:name",async(req,res)=>{
     const{name} =  req.params;
     const {quantity,rate,tax,brand} = req.body;

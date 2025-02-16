@@ -34,7 +34,8 @@ model Item {
   quantity Int?
   rate     Float?
   tax      Float?
-  quotations QuotationItem[]
+  quotation Quotation[]
+ 
 }
 model Quotation {
   id          String   @id @default(uuid())
@@ -44,20 +45,9 @@ model Quotation {
   owner       Owner    @relation(fields: [ownerId], references: [id])
   customerId  String
   customer    Customer @relation(fields: [customerId], references: [id])
-  items       QuotationItem[]
-  subtotal    Float
-  totalTax    Float
-  totalAmount Float
-}
-model QuotationItem {
-  id          String  @id @default(uuid())
-  quotationId String
-  quotation   Quotation @relation(fields: [quotationId], references: [id])
   itemId      String
-  item        Item @relation(fields: [itemId], references: [id])
-  quantity    Int
-  rate        Float
-  tax         Float
-  amount      Float
+  item        Item   @relation(fields: [itemId],references: [id])
 }
+
+
 
