@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
+//when you insesert sigle data
+//http://localhost:5000/iteam/datas
 router.post("/datas",async(req,res)=>{
     const{name,quantity,rate,tax,brand} = req.body;
     try{
@@ -48,9 +50,41 @@ router.post("/insertcameras", async (req, res) => {
     }
 });
 
+//http://localhost:5000/iteam/findbrand/Dell
+router.get("/findbrand/:brand",async(req,res)=>{
+    const{brand} = req.params;
+    try{
+        const finditeam = await prisma.item.findMany({
+            where:{brand:brand}
+        }) ; 
+        res.status(200).json(finditeam);
 
+    }catch(err){
+        console.log(err);
+        res.status(400).json({message:`error occur in iteam search ${err}`,err})
+    }
+})
 
-
+router.put("/update/:name",async(req,res)=>{
+    const{name} =  req.params;
+    const {quantity,rate,tax,brand} = req.body;
+    try{
+        const existingiteam = await prisma.item.findFirst({
+            where:{name},
+        })
+        if(!existingiteam){
+          res.status(400).json({message:"your name  is not exist"})
+        }
+        const updateiteam = await prisma.item.update({
+            where :{name},
+            data:{quantity,rate,tax,brand},
+        })
+        res.json({message:"iteam update sucessfully",updateiteam});
+    }catch(err){
+        console.log("error update while iteam",err)
+        res.status(500).json({message:`error ${err.message}`})
+    }
+})
 
 
 
