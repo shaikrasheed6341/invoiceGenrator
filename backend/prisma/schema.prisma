@@ -34,7 +34,7 @@ model Item {
   quantity Int?
   rate     Float?
   tax      Float?
-  quotation Quotation[]
+  quotations Quotation[]
  
 }
 model Quotation {
