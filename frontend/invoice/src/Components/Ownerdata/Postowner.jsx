@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast, Bounce } from "react-toastify"
 // Ensure correct path to your logo
 //import logo from "../public/logo.svg";
 
@@ -16,33 +17,56 @@ const Sudmitownerdata = () => {
         try {
             const res = await axios.post("http://localhost:5000/owners/insertownerdata", formData);
             setSuccess(res.data.message);
+            toast.success(res.data.message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            })
         } catch (err) {
             console.error(err);
             setSuccess("Submission failed. Please try again.");
+            toast.error(err.response.message, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            })
         }
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 to-indigo-600">
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#091235] to-[#003B73]">
+
             {/* Container with Image & Form Side by Side */}
-            <div className="flex bg-white rounded-2xl shadow-lg overflow-hidden w-[700px]">
-                
+            <div className="flex bg-white rounded-xl shadow-lg overflow-hidden w-[1000px]">
+
                 {/* Left Side - Logo and Business Name */}
-                <div className="w-1/2 flex flex-col items-center justify-center border-r-6 border-indigo-400 p-5 bg-white-100">
+                <div className="w-1/2 flex flex-col items-center justify-center border-r-8 border-[#003B73] p-5 bg-white-100">
                     {/* Business Name */}
-                    <h1 className="text-3xl font-bold text-gray-800 mb-8">ITPARTNER</h1>
-                    
+                    <h1 className="text-5xl font-bold text-[#003B73] mb-15">ITPARTNER</h1>
+
                     {/* Logo */}
-                    <img src="../public/logo.svg" alt="Company Logo" className="max-w-full h-auto mr-6" />
+                    <img src="./logo.svg" alt="Company Logo" className="max-w-full h-auto mr-12 mb-16" />
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="w-1/2 p-10">
-                    <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Register Owner</h2>
-                    
+                <div className="w-1/2 p-12">
+                    <h2 className=" text-[#003B73] text-center "><h3 className="text-4xl font-bold">Register Owner</h3></h2>
+
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium text-gray-700">Name</label>
+                        <div className="mt-6">
+                            <label className="text-sm font-medium text-gray-700 ">Name</label>
                             <input
                                 className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all p-2 w-full rounded-lg"
                                 type="text"
@@ -53,7 +77,7 @@ const Sudmitownerdata = () => {
                             />
                         </div>
 
-                        <div>
+                        <div className="mt-5">
                             <label className="text-sm font-medium text-gray-700">Email</label>
                             <input
                                 className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all p-2 w-full rounded-lg"
@@ -65,7 +89,7 @@ const Sudmitownerdata = () => {
                             />
                         </div>
 
-                        <div>
+                        <div className="mt-5">
                             <label className="text-sm font-medium text-gray-700">Phone</label>
                             <input
                                 className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all p-2 w-full rounded-lg"
@@ -77,7 +101,7 @@ const Sudmitownerdata = () => {
                             />
                         </div>
 
-                        <div>
+                        <div className="mt-5">
                             <label className="text-sm font-medium text-gray-700">GST Number</label>
                             <input
                                 className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all p-2 w-full rounded-lg"
@@ -88,16 +112,26 @@ const Sudmitownerdata = () => {
                                 onChange={(e) => setGstNumber(e.target.value)}
                             />
                         </div>
+                        <ToastContainer />
 
                         <button
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all shadow-md"
+                            className="bg-blue-600 hover:bg-blue-700  text-white font-semibold text-lg p-3 w-full rounded-lg transition-all mt-6 shadow-md"
                             type="submit"
                         >
                             Submit
                         </button>
+                        <div>
+                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 mr-20">
+                                <a href="www.youtbe.com">Update</a>
+                            </button>
+                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40">
+                                <a href="www.youtbe.com">Next</a>
+                            </button>
+                        </div>
+
+
                     </form>
 
-                    {success && <p className="text-green-600 text-center font-semibold mt-4">{success}</p>}
                 </div>
             </div>
         </div>
