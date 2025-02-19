@@ -1,15 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify"
 // Ensure correct path to your logo
 //import logo from "../public/logo.svg";
 
 const Sudmitownerdata = () => {
+    const navigate = useNavigate()
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [gstNumber, setGstNumber] = useState("");
     const [success, setSuccess] = useState("");
+    
+     const updatepage = ()=>{
+        navigate('/updateowner')
+     }
+     const  next = ()=>{
+        navigate('/postcustmer')
+     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -121,11 +130,11 @@ const Sudmitownerdata = () => {
                             Submit
                         </button>
                         <div>
-                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 mr-20">
-                                <a href="www.youtbe.com">Update</a>
+                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 mr-20" onClick={updatepage}>
+                                Update
                             </button>
-                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40">
-                                <a href="www.youtbe.com">Next</a>
+                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40"  onClick={next}>
+                                Next
                             </button>
                         </div>
 

@@ -6,6 +6,7 @@ import OwnerData from './Components/Ownerdata/Getownerdata'
 import Sudmitownerdata from './Components/Ownerdata/Postowner'
 import Postcustmer from './Components/Custmerdata/Postcustmerdata'
 import Updateowner from './Components/Ownerdata/Updateowner'
+import Updatecustmoer from './Components/Custmerdata/Updatecustmer'
 
 function App() {
   
@@ -14,9 +15,10 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route  path='/data' element={<OwnerData />} />
-      <Route path='/postowner' element={<Sudmitownerdata />}  />
+      <Route path='/' element={<Sudmitownerdata />}  />
       <Route path='/postcustmer' element={<Postcustmer />} />
       <Route path='/updateowner' element={<Updateowner />} />
+      <Route path='/updatecustmer' element= {<Updatecustmoer />} />
 
     </Routes>
 

@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Postcustmer = () => {
+    const navigate = useNavigate();
+    const updatecustmer =  ()=>{
+        navigate('/updatecustmer')
+    }
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [phone, setPhone] = useState("");
-
+ 
     const Custmerhandledata = async (e) => {
         e.preventDefault();
         const formData = { name, address, phone };
@@ -15,12 +20,13 @@ const Postcustmer = () => {
         try {
             const res = await axios.post("http://localhost:5000/custmor/custmor", formData);
             console.log(res)
-            toast.success(res.data.message, {position:"top-center",
-                autoClose:5000,
-                pauseOnHover:true,
-                theme:"light",
-                transition:Bounce
-             });
+            toast.success(res.data.message, {
+                position: "top-center",
+                autoClose: 5000,
+                pauseOnHover: true,
+                theme: "light",
+                transition: Bounce
+            });
         } catch (err) {
             toast.error(err.response?.data?.message || "Submission failed", {
                 position: "top-center",
@@ -92,18 +98,20 @@ const Postcustmer = () => {
 
                         <button
                             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all  shadow-md">
-                        
+
                             Sudmit
                         </button>
-                        <div>
-                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 mr-20">
-                                <a href="www.youtbe.com">Update</a>
-                            </button>
-                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40">
-                                <a href="www.youtbe.com">CustmerData</a>
-                            </button>
-                        </div>
+                        
                     </form>
+                    <div className="mt-6">
+                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40 mr-25" onClick={() =>navigate(-1)}>
+                                  GoBack
+                            </button>
+                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 "onClick={ updatecustmer}>
+                                Update
+                            </button>
+
+                        </div>
                 </div>
 
             </div>

@@ -17,7 +17,7 @@ model Owner {
   name       String
   email      String @unique
   phone      String?
-  gstNumber  String? 
+  gstNumber  String?
   quotations Quotation[]
 }
 model Customer {
