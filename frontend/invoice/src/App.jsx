@@ -7,6 +7,10 @@ import Sudmitownerdata from './Components/Ownerdata/Postowner'
 import Postcustmer from './Components/Custmerdata/Postcustmerdata'
 import Updateowner from './Components/Ownerdata/Updateowner'
 import Updatecustmoer from './Components/Custmerdata/Updatecustmer'
+import Insertiteams from './Components/Iteams/Insertiteams'
+
+import AllItemsTable from './Components/Iteams/SearchIteams'
+
 
 function App() {
   
@@ -19,6 +23,8 @@ function App() {
       <Route path='/postcustmer' element={<Postcustmer />} />
       <Route path='/updateowner' element={<Updateowner />} />
       <Route path='/updatecustmer' element= {<Updatecustmoer />} />
+      <Route path='/selectiteams' element={<Insertiteams />} />
+      <Route path='/getalliteams' element={<AllItemsTable />} />
 
     </Routes>
 
