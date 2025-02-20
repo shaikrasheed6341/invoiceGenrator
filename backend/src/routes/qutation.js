@@ -37,7 +37,10 @@ router.post("/data",async(req,res)=>{
 router.get("/getdata/:number",async(req,res)=>{
     const{number} = req.params;
     try{
-        const quationnumber = parseInt(number);
+        const quationnumber = parseInt(req.params.number,10);
+        if (isNaN(quationnumber)) {
+            return res.status(400).json({ message: "Invalid quotation number" });
+        }
       const finalresult  = await prisma.quotation.findUnique({
         where : {number:quationnumber},
         include:{
@@ -47,13 +50,13 @@ router.get("/getdata/:number",async(req,res)=>{
         }   
       })
       if(!finalresult){
-        res.json({message:"your serial data entre could be wrong"})
+        return res.json({message:"No data found for this quotation number"})
       }
       console.log(finalresult)
-      res.status(200).json(finalresult)
+      return res.status(200).json(finalresult)
     }catch(err){
         console.log(err)
-        res.json({message:`yourgetting data also faild ${err.message}`})
+        return res.json({message:`yourgetting data also faild ${err.message}`})
     }
 })
 export default router;

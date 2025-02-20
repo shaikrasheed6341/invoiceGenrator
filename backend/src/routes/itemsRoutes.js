@@ -7,32 +7,64 @@ const router = express.Router();
 
 //when you insesert sigle data
 //http://localhost:5000/iteam/datas
-router.post("/datas",async(req,res)=>{
-    const{name,quantity,rate,tax,brand} = req.body;
-    try{
-         if(!name || !quantity || !rate || !tax ||!brand){
-            console.log("require all input fields");
-         
-            res.status(400).json({message:"fill the all inut fields"});
-         }
-         const iteams =  await prisma.item.create({
-            data:{
-               name,
-               brand,
-               quantity,
-               rate,
-               tax
-            }
-         })
-         res.status(200).json(iteams)
-
-    }catch(err){
-      res.status(500).json({message:`something went wrong ${err}`,err})
-    }
+// router.post("/datas", async (req, res) => {
+//     const { name, quantity, rate, tax, brand } = req.body;
     
-})
+//     try {
+//         if (!name || !quantity || !rate || !tax || !brand) {
+//             console.log("Require all input fields");
+//             return res.status(400).json({ message: "Fill all input fields" }); // ✅ return added
+//         }
 
+//         const item = await prisma.item.create({
+//             data: {
+//                 name,
+//                 brand,
+//                 quantity,
+//                 rate,
+//                 tax,
+//             },
+//         });
 
+//         return res.status(200).json(item); // ✅ Return here ensures only one response is sent
+
+//     } catch (err) {
+//         console.error("Error creating item:", err);
+//         return res.status(500).json({ message: `Something went wrong: ${err.message}`, error: err });
+//     }
+// });
+router.post("/datas", async (req, res) => {
+    console.log("Received request body:", req.body); // Debugging line
+
+    const { name, quantity, rate, tax, brand } = req.body;
+
+    if (!name?.trim() || !brand?.trim() || !quantity?.trim() || !rate?.trim() || !tax?.trim()) {
+        console.log("Require all input fields");
+        return res.status(400).json({ message: "Fill all input fields with valid values" });
+    }
+
+    try {
+        const item = await prisma.item.create({
+            data: { name, brand, quantity, rate, tax },
+        });
+
+        return res.status(200).json(item);
+    } catch (err) {
+        console.error("Error creating item:", err);
+        return res.status(500).json({ message: `Something went wrong: ${err.message}` });
+    }
+});
+
+//http://localhost:5000/iteam/getalliteamdata
+ router.get("/getalliteamdata",async(req,res)=>{
+    try{
+         const result = await prisma.item.findMany();
+          return res.json(result)  
+        }catch(err){
+            console.log(err)
+             return res.json({message:"uneable to fetch data",err})
+    }
+ })
 
 //when you insert bulk dasta
 //http://localhost:5000/iteam/insertcameras
@@ -73,16 +105,16 @@ router.put("/update/:name",async(req,res)=>{
             where:{name},
         })
         if(!existingiteam){
-          res.status(400).json({message:"your name  is not exist"})
+          return res.status(400).json({message:"your name  is not exist"})
         }
         const updateiteam = await prisma.item.update({
             where :{name},
             data:{quantity,rate,tax,brand},
         })
-        res.json({message:"iteam update sucessfully",updateiteam});
+       return  res.json({message:"iteam update sucessfully",updateiteam});
     }catch(err){
         console.log("error update while iteam",err)
-        res.status(500).json({message:`error ${err.message}`})
+       return  res.status(500).json({message:`error ${err.message}`})
     }
 })
 

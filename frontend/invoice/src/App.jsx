@@ -10,6 +10,7 @@ import Updatecustmoer from './Components/Custmerdata/Updatecustmer'
 import Insertiteams from './Components/Iteams/Insertiteams'
 
 import AllItemsTable from './Components/Iteams/SearchIteams'
+import QuotationForm from './Components/Qutation/QuationTemplete'
 
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
       <Route path='/updatecustmer' element= {<Updatecustmoer />} />
       <Route path='/selectiteams' element={<Insertiteams />} />
       <Route path='/getalliteams' element={<AllItemsTable />} />
+      <Route path='/quataion' element={<QuotationForm />} />
+
 
     </Routes>
 
