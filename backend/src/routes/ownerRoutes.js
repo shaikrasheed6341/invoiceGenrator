@@ -4,10 +4,37 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
+
+
+
+
+
+
+// ✅ Create a new owner
+router.post("/insertownerdata", async (req, res) => {
+  try {
+    const { name, email, phone, gstNumber, compneyname, address } = req.body; // Fixed `compneyname` typo
+
+    if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const owner = await prisma.owner.create({
+      data: { name, email, phone, gstNumber, compneyname, address },
+    });
+
+    return res.json({ message: "Your data was successfully stored", owner });
+  } catch (error) {
+    console.error("Error creating owner:", error);
+    return res.status(500).json({ message: "Error creating owner" });
+  }
+});
+
+
 //http://localhost:5000/owners/john@example.com
 router.put("/:email", async(req,res)=>{
   const{email} =  req.params;
-  const {name,phone,gstNumber} =req.body;
+  const {name,phone,gstNumber,compneyname,address} =req.body;
   try{
    const existowner = await prisma.owner.findUnique({
      where:{
@@ -19,7 +46,7 @@ router.put("/:email", async(req,res)=>{
    }
    const updateownerdata = await prisma.owner.update({
      where:{email},
-     data:{name, phone,gstNumber }
+     data:{name, phone,gstNumber,compneyname,address }
    })
    return res.status(200).json({message:`your data is sucessfully updated ${updateownerdata}`})
 
@@ -30,25 +57,7 @@ router.put("/:email", async(req,res)=>{
 
 })
 
-// ✅ Create a new owner
-router.post("/insertownerdata", async (req, res) => {
-  try {
-    const { name, email, phone, gstNumber } = req.body;
 
-    if (!name || !email || !phone || !gstNumber) {
-      return res.status(400).json({ message: "Name, email, phone, and GST number are required" });
-    }
-
-    const owner = await prisma.owner.create({
-      data: { name, email, phone, gstNumber },
-    });
-
-    return res.json({ message: "Your data was successfully stored", owner });
-  } catch (error) {
-    console.error("Error creating owner:", error);
-    return res.status(500).json({ message: "Error Creating owner" });
-  }
-});
 //http://localhost:5000/owners/allownerdata
 router.get("/allownerdata", async (req, res) => {
   try {

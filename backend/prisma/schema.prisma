@@ -7,38 +7,40 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model Owner {
+  id          String  @id @default(uuid())
+  name        String
+  compneyname String  
+  address     String  
+  email       String  @unique
+  phone       String?
+  gstNumber   String?
+  quotations  Quotation[]
+}
+
+model Customer {
   id         String @id @default(uuid())
   name       String
-  compneyname String
-  address     String
-  email      String @unique
-  phone      String?
-  gstNumber  String?
+  address    String
+  phone      String @unique
   quotations Quotation[]
 }
-model Customer {
-  id       String @id @default(uuid())
-  name     String
-  address  String
-  phone    String @unique
-  quotations Quotation[]
-}
+
 model Item {
-  id       String @id @default(uuid())
-  name     String @unique
+  id        String @id @default(uuid())
+  name      String @unique
   brand     String?
-  quantity Int?
-  rate     Float?
-  tax      Float?
+  quantity  Int?
+  rate      Float?
+  tax       Int?
   quotations Quotation[]
- 
 }
+
 model Quotation {
   id          String   @id @default(uuid())
   number      Int      @unique
@@ -48,27 +50,26 @@ model Quotation {
   customerId  String
   customer    Customer @relation(fields: [customerId], references: [id])
   itemId      String
-  item        Item   @relation(fields: [itemId],references: [id])
-  bankdetailsId String
-  bank Bankdetails @relation(fields: [bankdetailsId],references: [id] )
-  paymentId String
-  pay  Payment @relation(fields: [paymentId],references: [upid]) 
-
+  item        Item   @relation(fields: [itemId], references: [id])
+  bankdetailsId String? // Nullable to avoid errors
+  bank        Bankdetails? @relation(fields: [bankdetailsId], references: [id])
+  paymentId   String? // Nullable to avoid errors
+  pay         Payment? @relation(fields: [paymentId], references: [id])
 }
 
-model Bankdetails{
-  id   String @id @default(uuid())
-  name  String
-  IFSCCode String
-  AccountNo String
-  bank  String
- quotations Quotation[]
-
-}
-
-model Payment{
- 
-  upid String @id @default(uuid())
+model Bankdetails {
+  id        String @id @default(uuid())
+  name      String?
+  IFSCCode  String?
+  AccountNo String?
+  bank      String?
   quotations Quotation[]
 }
+
+model Payment {
+  id   String @id @default(uuid())
+  upid String @unique // Ensure unique UPI IDs
+  quotations Quotation[]
+}
+
 

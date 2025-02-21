@@ -45,7 +45,7 @@ router.post("/datas", async (req, res) => {
 
     try {
         const item = await prisma.item.create({
-            data: { name, brand, quantity, rate, tax },
+            data: { name, brand, quantity:parseInt(quantity,10), rate:parseFloat(rate), tax:parseInt(tax,10) },
         });
 
         return res.status(200).json(item);

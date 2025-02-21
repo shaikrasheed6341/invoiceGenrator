@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Owner" ALTER COLUMN "address" DROP DEFAULT,
+ALTER COLUMN "compneyname" DROP DEFAULT;
