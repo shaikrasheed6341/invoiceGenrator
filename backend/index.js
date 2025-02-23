@@ -5,6 +5,8 @@ import ownerRoutes from "./src/routes/ownerRoutes.js";
 import custmorRoutes from "./src/routes/custmorRoutes.js";
 import itemsRoutes from "./src/routes/itemsRoutes.js"
 import qutation from "./src/routes/qutation.js"
+import bankdetails from "./src/routes/bankdetails.js"
+
 
 const app = express();
 const prisma = new PrismaClient();
@@ -17,6 +19,8 @@ app.use("/quation",qutation)
 app.use("/custmor",custmorRoutes);
 app.use("/owners", ownerRoutes);
 app.use("/iteam",itemsRoutes);
+app.use("/bank",bankdetails);
+
 
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

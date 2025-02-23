@@ -31,45 +31,51 @@ model Customer {
   quotations Quotation[]
 }
 
-model Item {
-  id        String @id @default(uuid())
-  name      String @unique
-  brand     String?
-  quantity  Int?
-  rate      Float?
-  tax       Int?
-  quotations Quotation[]
-}
-
 model Quotation {
+  id            String   @id @default(uuid())
+  number        Int      @unique
+  ownerId       String
+  customerId    String
+  bankdetailsId String?
+  owner         Owner    @relation(fields: [ownerId], references: [id])
+  customer      Customer @relation(fields: [customerId], references: [id])
+  bankdetails   BankDetails? @relation(fields: [bankdetailsId], references: [id])
+  items         QuotationItem[]  // Many-to-many relation via QuotationItem
+}
+
+model Item {
+  id       String   @id @default(uuid())
+  name     String
+  brand    String
+  quantity Int
+  rate     Float
+  tax      Float
+  quotations QuotationItem[]  // Many-to-many relation via QuotationItem
+}
+
+model QuotationItem {
   id          String   @id @default(uuid())
-  number      Int      @unique
-  date        DateTime @default(now())
-  ownerId     String
-  owner       Owner    @relation(fields: [ownerId], references: [id])
-  customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id])
+  quotationId String
   itemId      String
-  item        Item   @relation(fields: [itemId], references: [id])
-  bankdetailsId String? // Nullable to avoid errors
-  bank        Bankdetails? @relation(fields: [bankdetailsId], references: [id])
-  paymentId   String? // Nullable to avoid errors
-  pay         Payment? @relation(fields: [paymentId], references: [id])
+  quantity    Int      // Store item-specific quantity
+  
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([quotationId, itemId])  // Ensures no duplicate entries
 }
 
-model Bankdetails {
-  id        String @id @default(uuid())
-  name      String?
-  IFSCCode  String?
-  AccountNo String?
-  bank      String?
+
+model BankDetails {
+  id         String @id @default(uuid())
+  name       String
+  ifsccode   String
+  accountno  String
+  bank       String
+  upid       String
   quotations Quotation[]
 }
 
-model Payment {
-  id   String @id @default(uuid())
-  upid String @unique // Ensure unique UPI IDs
-  quotations Quotation[]
-}
+
 
 
