@@ -3,11 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+//http://localhost:5173/postcustmer
 const Postcustmer = () => {
     const navigate = useNavigate();
     const updatecustmer =  ()=>{
         navigate('/updatecustmer')
+    }
+    const iteamnavigate =()=>{
+        navigate('/selectiteams')
     }
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
@@ -104,8 +107,8 @@ const Postcustmer = () => {
                         
                     </form>
                     <div className="mt-6">
-                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40 mr-25" onClick={() =>navigate(-1)}>
-                                  GoBack
+                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40 mr-25" onClick={iteamnavigate}>
+                                  NEXT
                             </button>
                             <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 "onClick={ updatecustmer}>
                                 Update

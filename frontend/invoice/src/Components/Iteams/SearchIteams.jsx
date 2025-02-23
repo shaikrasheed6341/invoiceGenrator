@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
@@ -9,7 +10,10 @@ const AllItemsTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [selectedItems, setSelectedItems] = useState([]);
-
+  const navigate = useNavigate();
+  const updatepage = ()=>{
+    navigate('/quataion')
+  }
     // Fetch all items from backend
     const fetchItems = async () => {
         setLoading(true);
@@ -51,6 +55,7 @@ const AllItemsTable = () => {
         <div className="p-6">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">All Products</h2>
+                <div><button className="p-4  border" onClick={updatepage} >next</button></div>
                 <input
                     type="text"
                     placeholder="Search by name..."
@@ -68,6 +73,7 @@ const AllItemsTable = () => {
                     <table className="w-full border-collapse border border-gray-300 shadow-lg">
                         <thead className="bg-blue-500 text-white">
                             <tr>
+                            <th className="border px-4 py-2">ID</th>
                                 <th className="border px-4 py-2">ID</th>
                                 <th className="border px-4 py-2">Name</th>
                                 <th className="border px-4 py-2">Brand</th>
@@ -81,6 +87,7 @@ const AllItemsTable = () => {
                             {currentItems.map((item, index) => (
                                 <tr key={index} className="text-center border-b hover:bg-gray-100">
                                     <td className="border px-4 py-2">{indexOfFirstItem + index + 1}</td>
+                                        <td className="border px-4 py-2">{item.id}</td>
                                     <td className="border px-4 py-2">{item.name}</td>
                                     <td className="border px-4 py-2">{item.brand}</td>
                                     <td className="border px-4 py-2">{item.quantity}</td>

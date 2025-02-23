@@ -11,6 +11,8 @@ import Insertiteams from './Components/Iteams/Insertiteams'
 
 import AllItemsTable from './Components/Iteams/SearchIteams'
 import QuotationForm from './Components/Qutation/QuationTemplete'
+import Bankdetails from './Components/Bankdetails/Bankdetails'
+import Postquation from './Components/Qutation/Postquation'
 
 
 function App() {
@@ -26,7 +28,9 @@ function App() {
       <Route path='/updatecustmer' element= {<Updatecustmoer />} />
       <Route path='/selectiteams' element={<Insertiteams />} />
       <Route path='/getalliteams' element={<AllItemsTable />} />
+      <Route path='/bankdetails' element={<Bankdetails />} />
       <Route path='/quataion' element={<QuotationForm />} />
+      <Route path='/postquation' element={<Postquation />} />
 
 
     </Routes>
