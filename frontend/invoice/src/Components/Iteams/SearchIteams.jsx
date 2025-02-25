@@ -12,7 +12,7 @@ const AllItemsTable = () => {
     const [selectedItems, setSelectedItems] = useState([]);
   const navigate = useNavigate();
   const updatepage = ()=>{
-    navigate('/quataion')
+    navigate('/postquation')
   }
     // Fetch all items from backend
     const fetchItems = async () => {

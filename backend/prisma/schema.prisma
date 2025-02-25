@@ -73,6 +73,7 @@ model BankDetails {
   accountno  String
   bank       String
   upid       String
+  upidname String?
   quotations Quotation[]
 }
 

@@ -4,9 +4,9 @@ const  prisma = new PrismaClient();
 const router = express.Router();
 //http://localhost:5000/bank/bankdetails
 router.post("/bankdetails",async(req,res)=>{
-    const{name,ifsccode, accountno,bank,upid} =req.body;
+    const{name,ifsccode, accountno,bank,upid,upidname} =req.body;
     try{
-        if(!name || !ifsccode || !accountno || !bank|| !upid){
+        if(!name || !ifsccode || !accountno || !bank|| !upid || !upidname){
             return res.json({message:"fill the all input fields"})
         }
         const result  = await prisma.bankDetails.create({
@@ -16,6 +16,7 @@ router.post("/bankdetails",async(req,res)=>{
                 accountno,
                 bank,
                 upid,
+                upidname
             }
         })
         console.log(result)

@@ -15,7 +15,7 @@ const SubmitOwnerData = () => {
 
     const updatePage = (event) => {
         event.preventDefault();
-        navigate('/updateowner');
+        navigate('/bankdetails');
     };
 
     const nextPage = (event) => {
@@ -90,7 +90,7 @@ const SubmitOwnerData = () => {
                         <ToastContainer />
                         <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all mt-6 shadow-md" type="submit">Submit</button>
                         <div className="flex justify-between mt-4">
-                            <button className="p-3 bg-[#1abb2d] text-white shadow-md font-bold w-40" onClick={updatePage}>Update</button>
+                            <button className="p-3 bg-[#1abb2d] text-white shadow-md font-bold w-40" onClick={updatePage}>Bank Deteails</button>
                             <button className="p-3 bg-black text-white shadow-md font-bold w-40" onClick={nextPage}>Next</button>
                         </div>
                     </form>

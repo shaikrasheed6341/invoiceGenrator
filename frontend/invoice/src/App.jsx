@@ -1,5 +1,7 @@
 import React from 'react'
-import { BrowserRouter,Route,Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+
 import './App.css'
 import OwnerData from './Components/Ownerdata/Getownerdata'
 //import Postowner from './Components/Ownerdata/Postowner'
@@ -10,33 +12,40 @@ import Updatecustmoer from './Components/Custmerdata/Updatecustmer'
 import Insertiteams from './Components/Iteams/Insertiteams'
 
 import AllItemsTable from './Components/Iteams/SearchIteams'
-import QuotationForm from './Components/Qutation/QuationTemplete'
+
 import Bankdetails from './Components/Bankdetails/Bankdetails'
-import Postquation from './Components/Qutation/Postquation'
+import FetchQuotation from './Components/Invoice/FetchQuotation'
+import Invoice from './Components/Invoice/Invoice'
+
 
 
 function App() {
-  
 
-  return (    
+
+  return (
+
     <BrowserRouter>
-    <Routes>
-      <Route  path='/data' element={<OwnerData />} />
-      <Route path='/' element={<Sudmitownerdata />}  />
-      <Route path='/postcustmer' element={<Postcustmer />} />
-      <Route path='/updateowner' element={<Updateowner />} />
-      <Route path='/updatecustmer' element= {<Updatecustmoer />} />
-      <Route path='/selectiteams' element={<Insertiteams />} />
-      <Route path='/getalliteams' element={<AllItemsTable />} />
-      <Route path='/bankdetails' element={<Bankdetails />} />
-      <Route path='/quataion' element={<QuotationForm />} />
-      <Route path='/postquation' element={<Postquation />} />
+      <Routes>
+        <Route path='/' element={<Sudmitownerdata />} />
+        <Route path='/postcustmer' element={<Postcustmer />} />
+        <Route path='/updateowner' element={<Updateowner />} />
+        <Route path='/updatecustmer' element={<Updatecustmoer />} />
+        <Route path='/selectiteams' element={<Insertiteams />} />
+        <Route path='/getalliteams' element={<AllItemsTable />} />
+        <Route path='/bankdetails' element={<Bankdetails />} />
+        {/* <Route path='/postquation' element={<Postquation />} />
+        <Route path='/quataion' element={<QuotationForm />} /> */}
+        <Route path='/fetch' element ={<FetchQuotation  />} / >
+        <Route path='/invoice' element ={<Invoice  />} / > 
+       
+        
+       
 
-
-    </Routes>
+      </Routes>
 
     </BrowserRouter>
-    
+
+
   )
 }
 
