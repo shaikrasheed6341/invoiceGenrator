@@ -14,10 +14,10 @@ import Insertiteams from './Components/Iteams/Insertiteams'
 import AllItemsTable from './Components/Iteams/SearchIteams'
 
 import Bankdetails from './Components/Bankdetails/Bankdetails'
+import PostQuotation from './Components/Qutation/Postquation'
+
 import FetchQuotation from './Components/Invoice/FetchQuotation'
 import Invoice from './Components/Invoice/Invoice'
-
-
 
 function App() {
 
@@ -33,8 +33,8 @@ function App() {
         <Route path='/selectiteams' element={<Insertiteams />} />
         <Route path='/getalliteams' element={<AllItemsTable />} />
         <Route path='/bankdetails' element={<Bankdetails />} />
-        {/* <Route path='/postquation' element={<Postquation />} />
-        <Route path='/quataion' element={<QuotationForm />} /> */}
+         <Route path='/postquation' element={<PostQuotation />} />
+        
         <Route path='/fetch' element ={<FetchQuotation  />} / >
         <Route path='/invoice' element ={<Invoice  />} / > 
        

@@ -76,7 +76,7 @@ const Invoice = () => {
                     </tbody>
                 </table>
 
-                <h4 className="text-lg font-bold mt-6 text-right">
+                <h4 className="text-md font-bold mt-4 mr-15 text-right">
                     Total: <span className="font-bold">₹ {calculateTotalAmount(quotation.items)}</span>
                 </h4>
 

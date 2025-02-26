@@ -45,7 +45,7 @@ model Quotation {
 
 model Item {
   id       String   @id @default(uuid())
-  name     String
+  name     String   @unique
   brand    String
   quantity Int
   rate     Float
@@ -70,9 +70,9 @@ model BankDetails {
   id         String @id @default(uuid())
   name       String
   ifsccode   String
-  accountno  String
+  accountno  String @unique
   bank       String
-  upid       String
+  upid       String 
   upidname String?
   quotations Quotation[]
 }
