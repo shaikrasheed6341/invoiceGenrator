@@ -17,7 +17,7 @@ Ensure you have the following installed:
 ### Steps to Install
 
 # Clone the repository
-git clone https://github.com/your-username/project-name.git
+git clone https://github.com/shaikrasheed6341/invoiceGenrator
 
 # Navigate frontend to project folder
 cd frontend/invoice
