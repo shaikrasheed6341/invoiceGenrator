@@ -25,7 +25,7 @@ const SubmitOwnerData = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const formData = { name, email, phone, gstNumber, compneyname , address };
+        const formData = { name, email, phone, gstNumber, compneyname, address };
 
         try {
             const result = await axios.post('http://localhost:5000/owners/insertownerdata', formData);
@@ -63,30 +63,34 @@ const SubmitOwnerData = () => {
                 <div className="w-1/2 p-12">
                     <h2 className="text-4xl font-bold text-[#003B73] text-center mb-6">Register Owner</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium text-gray-700">Name</label>
-                            <input className="input-field" type="text" placeholder="Enter your name" required value={name} onChange={(e) => setName(e.target.value)} />
+                        <div className=" flex-col ">
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Name</label></div>
+                            <div>
+                                <input className="input-field border-2 p-2 w-full rounded-md bg-gray-50 " type="text" placeholder="Enter your name" required value={name} onChange={(e) => setName(e.target.value)} />
+                            </div>
                         </div>
                         <div>
-                            <label className="text-sm font-medium text-gray-700">Email</label>
-                            <input className="input-field" type="email" placeholder="Enter your email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                            <div><label className="text-sm font-medium text-gray-700">Email</label></div>
+                            <div><input className="input-field input-field border-2 p-2 w-full rounded-md bg-gray-50" type="email" placeholder="Enter your email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div> </div>
+                        <div>
+                            <div><label className="text-sm font-medium text-gray-700">Phone</label></div>
+                            <div><input className="input-field input-field border-2 p-2 w-full rounded-md bg-gray-50" type="tel" placeholder="Enter your phone number" required value={phone} onChange={(e) => setPhone(e.target.value)} />
+                            </div>                         </div>
+                        <div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Company Name</label>
+                            </div>                            <div><input className="input-field input-field border-2  bg-gray-50 p-2 w-full rounded-md" type="text" placeholder="Enter your company name" required value={compneyname} onChange={(e) => setCompneyname(e.target.value)} />
+                            </div> </div>
+                        <div>
+                            <div><label className="text-sm font-medium text-gray-700">GST Number</label></div>
+                            <div><input className="input-field input-field border-2 p-2 w-full bg-gray-50 rounded-md" type="text" placeholder="Enter your GST Number" required value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} /></div>
                         </div>
                         <div>
-                            <label className="text-sm font-medium text-gray-700">Phone</label>
-                            <input className="input-field" type="tel" placeholder="Enter your phone number" required value={phone} onChange={(e) => setPhone(e.target.value)} />
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium text-gray-700">Company Name</label>
-                            <input className="input-field" type="text" placeholder="Enter your company name" required value={compneyname} onChange={(e) => setCompneyname(e.target.value)} />
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium text-gray-700">GST Number</label>
-                            <input className="input-field" type="text" placeholder="Enter your GST Number" required value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} />
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium text-gray-700">Address</label>
-                            <input className="input-field" type="text" placeholder="Enter your address" required value={address} onChange={(e) => setAddress(e.target.value)} />
-                        </div>
+                            <div><label className="text-sm font-medium text-gray-700">Address</label>
+                            </div>                             <div><input className="input-field bg-gray-50 input-field border-2 p-2 w-full rounded-md" type="text" placeholder="Enter your address" required value={address} onChange={(e) => setAddress(e.target.value)} />
+                            </div> </div>
                         <ToastContainer />
                         <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all mt-6 shadow-md" type="submit">Submit</button>
                         <div className="flex justify-between mt-4">

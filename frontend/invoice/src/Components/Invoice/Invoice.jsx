@@ -1,9 +1,11 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import DropZone from 'react-dropzone'
 
 const Invoice = () => {
     const location = useLocation();
     const quotation = location.state?.quotation;
+    
 
     if (!quotation) {
         return (
@@ -91,48 +93,55 @@ const Invoice = () => {
 
                 <div className="mt-6 p-4 border-t bg-gray-50 rounded-md">
                     <h3 className="pb-2 font-bold text-lg">Payment Details</h3>
+                    
                     <p><strong>UPI ID:</strong> {quotation.bankdetails.upid}</p>
                     <p><strong>UPI Name:</strong> {quotation.bankdetails.upidname}</p>
                 </div>
+                <div></div>
             </div>
+            
 
             {/* CSS for printing */}
             <style>
                 {`
-                @media print {
-                    body {
-                        -webkit-print-color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .invoice {
-                        width: 100%;
-                        max-width: 800px;
-                        padding: 20px;
-                        background: white;
-                        box-shadow: none;
-                    }
-                    .invoice-container {
-                        background: white;
-                    }
-                    table {
-                        width: 100%;
-                        font-size: 12px;
-                    }
-                    th, td {
-                        padding: 5px;
-                        border: 1px solid black;
-                    }
-                    .no-print {
-                        display: none;
-                    }
-                    @page {
-                        size: A4;
-                        margin: 10mm;
-                    }
-                }
-                `}
+    @media print {
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin: 0;
+            padding: 0;
+        }
+        .invoice {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background: white;
+            box-shadow: none;
+        }
+        .invoice-container {
+            background: white;
+        }
+        table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            border-top: 1px solid black; /* Only top border */
+            border-left: none;
+            border-right: none;
+            border-bottom: none;
+        }
+        .no-print {
+            display: none;
+        }
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+    }
+    `}
             </style>
         </div>
     );

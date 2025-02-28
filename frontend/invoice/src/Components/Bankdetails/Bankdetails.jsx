@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+//import MyDropzone from "./Qrcode";
 
 const Bankdetails = () => {
     const [name, setName] = useState("");
@@ -12,10 +14,17 @@ const Bankdetails = () => {
     const [upid, setUpid] = useState("");
     const [upidname, setUpidname] = useState("");
     const navigate = useNavigate();
+    
 
     const custmerpage = () => {
         navigate('/postcustmer');
     };
+
+    
+       
+    
+
+    
 
     const handleform = async (e) => {
         e.preventDefault();
@@ -71,6 +80,8 @@ const Bankdetails = () => {
                     </form>
                     <button className="p-3 border-2 rounded-xl bg-black text-white w-100 mt-3 ml-2" onClick={custmerpage}>Next</button>
                 </div>
+                
+                
             </div>
         </div>
     );

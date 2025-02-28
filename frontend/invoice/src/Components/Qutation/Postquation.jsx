@@ -84,6 +84,7 @@ const PostQuotation = () => {
 
     return (
         <div className="p-6 max-w-lg mx-auto bg-gray-100 rounded shadow">
+            <h3 className="font-light text-gray-400">Note: Remeber your quation number</h3>
             <h2 className="text-2xl font-bold mb-4">Create Quotation</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <input type="text" name="number" placeholder="Quotation Number" value={formData.number} onChange={handleChange} className="p-2 border rounded" required />

@@ -65,6 +65,7 @@ const InsertItems = () => {
                                 <th className="border px-4 py-2">Quantity</th>
                                 <th className="border px-4 py-2">Tax</th>
                                 <th className="border px-4 py-2">Price</th>
+                                <th className="border px-4 py-2">Discount</th>
                                 <th className="border px-4 py-2">Remove</th>
                             </tr>
                         </thead>
@@ -76,6 +77,7 @@ const InsertItems = () => {
                                     <td className="border px-4 py-2">{row.quantity}</td>
                                     <td className="border px-4 py-2">{row.tax}</td>
                                     <td className="border px-4 py-2">{row.rate}</td>
+
                                     <td className="border px-4 py-2">
                                         <button onClick={() => handleDeleteRow(index)} className="bg-red-500 hover:bg-red-700 text-white p-2 rounded">
                                             Remove
