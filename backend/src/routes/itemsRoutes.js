@@ -36,9 +36,9 @@ const router = express.Router();
 router.post("/datas", async (req, res) => {
     console.log("Received request body:", req.body); // Debugging line
 
-    const { name, quantity, rate, tax, brand } = req.body;
+    const { name, quantity, rate, tax, brand,discount } = req.body;
 
-    if (!name?.trim() || !brand?.trim() || !quantity?.trim() || !rate?.trim() || !tax?.trim()) {
+    if (!name?.trim() || !brand?.trim() || !quantity?.trim() || !rate?.trim() || !tax?.trim() ) {
         console.log("Require all input fields");
         return res.status(400).json({ message: "Fill all input fields with valid values" });
     }
