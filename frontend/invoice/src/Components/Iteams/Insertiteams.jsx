@@ -65,7 +65,7 @@ const InsertItems = () => {
                                 <th className="border px-4 py-2">Quantity</th>
                                 <th className="border px-4 py-2">Tax</th>
                                 <th className="border px-4 py-2">Price</th>
-                                <th className="border px-4 py-2">Discount</th>
+                                
                                 <th className="border px-4 py-2">Remove</th>
                             </tr>
                         </thead>

@@ -3,37 +3,42 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav className="bg-white border-2  shadow-2xl">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex h-16 items-center">
-          {/* Clickable Logo (Navigates to Home) */}
-          <div className="flex items-center">
-            <Link to="/">
-              <img src="./logo.svg" alt="logo" className="w-20 cursor-pointer" />
-            </Link>
+    <nav className="bg-gradient-to-r from-gray-100 to-gray-100 shadow-lg border-b border-gray-300">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo on the left with more spacing */}
+          <Link to="/" className="mr-auto">
+            <img src="./logo.svg" alt="logo" className="w-28 transition-transform transform hover:scale-110" />
+          </Link>
+
+          {/* Centered Navigation */}
+          <div className="flex space-x-6 flex-1 justify-center">
+            <NavItem to="/submitownerdata" label="Owner Data" />
+            <NavItem to="/postcustmer" label="Customer" />
+            <NavItem to="/getalliteams" label="Product Data" />
+            <NavItem to="/fetch" label="Quotation" />
+            <NavItem to="/bankdetails" label="Bank Details" />
           </div>
 
-          {/* Navigation Links (Aligned Left) */}
-          <div className="ml-100     flex space-x-6">
-            <Link to="/submitownerdata" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
-              Owner Data
-            </Link>
-            <Link to="/postcustmer" className="rounded-md px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-700">
-              Customer
-            </Link>
-            <Link to="/getalliteams" className="rounded-md px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-700">
-              Item Data
-            </Link>
-            <Link to="/fetch" className="rounded-md px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-700">
-              Quotation
-            </Link>
-            <Link to="/bankdetails" className="rounded-md px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-700">
-              Bank Details
-            </Link>
+          {/* Signup and Login on the right with more spacing */}
+          <div className="flex space-x-8 ml-auto">
+            <NavItem to="/signup" label="Signup" />
+            <NavItem to="/login" label="Login" />
           </div>
         </div>
       </div>
     </nav>
+  );
+}
+
+function NavItem({ to, label }) {
+  return (
+    <Link
+      to={to}
+      className="px-6 py-3 rounded-lg text-md font-semibold text-zinc-600 bg-opacity-80 hover:bg-opacity-100 hover:shadow-lg transition-all duration-300"
+    >
+      {label}
+    </Link>
   );
 }
 

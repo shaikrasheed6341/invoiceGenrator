@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const router = express.Router();
-
+//http://localhost:5000/register/signup
 router.post('/signup', async(req,res)=>{
     const{firstname,lastname,email,password} = req.body;
    if(!firstname || !lastname || !email || !password){
