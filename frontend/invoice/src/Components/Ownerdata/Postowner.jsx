@@ -5,103 +5,193 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SubmitOwnerData = () => {
-    const navigate = useNavigate();
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [compneyname, setCompneyname] = useState("");
-    const [address, setAddress] = useState("");
-    const [gstNumber, setGstNumber] = useState("");
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    companyName: "",
+    address: "",
+    gstNumber: "",
+  });
 
-    const updatePage = (event) => {
-        event.preventDefault();
-        navigate('/bankdetails');
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    const nextPage = (event) => {
-        event.preventDefault();
-        navigate('/postcustmer');
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = { name, email, phone, gstNumber, compneyname, address };
-
-        try {
-            const result = await axios.post('http://localhost:5000/owners/insertownerdata', formData);
-            toast.success(result.data.message, {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "light",
-                transition: Bounce,
-            });
-            console.log(result);
-        } catch (err) {
-            console.error(err);
-            toast.error(err.response?.data?.message || "Submission failed. Please try again.", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "light",
-                transition: Bounce,
-            });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const result = await axios.post(
+        "http://localhost:5000/owners/insertownerdata",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-    };
+      );
 
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#091235] to-[#003B73]">
-            <div className="flex bg-white rounded-xl shadow-lg overflow-hidden w-[1000px]">
-                <div className="w-1/2 flex flex-col items-center justify-center border-r-8 border-[#003B73] p-5">
-                    <h1 className="text-5xl font-bold text-[#003B73] mb-10">ITPARTNER</h1>
-                    <img src="/logo.svg" alt="Company Logo" className="max-w-full h-auto mb-16" />
-                </div>
-                <div className="w-1/2 p-12">
-                    <h2 className="text-4xl font-bold text-[#003B73] text-center mb-6">Register Owner</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className=" flex-col ">
-                            <div>
-                                <label className="text-sm font-medium text-gray-700">Name</label></div>
-                            <div>
-                                <input className="input-field border-2 p-2 w-full rounded-md bg-gray-50 " type="text" placeholder="Enter your name" required value={name} onChange={(e) => setName(e.target.value)} />
-                            </div>
-                        </div>
-                        <div>
-                            <div><label className="text-sm font-medium text-gray-700">Email</label></div>
-                            <div><input className="input-field input-field border-2 p-2 w-full rounded-md bg-gray-50" type="email" placeholder="Enter your email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                            </div> </div>
-                        <div>
-                            <div><label className="text-sm font-medium text-gray-700">Phone</label></div>
-                            <div><input className="input-field input-field border-2 p-2 w-full rounded-md bg-gray-50" type="tel" placeholder="Enter your phone number" required value={phone} onChange={(e) => setPhone(e.target.value)} />
-                            </div>                         </div>
-                        <div>
-                            <div>
-                                <label className="text-sm font-medium text-gray-700">Company Name</label>
-                            </div>                            <div><input className="input-field input-field border-2  bg-gray-50 p-2 w-full rounded-md" type="text" placeholder="Enter your company name" required value={compneyname} onChange={(e) => setCompneyname(e.target.value)} />
-                            </div> </div>
-                        <div>
-                            <div><label className="text-sm font-medium text-gray-700">GST Number</label></div>
-                            <div><input className="input-field input-field border-2 p-2 w-full bg-gray-50 rounded-md" type="text" placeholder="Enter your GST Number" required value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} /></div>
-                        </div>
-                        <div>
-                            <div><label className="text-sm font-medium text-gray-700">Address</label>
-                            </div>                             <div><input className="input-field bg-gray-50 input-field border-2 p-2 w-full rounded-md" type="text" placeholder="Enter your address" required value={address} onChange={(e) => setAddress(e.target.value)} />
-                            </div> </div>
-                        <ToastContainer />
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all mt-6 shadow-md" type="submit">Submit</button>
-                        <div className="flex justify-between mt-4">
-                            <button className="p-3 bg-[#1abb2d] text-white shadow-md font-bold w-40" onClick={updatePage}>Bank Deteails</button>
-                            <button className="p-3 bg-black text-white shadow-md font-bold w-40" onClick={nextPage}>Next</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      toast.success(result.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        companyName: "",
+        address: "",
+        gstNumber: "",
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+    }
+  };
+
+  const goToBankDetails = (e) => {
+    e.preventDefault();
+    navigate("/bankdetails");
+  };
+
+  const goToNextPage = (e) => {
+    e.preventDefault();
+    navigate("/postcustmer");
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#688ce0] via-[#16358b] to-[#9c63ca] flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.2)_0%,_rgba(15,23,42,0)_70%)] pointer-events-none"></div>
+      <div className="absolute top-[-15%] left-[-15%] w-96 h-96 bg-gradient-to-r from-[#8B5CF6]/20 to-[#1E3A8A]/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-[-20%] right-[-20%] w-112 h-112 bg-gradient-to-l from-[#6B21A8]/20 to-[#0F172A]/10 rounded-full blur-3xl animate-float delay-1000"></div>
+
+      {/* Main Card */}
+      <div className="relative z-10 bg-gradient-to-br from-white/95 to-gray-100/90 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] w-full max-w-lg p-8 transition-all duration-500 hover:shadow-[0_30px_90px_rgba(139,92,246,0.35)]">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold text-transparent bg-gradient-to-r from-[#133594] via-[#2839ce] to-[#204aa5] bg-clip-text animate-fade-in">
+            Owner Registration
+          </h1>
+          <p className="text-sm text-gray-600 mt-3 font-light tracking-wide">
+            Provide your details for a seamless onboarding experience
+          </p>
         </div>
-    );
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <InputField
+            label="Full Name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Email Address"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Company Name"
+            name="companyName"
+            type="text"
+            value={formData.companyName}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="GST Number"
+            name="gstNumber"
+            type="text"
+            value={formData.gstNumber}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Address"
+            name="address"
+            type="text"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#1E3A8A] via-[#6B21A8] to-[#8B5CF6] text-white font-semibold py-3.5 rounded-xl shadow-lg hover:from-[#1E3A8A]/90 hover:via-[#6B21A8]/90 hover:to-[#8B5CF6]/90 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-[#8B5CF6]/50"
+          >
+            Register Now
+          </button>
+
+          {/* Navigation Buttons */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={goToBankDetails}
+              className="flex-1 bg-gradient-to-r from-gray-800/90 to-gray-700/90 backdrop-blur-md text-white font-medium py-3 rounded-xl hover:from-gray-700/90 hover:to-gray-600/90 transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Bank Details
+            </button>
+            <button
+              onClick={goToNextPage}
+              className="flex-1 bg-gradient-to-r from-[#8B5CF6]/90 to-[#6B21A8]/90 backdrop-blur-md text-white font-medium py-3 rounded-xl hover:from-[#7C3AED]/90 hover:to-[#5B1A8A]/90 transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Next
+            </button>
+          </div>
+        </form>
+      </div>
+      <ToastContainer />
+    </div>
+  );
 };
+
+// Reusable Input Field Component
+const InputField = ({ label, name, type, value, onChange, required }) => (
+  <div className="relative group">
+    <label className="absolute -top-2.5 left-3 px-2 bg-gradient-to-r from-white/95 to-gray-100/90 text-xs font-medium text-[#1E3A8A] transition-all duration-300 transform scale-95 origin-left group-focus-within:scale-100 group-focus-within:text-[#8B5CF6] shadow-sm rounded-md">
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      placeholder=""
+      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-800 shadow-sm focus:outline-none focus:border-[#8B5CF6] focus:ring-2 focus:ring-[#8B5CF6]/30 transition-all duration-300 hover:border-[#6B21A8]/70"
+    />
+  </div>
+);
 
 export default SubmitOwnerData;

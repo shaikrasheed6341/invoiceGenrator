@@ -1,11 +1,9 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import DropZone from 'react-dropzone'
 
 const Invoice = () => {
     const location = useLocation();
     const quotation = location.state?.quotation;
-    
 
     if (!quotation) {
         return (
@@ -23,11 +21,11 @@ const Invoice = () => {
 
     return (
         <div className="invoice-container min-h-screen bg-gray-50 py-10">
-            <div className="invoice max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+            <div className="invoice max-w-4xl mx-auto bg-white p-5 rounded-lg shadow-lg">
+                {/* Business Info */}
                 <div className="text-center mb-6">
                     <h2 className="text-2xl font-bold uppercase">{quotation.owner.compneyname}</h2>
                     <p className="text-sm mt-1">{quotation.owner.address}</p>
-
                     <div className="flex justify-center mt-2 space-x-4">
                         <p className="text-sm font-bold">{quotation.owner.email}</p>
                         <p className="text-sm font-bold">{quotation.owner.gstNumber}</p>
@@ -35,11 +33,13 @@ const Invoice = () => {
                     </div>
                 </div>
 
+                {/* Quotation Info */}
                 <div className="flex justify-between bg-gray-100 p-4 rounded-md shadow-sm">
-                    <h3 className="text-lg"><strong>Quotation No:</strong> {quotation.number}</h3>
-                    <p className="text-gray-700"><strong>Date:</strong> {new Date().toLocaleDateString("en-IN")}</p>
+                    <h3 className="text-lg font-semibold">Quotation No: {quotation.number}</h3>
+                    <p className="text-gray-700"><b>Date:</b> {new Date().toLocaleDateString("en-IN")}</p>
                 </div>
 
+                {/* Billing and Shipping Info */}
                 <div className="grid grid-cols-2 gap-6 mt-4">
                     <div className="bg-gray-50 p-4 rounded-md">
                         <h4 className="text-lg font-bold mb-2">BILL TO</h4>
@@ -53,6 +53,7 @@ const Invoice = () => {
                     </div>
                 </div>
 
+                {/* Items Table */}
                 <table className="w-full mt-6 border-collapse">
                     <thead className="border-b">
                         <tr>
@@ -64,24 +65,26 @@ const Invoice = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {quotation.items?.map((item) => (
-                            <tr key={item.id} className="text-center bg-white border-b">
-                                <td className="p-3">{item.item.name || "N/A"}</td>
+                        {quotation.items?.map((item, index) => (
+                            <tr key={index} className="text-center bg-white border-b">
+                                <td className="p-3">{item.item?.name || "N/A"}</td>
                                 <td className="p-2">{item.quantity || "0"}</td>
-                                <td className="p-2">₹ {item.item.rate || "0"}</td>
-                                <td className="p-2">{item.item.tax || "0"}%</td>
+                                <td className="p-2">₹ {item.item?.rate || "0"}</td>
+                                <td className="p-2">{item.item?.tax || "0"}%</td>
                                 <td className="p-2">
-                                    ₹ {(item.quantity * item.item.rate * (1 + item.item.tax / 100)).toFixed(2)}
+                                    ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
-                <h4 className="text-md font-bold mt-4 mr-15 text-right">
+                {/* Total Amount */}
+                <h4 className="text-md font-bold mt-4 text-right mr-14">
                     Total: <span className="font-bold">₹ {calculateTotalAmount(quotation.items)}</span>
                 </h4>
 
+                {/* Bank Details */}
                 {quotation.bankdetails && (
                     <div className="mt-6 p-4 border-t bg-gray-50 rounded-md">
                         <h4 className="text-lg font-bold mb-2">Bank Details</h4>
@@ -91,57 +94,71 @@ const Invoice = () => {
                     </div>
                 )}
 
-                <div className="mt-6 p-4 border-t bg-gray-50 rounded-md">
-                    <h3 className="pb-2 font-bold text-lg">Payment Details</h3>
-                    
-                    <p><strong>UPI ID:</strong> {quotation.bankdetails.upid}</p>
-                    <p><strong>UPI Name:</strong> {quotation.bankdetails.upidname}</p>
+                {/* Payment Details & QR Code */}
+                <div className="mt-6 p-4 border-t bg-gray-50 rounded-md flex items-center gap-4">
+                    <div className="space-y-2">
+                        <h3 className="pb-2 font-bold text-lg">Payment Details</h3>
+                        <p><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
+                        <p><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
+                    </div>
+                    <img src="./qrcode.png" alt="QR Code" className="w-24 h-24 ml-6" />
                 </div>
-                <div></div>
-            </div>
-            
 
-            {/* CSS for printing */}
+                {/* Terms & Conditions */}
+                <div className="mt-6 p-4 border-t bg-gray-50 rounded-md">
+                    <h3 className="font-semibold text-lg mb-2">Terms & Conditions</h3>
+                    <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Goods once sold will not be taken back.</li>
+                        <li>Goods should be checked at the time of delivery. The company will not be responsible for any damage after delivery.</li>
+                        <li>Any bank charges will be borne by the client.</li>
+                        <li>Delayed payments (10-20 days) for non-product items (CPU, Laptop, etc.) will incur a 2% interest charge.</li>
+                        <li>A card copy is mandatory with the product.</li>
+                    </ul>
+                </div>
+                <div className="mt-2 border-t-2  font-semibold text-2xl flex justify-center " >Thank You </div>
+            </div>
+
+            {/* CSS for Printing */}
             <style>
                 {`
-    @media print {
-        body {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            margin: 0;
-            padding: 0;
-        }
-        .invoice {
-            width: 100%;
-            max-width: 800px;
-            padding: 20px;
-            background: white;
-            box-shadow: none;
-        }
-        .invoice-container {
-            background: white;
-        }
-        table {
-            width: 100%;
-            font-size: 12px;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 5px;
-            border-top: 1px solid black; /* Only top border */
-            border-left: none;
-            border-right: none;
-            border-bottom: none;
-        }
-        .no-print {
-            display: none;
-        }
-        @page {
-            size: A4;
-            margin: 10mm;
-        }
-    }
-    `}
+                    @media print {
+                        @page {
+                            size: A4;
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        .invoice {
+                            width: 100%;
+                            max-width: 800px;
+                            padding: 20px;
+                            background: white;
+                            box-shadow: none;
+                        }
+                        .invoice-container {
+                            background: white;
+                        }
+                        table {
+                            width: 100%;
+                            font-size: 12px;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            padding: 5px;
+                            border-top: 1px solid black;
+                            border-left: none;
+                            border-right: none;
+                            border-bottom: none;
+                        }
+                        .no-print {
+                            display: none;
+                        }
+                    }
+                `}
             </style>
         </div>
     );
