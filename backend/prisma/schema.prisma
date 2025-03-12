@@ -36,6 +36,7 @@ model Customer {
   id         String @id @default(uuid())
   name       String
   address    String
+  gstnumber  String?
   phone      String @unique
   quotations Quotation[]
 }

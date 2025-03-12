@@ -17,7 +17,7 @@ router.put('/:phone', async (req, res) => {
         }
         const updatecustmer = await prisma.customer.update({
             where: { phone },
-            data: { name, address }
+            data: { name, address}
         })
         console.log(updatecustmer)
         res.json({ message: `sucesssfully updated custmer `,updatecustmer })
@@ -39,9 +39,9 @@ router.put('/:phone', async (req, res) => {
 //http://localhost:5000/custmor/custmor
 router.post("/custmor", async (req, res) => {
     try {
-        const { name, address, phone } = req.body;
+        const { name, address, phone ,gstnumber} = req.body;
 
-        if (!name || !address || !phone) {
+        if (!name || !address || !phone  || !gstnumber) {
             res.json({ message: "you need fill the all inputs " });
 
         }
@@ -50,7 +50,8 @@ router.post("/custmor", async (req, res) => {
             data: {
                 name,
                 address,
-                phone
+                phone,
+                gstnumber
             }
         })
         console.log(customer);
