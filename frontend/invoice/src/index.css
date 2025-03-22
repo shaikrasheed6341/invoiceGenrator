@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-text: #07060c;       /* Dark text */
+  --color-blue: #f2f2fa;       /* Light blue/gray */
+  --color-primary: #4c48cb;    /* Blue-purple */
+  --color-secondary: #928fea;  /* Light purple */
+  --color-accent: #605bed;     /* Vibrant purple */
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Landingpage from '../Landingpage/Landingpage';
 
 const Dashboard = () => {
   const cards = [
@@ -42,12 +43,13 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen py-12 px-6">
+    <div className=" min-h-screen py-12 px-6">
       <div className="max-w-7xl mx-auto text-center mb-10">
-        <h1 className="text-4xl font-extrabold text-white tracking-wide">
-          Dashboard
-        </h1>
-        <p className="text-gray-300 mt-2">Manage your business efficiently</p>
+        <>
+        <Landingpage  />
+        </>
+
+       
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -57,7 +59,7 @@ const Dashboard = () => {
             to={card.link}
             className="group relative overflow-hidden rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-500"
           >
-            <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 flex items-center justify-center">
+            <div className="absolute inset-0 bg-white bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 flex items-center justify-center">
               <h3 className="text-white text-2xl font-bold text-center tracking-wider opacity-90 group-hover:opacity-100 transition duration-300">
                 {card.title}
               </h3>

@@ -11,6 +11,7 @@ import Bankdetails from './Components/Bankdetails/Bankdetails';
 import PostQuotation from './Components/Qutation/Postquation';
 import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
+import Landingpage from './Components/Landingpage/Landingpage.jsx';
 // import Signup from './Components/Singnup/Signup.jsx';
 // import Login from './Components/Singnup/Login.jsx';
 
@@ -20,6 +21,7 @@ function App() {
       {/* <Route path='/signup' element={<Layout><Signup /></Layout>} />
       <Route path='/login' element={<Layout><Login /></Layout>} /> */}
       <Route path="/" element={<Layout><Dashboard /></Layout>} />
+      <Route path='/Landinpage' element={<Layout><Landingpage /></Layout>}  />
       <Route path="/submitownerdata" element={<Layout><Submitownerdata /></Layout>} />
       <Route path="/postcustmer" element={<Layout><Postcustomer /></Layout>} />
       <Route path="/updateowner" element={<Layout><Updateowner /></Layout>} />
