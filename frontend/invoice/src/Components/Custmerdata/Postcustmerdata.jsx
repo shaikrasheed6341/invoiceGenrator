@@ -3,123 +3,153 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//http://localhost:5173/postcustmer
+
 const Postcustmer = () => {
-    const navigate = useNavigate();
-    const updatecustmer =  ()=>{
-        navigate('/updatecustmer')
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const Custmerhandledata = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/custmor/custmor", formData);
+      toast.success(res.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+      setFormData({
+        name: "",
+        address: "",
+        phone: "",
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Submission failed", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
     }
-    const iteamnavigate =()=>{
-        navigate('/selectiteams')
-    }
-    const [name, setName] = useState("");
-    const [address, setAddress] = useState("");
-    const [phone, setPhone] = useState("");
- 
-    const Custmerhandledata = async (e) => {
-        e.preventDefault();
-        const formData = { name, address, phone };
+  };
 
-        try {
-            const res = await axios.post("http://localhost:5000/custmor/custmor", formData);
-            console.log(res)
-            toast.success(res.data.message, {
-                position: "top-center",
-                autoClose: 5000,
-                pauseOnHover: true,
-                theme: "light",
-                transition: Bounce
-            });
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Submission failed", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-        }
-    };
+  const goToUpdatecustmer = (e) => {
+    e.preventDefault();
+    navigate("/updatecustmer");
+  };
 
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#091235] to-[#003B73] p-10">
-            <div className="flex bg-white rounded-lg shadow-lg w-[1000px] h-[600px] overflow-hidden">
+  const goToItems = (e) => {
+    e.preventDefault();
+    navigate("/selectiteams");
+  };
 
-                {/* Left Side - Logo Section */}
-                <div className="w-2/3 flex flex-col justify-center items-center bg-white border-r-8 border-[#091235] p-6">
-                    <h1 className="text-5xl font-bold text-[#003B73] mb-18  ">ITPARTNER</h1>
-                    <img src="./logo.svg" alt="Company Logo" className="h-auto w-100 mr-14 mb-14" />
+  return (
+    <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.2)_0%,_rgba(15,23,42,0)_70%)] pointer-events-none"></div>
+      <div className="absolute top-[-15%] left-[-15%] w-96 h-96 bg-gradient-to-r from-[#8B5CF6]/20 to-[#1E3A8A]/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-[-20%] right-[-20%] w-112 h-112 bg-gradient-to-l from-[#6B21A8]/20 to-[#0F172A]/10 rounded-full blur-3xl animate-float delay-1000"></div>
 
-                </div>
-
-                {/* Right Side - Form Section */}
-                <div className="w-2/3 p-10">
-                    <h2 className="text-4xl font-bold text-[#003B73] text-center mb-6 m-6">Customer Data</h2>
-
-                    <form onSubmit={Custmerhandledata} className="space-y-4">
-                        <div className="mb-10 ">
-                            <label className="block text-sm font-medium text-gray-600">Name</label>
-                            <input
-                                type="text"
-                                className="border p-2 rounded-lg w-full shadow-sm"
-                                placeholder="Enter Customer Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-10" >
-                            <label className="block text-sm font-medium text-gray-600">Address</label>
-                            <input
-                                type="text"
-                                className="border p-2 rounded-lg w-full shadow-sm"
-                                placeholder="Enter Customer Address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-15">
-                            <label className="block text-sm font-medium text-gray-600">Phone</label>
-                            <input
-                                type="tel"
-                                className="border p-2 rounded-lg w-full shadow-sm"
-                                placeholder="Enter Customer Phone"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <ToastContainer />
-
-                        <button
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg p-3 w-full rounded-lg transition-all  shadow-md">
-
-                            Sudmit
-                        </button>
-                        
-                    </form>
-                    <div className="mt-6">
-                            <button className="p-3 bg-black text-white shadow-md  font-bold w-40 mr-25" onClick={iteamnavigate}>
-                                  NEXT
-                            </button>
-                            <button className="p-3 bg-[#1abb2d] text-white shadow-md  font-bold w-40 "onClick={ updatecustmer}>
-                                Update
-                            </button>
-
-                        </div>
-                </div>
-
-            </div>
+      {/* Main Card */}
+      <div className="relative z-10 bg-gradient-to-br from-white/95 to-gray-100/90 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] w-full max-w-lg p-8 transition-all duration-500 hover:shadow-[0_30px_90px_rgba(139,92,246,0.35)]">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold text-transparent bg-zinc-800 bg-clip-text animate-fade-in">
+            Customer Registration
+          </h1>
+          <p className="text-sm text-zinc-900 mt-3 font-light tracking-wide">
+            Enter customer details to proceed
+          </p>
         </div>
-    );
+
+        {/* Form */}
+        <form onSubmit={Custmerhandledata} className="space-y-6">
+          <InputField
+            label="Customer Name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Address"
+            name="address"
+            type="text"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-zinc-900 text-white text-text font-semibold py-3.5 rounded-xl shadow-lg hover: transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-accent/50"
+          >
+            Submit Customer
+          </button>
+
+          {/* Navigation Buttons */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={goToUpdatecustmer}
+              className="flex-1 bg-zinc-900 text-text text-zinc-100 font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Update Customer
+            </button>
+            <button
+              onClick={goToItems}
+              className="flex-1 bg-zinc-900 text-text text-white font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Next
+            </button>
+          </div>
+        </form>
+      </div>
+      <ToastContainer />
+    </div>
+  );
 };
+
+// Reusable Input Field Component (Copied from SubmitOwnerData)
+const InputField = ({ label, name, type, value, onChange, required }) => (
+  <div className="relative group">
+    <label className="absolute -top-2.5 left-3 px-2 bg-gradient-to-r from-white/95 to-gray-100/90 text-xs font-medium text-primary transition-all duration-300 transform scale-95 origin-left group-focus-within:scale-100 group-focus-within:text-accent shadow-sm rounded-md">
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      placeholder=""
+      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70"
+    />
+  </div>
+);
 
 export default Postcustmer;

@@ -2,13 +2,14 @@ import React from 'react'
 
 function Landingpage() {
   return (
-<section className=" lg:grid lg:h-100   lg:place-content-center">
+<section className=" lg:grid lg:h-110 bg-image:url('./banner.png')  lg:place-content-center">
+  
   <div className="mx-auto w-screen max-w-screen-xl  px-2 py-10 sm:pr-7 pr-15  sm:py-24 lg:px-8 lg:py-32">
     <div className="mx-auto max-w-prose text-center ">
       <h1 className=" text-4xl font-bold text-white  space-y-6 lg:text-5xl lg:font-bold  ">
       Create detailed 
         <br /><strong className="text-indigo-600 text-center text-4xl lg:text-5xl font-extrabold">  Professional Invoices </strong><br />
-        in just a few clicks.
+        in just  few clicks.
       </h1>
 
       <p className="mt-4 text-base text-center  text-wrap text-gray-50 sm:ml-3 ">

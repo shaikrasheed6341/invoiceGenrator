@@ -77,7 +77,7 @@ const SubmitOwnerData = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#688ce0] via-[#16358b] to-[#9c63ca] flex items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen   flex items-center justify-center p-8 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.2)_0%,_rgba(15,23,42,0)_70%)] pointer-events-none"></div>
       <div className="absolute top-[-15%] left-[-15%] w-96 h-96 bg-gradient-to-r from-[#8B5CF6]/20 to-[#1E3A8A]/10 rounded-full blur-3xl animate-float"></div>
@@ -87,10 +87,10 @@ const SubmitOwnerData = () => {
       <div className="relative z-10 bg-gradient-to-br from-white/95 to-gray-100/90 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] w-full max-w-lg p-8 transition-all duration-500 hover:shadow-[0_30px_90px_rgba(139,92,246,0.35)]">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-transparent bg-gradient-to-r from-[#133594] via-[#2839ce] to-[#204aa5] bg-clip-text animate-fade-in">
+          <h1 className="text-4xl font-extrabold text-transparent bg-zinc-800 bg-clip-text animate-fade-in">
             Owner Registration
           </h1>
-          <p className="text-sm text-gray-600 mt-3 font-light tracking-wide">
+          <p className="text-sm text-zinc-900 mt-3 font-light tracking-wide">
             Provide your details for a seamless onboarding experience
           </p>
         </div>
@@ -149,7 +149,7 @@ const SubmitOwnerData = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#1E3A8A] via-[#6B21A8] to-[#8B5CF6] text-white font-semibold py-3.5 rounded-xl shadow-lg hover:from-[#1E3A8A]/90 hover:via-[#6B21A8]/90 hover:to-[#8B5CF6]/90 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-[#8B5CF6]/50"
+            className="w-full bg-zinc-800 text-white font-semibold py-3.5 rounded-xl shadow-lg hover:from-[#1E3A8A]/90 hover:via-[#6B21A8]/90 hover:to-[#8B5CF6]/90 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-[#8B5CF6]/50"
           >
             Register Now
           </button>
@@ -164,7 +164,7 @@ const SubmitOwnerData = () => {
             </button>
             <button
               onClick={goToNextPage}
-              className="flex-1 bg-gradient-to-r from-[#8B5CF6]/90 to-[#6B21A8]/90 backdrop-blur-md text-white font-medium py-3 rounded-xl hover:from-[#7C3AED]/90 hover:to-[#5B1A8A]/90 transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1  backdrop-blur-md bg-gradient-to-r from-gray-800/90 to-gray-700/90  text-white font-medium py-3 rounded-xl hover:transition-all duration-300 transform hover:-translate-y-1"
             >
               Next
             </button>
