@@ -37,6 +37,7 @@ model Customer {
   name       String
   address    String
   gstnumber  String?
+  pannumber String?
   phone      String @unique
   quotations Quotation[]
 }

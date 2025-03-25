@@ -7,7 +7,7 @@ const router = express.Router();
 //http://localhost:5000/custmor/345678456
 router.put('/:phone', async (req, res) => {
     const { phone } = req.params;
-    const { name, address } = req.body;
+    const { name, address,gstnumber,pannumber } = req.body;
     try {
         const existcustmer = await prisma.customer.findUnique({
             where: { phone }
@@ -17,7 +17,7 @@ router.put('/:phone', async (req, res) => {
         }
         const updatecustmer = await prisma.customer.update({
             where: { phone },
-            data: { name, address}
+            data: { name, address,gstnumber,pannumber}
         })
         console.log(updatecustmer)
         res.json({ message: `sucesssfully updated custmer `,updatecustmer })
@@ -39,9 +39,9 @@ router.put('/:phone', async (req, res) => {
 //http://localhost:5000/custmor/custmor
 router.post("/custmor", async (req, res) => {
     try {
-        const { name, address, phone ,gstnumber} = req.body;
+        const { name, address, phone ,gstnumber,pannumber} = req.body;
 
-        if (!name || !address || !phone  || !gstnumber) {
+        if (!name || !address || !phone  || !gstnumber ||!pannumber) {
             res.json({ message: "you need fill the all inputs " });
 
         }
@@ -51,7 +51,8 @@ router.post("/custmor", async (req, res) => {
                 name,
                 address,
                 phone,
-                gstnumber
+                gstnumber,
+                pannumber
             }
         })
         console.log(customer);
