@@ -10,13 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fileforge/react-print": "^0.1.150",
     "@react-pdf/renderer": "^4.2.2",
     "@tailwindcss/vite": "^4.0.6",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.10",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
-    "jspdf": "^3.0.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",

@@ -32,10 +32,11 @@ function Navbar() {
   ];
 
   return (
-    <nav className="bg-gradient-to-tl from bg-accent text-text shadow-lg z-[9999] sticky ">
+    <nav className="bg-gradient-to-tl from bg-[#34bfc9] text-text shadow-lg z-[9999] sticky ">
       <div className="max-w-7xl mx-auto px-10 sm:px-6 lg:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
+          <div className="flex "> 
           <Link to="/" className="flex-shrink-0">
             <img
               src="./logo.png"
@@ -43,6 +44,9 @@ function Navbar() {
               className="w-18 md:w-24 transition-transform duration-300 hover:scale-105"
             />
           </Link>
+          <span className="text-white my-8 font-bold tracking-wider  text-2xl">ITPARTNER</span>
+          </div>
+          
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6 flex-1 justify-end">
