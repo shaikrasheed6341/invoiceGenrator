@@ -26,6 +26,7 @@ const FetchQuotation = () => {
 
       // Navigate to invoice page with fetched data
       navigate("/invoice", { state: { quotation: data } });
+      navigate("/template", { state: { quotation: data } });
     } catch (err) {
       setError(err.message);
     } finally {

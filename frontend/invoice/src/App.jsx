@@ -12,6 +12,7 @@ import PostQuotation from './Components/Qutation/Postquation';
 import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
 import Landingpage from './Components/Landingpage/Landingpage.jsx';
+import TemplatetTwo from './Components/Invoice/TemplatetTwo.jsx';
 // import Signup from './Components/Singnup/Signup.jsx';
 // import Login from './Components/Singnup/Login.jsx';
 
@@ -32,6 +33,7 @@ function App() {
       <Route path="/postquation" element={<Layout><PostQuotation /></Layout>} />
       <Route path="/fetch" element={<Layout><FetchQuotation /></Layout>} />
       <Route path="/invoice" element={ <Invoice />} />
+      <Route path='/template' element={<TemplatetTwo />} />
     </Routes>
   );
 }

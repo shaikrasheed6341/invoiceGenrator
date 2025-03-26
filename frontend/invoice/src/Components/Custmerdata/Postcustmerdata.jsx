@@ -10,6 +10,8 @@ const Postcustmer = () => {
     name: "",
     address: "",
     phone: "",
+    gstnumber:"",
+    pannumber:""
   });
 
   const handleChange = (e) => {
@@ -34,6 +36,8 @@ const Postcustmer = () => {
         name: "",
         address: "",
         phone: "",
+        pannumber:"",
+        gstnumber:"",
       });
     } catch (err) {
       toast.error(err.response?.data?.message || "Submission failed", {
@@ -103,7 +107,22 @@ const Postcustmer = () => {
             onChange={handleChange}
             required
           />
-
+<InputField
+            label="Gst Number"
+            name="gstnumber"
+            type="text"
+            value={formData.gstnumber}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="pan Number"
+            name="pannumber"
+            type="text"
+            value={formData.pannumber}
+            onChange={handleChange}
+            required
+          />
           {/* Submit Button */}
           <button
             type="submit"

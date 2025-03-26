@@ -32,7 +32,7 @@ function Navbar() {
   ];
 
   return (
-    <nav className="bg-gradient-to-tl from bg-[#34bfc9] text-text shadow-lg z-[9999] sticky ">
+    <nav className="bg-gradient-to-tl from bg-[#4826e0] text-text shadow-lg z-[9999] sticky ">
       <div className="max-w-7xl mx-auto px-10 sm:px-6 lg:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

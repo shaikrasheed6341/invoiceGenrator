@@ -8,7 +8,7 @@ function Landingpage() {
     <div className="mx-auto max-w-prose text-center ">
       <h1 className=" text-4xl font-bold text-white  space-y-6 lg:text-5xl lg:font-bold  ">
       Create detailed 
-        <br /><strong className="text-indigo-600 text-center text-4xl lg:text-5xl font-extrabold">  Professional Invoices </strong><br />
+        <br /><strong className="text-indigo-500 text-center text-4xl lg:text-5xl font-extrabold">  Professional Invoices </strong><br />
         in just  few clicks.
       </h1>
 

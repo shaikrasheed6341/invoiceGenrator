@@ -1,50 +1,8 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import converter from 'number-to-words'
 
 // Utility function to convert number to words (Indian English)
-const numberToWords = (num) => {
-  const units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
-  const teens = [
-    "Ten",
-    "Eleven",
-    "Twelve",
-    "Thirteen",
-    "Fourteen",
-    "Fifteen",
-    "Sixteen",
-    "Seventeen",
-    "Eighteen",
-    "Nineteen",
-  ];
-  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-  const thousands = ["", "Thousand", "Lakh", "Crore"];
-
-  if (num === 0) return "Zero Rupees";
-
-  const numStr = Math.floor(num).toString();
-  let result = "";
-
-  const convertLessThanThousand = (n) => {
-    if (n === 0) return "";
-    if (n < 10) return units[n];
-    if (n < 20) return teens[n - 10];
-    if (n < 100) return `${tens[Math.floor(n / 10)]} ${units[n % 10]}`.trim();
-    return `${units[Math.floor(n / 100)]} Hundred ${convertLessThanThousand(n % 100)}`.trim();
-  };
-
-  let chunk = 0;
-  let tempNum = numStr;
-  while (tempNum > 0) {
-    const part = tempNum % 1000;
-    if (part > 0) {
-      result = `${convertLessThanThousand(part)} ${thousands[chunk]} ${result}`.trim();
-    }
-    tempNum = Math.floor(tempNum / 1000);
-    chunk++;
-  }
-
-  return `${result} Rupees`;
-};
 
 const Invoice = () => {
   const location = useLocation();
@@ -70,7 +28,8 @@ const Invoice = () => {
   };
 
   const totalAmount = calculateTotalAmount(quotation.items);
-  const totalAmountInWords = numberToWords(parseFloat(totalAmount));
+  const totalAmountInWords =converter.toWords(totalAmount)
+  // console.log(totalAmountInWords)
 
   return (
     <div className="min-h-screen flex items-center justify-center p-10 relative overflow-hidden bg-gray-50">
@@ -153,7 +112,7 @@ const Invoice = () => {
             Total Amount: <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
           </h4>
           <p className="text-md mr-4 text-zinc-600 mt-1 capitalize">
-            <div className="flex justify-end text-sm text-black">{totalAmountInWords}</div>
+            <div className="flex justify-end text-sm text-black">{totalAmountInWords} Rupees </div>
           </p>
         </div>
 
