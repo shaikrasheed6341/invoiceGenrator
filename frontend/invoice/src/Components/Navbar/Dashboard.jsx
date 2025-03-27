@@ -1,24 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Landingpage from '../Landingpage/Landingpage';
+import React from "react";
+import Landingpage from "../Landingpage/Landingpage";
+import Card from "../Cards/Card";
+import Footer from "./Footer";
 
 const Dashboard = () => {
-  
-
   return (
-    <div className=" min-h-screen py-12 px-6">
-      <div className="max-w-7xl mx-auto text-center mb-10">
-        <>
-        <Landingpage  />
-        </>
-
-       
+    
+    <div className="flex flex-col  min-h-screen  w-full ">
+      <div>
+        <Landingpage />
+      </div>
+      <div className="flex-grow min-h-screen w-full ">
+        <Card />
       </div>
       
-
-  
-      </div>
-      );
+    </div>
+  );
 };
 
 export default Dashboard;
