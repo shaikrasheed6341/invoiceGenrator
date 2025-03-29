@@ -6,12 +6,16 @@ import Footer from "./Footer";
 const Dashboard = () => {
   return (
     
-    <div className="flex flex-col  min-h-screen  w-full ">
+    <div className="flex flex-col  min-h-screen   w-full ">
+    
       <div>
         <Landingpage />
       </div>
       <div className="flex-grow min-h-screen w-full ">
         <Card />
+      </div>
+      <div className="div">
+        <Footer />
       </div>
       
     </div>

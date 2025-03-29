@@ -22,6 +22,7 @@ const InsertItems = () => {
 
   const handleSubmitRow = async (e) => {
     e.preventDefault();
+    
     try {
       const response = await axios.post("http://localhost:5000/iteam/datas", formData);
       toast.success("Item added successfully", {
@@ -34,7 +35,9 @@ const InsertItems = () => {
         transition: Bounce,
       });
       setSuccessRows([...successRows, formData]);
+      
       setFormData({ name: "", brand: "", quantity: "", tax: "", rate: "" });
+      
     } catch (error) {
       toast.error(error.response?.data?.message || "Error adding item", {
         position: "top-right",
@@ -47,7 +50,9 @@ const InsertItems = () => {
       });
     }
   };
-
+  const updatePage = (e) => {
+    navigate("/postquation");
+  };
   const handleDeleteRow = (index) => {
     const updatedRows = successRows.filter((_, i) => i !== index);
     setSuccessRows(updatedRows);
@@ -139,6 +144,12 @@ const InsertItems = () => {
               className="flex-1 bg-zinc-900 text-white font-medium py-3 rounded-xl transition-all duration-300 transform hover:-translate-y-1"
             >
               Find Product
+            </button>
+            <button
+              onClick={updatePage}
+              className="bg-zinc-900 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Next
             </button>
           </div>
         </form>
