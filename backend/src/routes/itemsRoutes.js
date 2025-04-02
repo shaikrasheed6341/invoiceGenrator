@@ -34,18 +34,24 @@ const router = express.Router();
 //     }
 // });
 router.post("/datas", async (req, res) => {
-    console.log("Received request body:", req.body); // Debugging line
+    console.log("Received request body:", req.body); // Debugging
 
-    const { name, quantity, rate, tax, brand,discount } = req.body;
+    const { name, quantity, rate, tax, brand } = req.body;
 
-    if (!name?.trim() || !brand?.trim() || !quantity?.trim() || !rate?.trim() || !tax?.trim() ) {
-        console.log("Require all input fields");
-        return res.status(400).json({ message: "Fill all input fields with valid values" });
+    if (!name?.trim() || !brand?.trim() || !rate?.trim() || !tax?.trim()) {
+        console.log("Require all input fields except quantity");
+        return res.status(400).json({ message: "Fill all input fields (except quantity) with valid values" });
     }
 
     try {
         const item = await prisma.item.create({
-            data: { name, brand, quantity:parseInt(quantity,10), rate:parseFloat(rate), tax:parseInt(tax,10) },
+            data: {
+                name,
+                brand,
+                quantity: quantity ? parseInt(quantity, 10) : null, // ✅ Default to null if empty
+                rate: parseFloat(rate),
+                tax: parseInt(tax, 10),
+            },
         });
 
         return res.status(200).json(item);
@@ -54,6 +60,7 @@ router.post("/datas", async (req, res) => {
         return res.status(500).json({ message: `Something went wrong: ${err.message}` });
     }
 });
+
 
 //http://localhost:5000/iteam/getalliteamdata
  router.get("/getalliteamdata",async(req,res)=>{

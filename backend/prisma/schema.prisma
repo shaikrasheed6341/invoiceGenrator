@@ -58,7 +58,7 @@ model Item {
   id       String   @id @default(uuid())
   name     String   @unique
   brand    String
-  quantity Int
+  quantity Int?
   rate     Float
   tax      Float
   quotations QuotationItem[]  // Many-to-many relation via QuotationItem
