@@ -16,8 +16,11 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+    origin: "https://invoice-genrator-tvpk.vercel.app/", // Frontend ka deployed URL
+    methods: ["GET", "POST","PUT", "DELETE","OPTIONS"],
+    credentials: true,
+  }));
 // app.use("/register",registerRoute);
 // app.use("/login",loginRoute)
 app.use("/quation",qutation);
