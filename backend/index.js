@@ -16,8 +16,7 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 app.use(cors({
-    origin: process.env.VITE_BAKEND_URL,
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: process.env.VITE_FRONTEND_URL,
     credentials: true,
 }));
 
