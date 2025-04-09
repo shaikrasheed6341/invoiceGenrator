@@ -10,27 +10,20 @@ import bankdetails from "./src/routes/bankdetails.js"
 // import loginRoute from "./src/routes/loginRoute.js"
 // import authmiddle from "./src/routes/authmiddleware.js";
 
-
-
 const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
 app.use(cors({
     origin: "https://invoice-genrator-tvpk.vercel.app/", // Frontend ka deployed URL
-    methods: ["GET", "POST","PUT", "DELETE","OPTIONS"],
+    methods: ["GET", "POST","OPTIONS"],
     credentials: true,
-  }));
-// app.use("/register",registerRoute);
-// app.use("/login",loginRoute)
-app.use("/quation",qutation);
-app.use("/custmor",custmorRoutes);
+}));
+app.use("/quation", qutation);
+app.use("/custmor", custmorRoutes);
 app.use("/owners", ownerRoutes);
-app.use("/iteam",itemsRoutes);
-app.use("/bank",bankdetails);
+app.use("/iteam", itemsRoutes);
+app.use("/bank", bankdetails);
 
-
-
-
-
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+// Remove app.listen and export for Vercel
+export default app;
