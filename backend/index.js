@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors"; // Ensure this is imported correctly
+import cors from "cors"; // Ensure this is installed
 import { PrismaClient } from "@prisma/client";
 import ownerRoutes from "./src/routes/ownerRoutes.js";
 import custmorRoutes from "./src/routes/custmorRoutes.js";
@@ -13,14 +13,23 @@ import bankdetails from "./src/routes/bankdetails.js";
 const app = express();
 const prisma = new PrismaClient();
 
-// Robust CORS configuration
+// Explicit CORS middleware
 app.use(express.json());
 app.use(cors({
-  origin: "https://invoice-genrator-tvpk.vercel.app", // Remove trailing slash to avoid issues
-  methods: ["GET", "POST", "OPTIONS"],
-  credentials: true,
-  optionsSuccessStatus: 200, // Some CORS clients require this
+    origin: "https://invoice-genrator-tvpk.vercel.app", // Remove trailing slash
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    optionsSuccessStatus: 200, // Handle preflight
 }));
+
+// Manual header fallback (for testing)
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://invoice-genrator-tvpk.vercel.app");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
 
 app.use("/quation", qutation);
 app.use("/custmor", custmorRoutes);
