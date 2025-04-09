@@ -36,4 +36,6 @@ app.use("/owners", ownerRoutes);
 app.use("/iteam", itemsRoutes);
 app.use("/bank", bankdetails);
 
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
 export default app;
