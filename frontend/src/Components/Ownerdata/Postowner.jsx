@@ -44,7 +44,7 @@ const SubmitOwnerData = () => {
         name: "",
         email: "",
         phone: "",
-        companyname: "", // Change to camelCase
+        compneyname: "", // Change to camelCase
         address: "",
         gstNumber: "",
       });
