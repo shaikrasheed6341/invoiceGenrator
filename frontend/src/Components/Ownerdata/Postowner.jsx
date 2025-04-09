@@ -28,11 +28,7 @@ const SubmitOwnerData = () => {
       const result = await axios.post(
         `${BACKENDURL}/owners/insertownerdata`,
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        
       );
       console.log("Response:", result.data); // Debugging
       toast.success(result.data.message, {
