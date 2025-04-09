@@ -26,7 +26,7 @@ const UpdateOwner = () => {
             return;
         }
         try {
-            const response = await axios.put(`http://localhost:5000/owners/${email}`, formData);
+            const response = await axios.put(`https://invoice-genrator-backend-five.vercel.app/owners/${email}`, formData);
             toast.success(response.data.message, { transition: Bounce });
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating owner.");

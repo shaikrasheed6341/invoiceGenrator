@@ -17,7 +17,7 @@ const FetchQuotation = () => {
     setError("");
 
     try {
-      const response = await fetch(`http://localhost:5000/quation/getdata/${quotationNumber}`);
+      const response = await fetch(`https://invoice-genrator-backend-five.vercel.app/quation/getdata/${quotationNumber}`);
       const data = await response.json();
 
       if (!response.ok) {

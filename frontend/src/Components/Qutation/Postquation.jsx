@@ -71,7 +71,7 @@ const PostQuotation = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/quation/data", {
+      await axios.post("https://invoice-genrator-backend-five.vercel.app/quation/data", {
         number: formData.number,
         owneremail: formData.owneremail,
         customerphone: formData.customerphone,

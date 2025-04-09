@@ -29,7 +29,7 @@ const InsertItems = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/iteam/datas", formData);
+      await axios.post("https://invoice-genrator-backend-five.vercel.app/iteam/datas", formData);
       toast.success("Item added successfully", {
         position: "top-right",
         autoClose: 2000,

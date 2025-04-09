@@ -22,7 +22,7 @@ const Postcustmer = () => {
   const Custmerhandledata = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/custmor/custmor", formData);
+      const res = await axios.post("https://invoice-genrator-backend-five.vercel.app/custmor/custmor", formData);
       toast.success(res.data.message, {
         position: "top-right",
         autoClose: 2000,

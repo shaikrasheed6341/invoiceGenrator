@@ -23,7 +23,7 @@ const Bankdetails = () => {
   const handleForm = async (e) => {
     e.preventDefault();
     try {
-      const result = await axios.post("http://localhost:5000/bank/bankdetails", formData);
+      const result = await axios.post("https://invoice-genrator-backend-five.vercel.app/bank/bankdetails", formData);
       toast.success(result.data.message || "Bank details submitted successfully!", {
         position: "top-right",
         autoClose: 2000,

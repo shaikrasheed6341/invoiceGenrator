@@ -8,7 +8,7 @@ export default function OwnerData() {
     useEffect(() => {
         const fetchOwners = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/owners/allownerdata");
+                const res = await axios.get("https://invoice-genrator-backend-five.vercel.app/owners/allownerdata");
                 setOwners(res.data);
                 console.log(res.data);
             } catch (err) {

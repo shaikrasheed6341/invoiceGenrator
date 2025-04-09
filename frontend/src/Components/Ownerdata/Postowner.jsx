@@ -25,7 +25,7 @@ const SubmitOwnerData = () => {
     console.log("Sending data:", formData); // Debugging
     try {
       const result = await axios.post(
-        "http://localhost:5000/owners/insertownerdata",
+        "https://invoice-genrator-backend-five.vercel.app/owners/insertownerdata",
         formData,
         {
           headers: {

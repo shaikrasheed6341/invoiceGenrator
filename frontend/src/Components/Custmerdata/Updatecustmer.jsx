@@ -34,7 +34,7 @@ const UpdateCustomer = () => {
       return;
     }
     try {
-      const response = await axios.put(`http://localhost:5000/custmor/${phone}`, formData);
+      const response = await axios.put(`https://invoice-genrator-backend-five.vercel.app/custmor/${phone}`, formData);
       toast.success(response.data.message, {
         position: "top-right",
         autoClose: 2000,

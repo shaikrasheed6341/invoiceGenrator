@@ -17,7 +17,7 @@ const AllItemsTable = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/iteam/getalliteamdata");
+      const response = await axios.get("https://invoice-genrator-backend-five.vercel.app/iteam/getalliteamdata");
       setItems(response.data || []);
     } catch (error) {
       toast.error("Error fetching items", {

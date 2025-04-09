@@ -21,7 +21,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const result = await axios.post('http://localhost:5000/register/signup', formData);
+            const result = await axios.post('https://invoice-genrator-backend-five.vercel.app/register/signup', formData);
             toast.success("Registration Successful!");
             console.log(result.data);
 
