@@ -13,11 +13,20 @@ const router = express.Router();
 // ✅ Create a new owner
 router.post("/insertownerdata", async (req, res) => {
   try {
-    const { name, email, phone, gstNumber, compneyname, address } = req.body; // Fixed `compneyname` typo
+    const { name, email, phone, gstNumber, compneyname, address } = req.body;
 
     if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    const existingOwner = await prisma.owner.findUnique({
+      where: { email },
+    });
+    if (existingOwner) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    console.log("Received data:", { name, email, phone, gstNumber, compneyname, address });
 
     const owner = await prisma.owner.create({
       data: { name, email, phone, gstNumber, compneyname, address },
@@ -25,8 +34,8 @@ router.post("/insertownerdata", async (req, res) => {
 
     return res.json({ message: "Your data was successfully stored", owner });
   } catch (error) {
-    console.error("Error creating owner:", error);
-    return res.status(500).json({ message: "Error creating owner" });
+    console.error("Error creating owner:", error.message, error.stack);
+    return res.status(500).json({ message: "Error creating owner", error: error.message });
   }
 });
 
