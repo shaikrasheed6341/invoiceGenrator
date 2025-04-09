@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+
 
 const Postcustmer = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const Postcustmer = () => {
   const Custmerhandledata = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://invoice-genrator-backend-five.vercel.app/custmor/custmor", formData);
+      const res = await axios.post(`${BACKENDURL}/custmor/custmor`, formData);
       toast.success(res.data.message, {
         position: "top-right",
         autoClose: 2000,

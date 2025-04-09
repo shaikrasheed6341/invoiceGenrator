@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 const UpdateOwner = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const UpdateOwner = () => {
             return;
         }
         try {
-            const response = await axios.put(`https://invoice-genrator-backend-five.vercel.app/owners/${email}`, formData);
+            const response = await axios.put(`${BACKENDURL}/owners/${email}`, formData);
             toast.success(response.data.message, { transition: Bounce });
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating owner.");

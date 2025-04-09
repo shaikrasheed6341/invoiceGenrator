@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+
 const PostQuotation = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -71,7 +73,7 @@ const PostQuotation = () => {
     }
 
     try {
-      await axios.post("https://invoice-genrator-backend-five.vercel.app/quation/data", {
+      await axios.post(`${BACKENDURL}/quation/data`, {
         number: formData.number,
         owneremail: formData.owneremail,
         customerphone: formData.customerphone,

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 const FetchQuotation = () => {
   const [quotationNumber, setQuotationNumber] = useState("");
@@ -17,7 +18,7 @@ const FetchQuotation = () => {
     setError("");
 
     try {
-      const response = await fetch(`https://invoice-genrator-backend-five.vercel.app/quation/getdata/${quotationNumber}`);
+      const response = await fetch(`${BACKENDURL}/quation/getdata/${quotationNumber}`);
       const data = await response.json();
 
       if (!response.ok) {

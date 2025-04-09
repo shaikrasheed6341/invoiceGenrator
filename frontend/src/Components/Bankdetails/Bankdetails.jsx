@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 const Bankdetails = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -19,11 +19,13 @@ const Bankdetails = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
+  
   const handleForm = async (e) => {
     e.preventDefault();
+ 
     try {
-      const result = await axios.post("https://invoice-genrator-backend-five.vercel.app/bank/bankdetails", formData);
+      
+      const result = await axios.post(`${BACKENDURL}/bank/bankdetails`, formData);
       toast.success(result.data.message || "Bank details submitted successfully!", {
         position: "top-right",
         autoClose: 2000,

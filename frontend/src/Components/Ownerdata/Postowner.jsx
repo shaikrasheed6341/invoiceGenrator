@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 const SubmitOwnerData = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const SubmitOwnerData = () => {
     console.log("Sending data:", formData); // Debugging
     try {
       const result = await axios.post(
-        "https://invoice-genrator-backend-five.vercel.app/owners/insertownerdata",
+        `${BACKENDURL}/owners/insertownerdata`,
         formData,
         {
           headers: {

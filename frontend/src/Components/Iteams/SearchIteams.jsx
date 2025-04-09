@@ -12,12 +12,13 @@ const AllItemsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState([]);
   const itemsPerPage = 10;
+  const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
   // Fetch all items from backend
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("https://invoice-genrator-backend-five.vercel.app/iteam/getalliteamdata");
+      const response = await axios.get(`${BACKENDURL}/iteam/getalliteamdata`);
       setItems(response.data || []);
     } catch (error) {
       toast.error("Error fetching items", {

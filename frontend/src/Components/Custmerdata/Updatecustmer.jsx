@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 const UpdateCustomer = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const UpdateCustomer = () => {
       return;
     }
     try {
-      const response = await axios.put(`https://invoice-genrator-backend-five.vercel.app/custmor/${phone}`, formData);
+      const response = await axios.put(`${BACKENDURL}/custmor/${phone}`, formData);
       toast.success(response.data.message, {
         position: "top-right",
         autoClose: 2000,

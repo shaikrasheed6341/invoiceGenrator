@@ -3,6 +3,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -21,7 +23,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const result = await axios.post('https://invoice-genrator-backend-five.vercel.app/register/signup', formData);
+            const result = await axios.post(`${BACKENDURL}/register/signup`, formData);
             toast.success("Registration Successful!");
             console.log(result.data);
 

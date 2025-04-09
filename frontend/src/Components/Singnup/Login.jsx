@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("https://invoice-genrator-backend-five.vercel.app/login/signin", {
+      const res = await axios.post(`${BACKENDURL}/login/signin`, {
         email,
         password,
       });

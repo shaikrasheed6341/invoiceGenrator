@@ -4,6 +4,9 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+
+
 const InsertItems = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -29,7 +32,7 @@ const InsertItems = () => {
     e.preventDefault();
 
     try {
-      await axios.post("https://invoice-genrator-backend-five.vercel.app/iteam/datas", formData);
+      await axios.post(`${BACKENDURL}/iteam/datas`, formData);
       toast.success("Item added successfully", {
         position: "top-right",
         autoClose: 2000,

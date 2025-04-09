@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+const BACKENDURL= import.meta.env.VITE_BACKEND_URL
 
 export default function OwnerData() {
     const [owners, setOwners] = useState([]);
@@ -8,7 +9,7 @@ export default function OwnerData() {
     useEffect(() => {
         const fetchOwners = async () => {
             try {
-                const res = await axios.get("https://invoice-genrator-backend-five.vercel.app/owners/allownerdata");
+                const res = await axios.get(`${BACKENDURL}/owners/allownerdata`);
                 setOwners(res.data);
                 console.log(res.data);
             } catch (err) {
