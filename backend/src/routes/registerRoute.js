@@ -23,7 +23,7 @@ router.post('/signup', async(req,res)=>{
              }
           })
          console.log(userdata)
-         res.status(200).json({message:"you succes fully regesterd"})
+         return res.status(200).json({message:"you succes fully regesterd"})
 
 
    }catch(err){

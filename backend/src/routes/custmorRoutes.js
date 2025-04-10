@@ -13,23 +13,23 @@ router.put('/:phone', async (req, res) => {
             where: { phone }
         })
         if (!existcustmer) {
-            res.status(500).json({ message: "this custmer not exist" });
+            return   res.status(500).json({ message: "this custmer not exist" });
         }
         const updatecustmer = await prisma.customer.update({
             where: { phone },
             data: { name, address,gstnumber,pannumber}
         })
         console.log(updatecustmer)
-        res.json({ message: `sucesssfully updated custmer `,updatecustmer })
+        return res.json({ message: `sucesssfully updated custmer `,updatecustmer })
 
 
 
     } catch (err) {
         console.log(err);
         if (err.message) {
-            res.status(500).json({ message: "custmer updatetion is went wrong" })
+            return  res.status(500).json({ message: "custmer updatetion is went wrong" })
         }else{
-            res.json(err)
+            return  res.json(err)
         }
     }
 })
@@ -42,7 +42,7 @@ router.post("/custmor", async (req, res) => {
         const { name, address, phone ,gstnumber,pannumber} = req.body;
 
         if (!name || !address || !phone  || !gstnumber ||!pannumber) {
-            res.json({ message: "you need fill the all inputs " });
+            return res.json({ message: "you need fill the all inputs " });
 
         }
 
@@ -56,12 +56,12 @@ router.post("/custmor", async (req, res) => {
             }
         })
         console.log(customer);
-        res.json({ message: "Custmor Data store sucessfully" });
+        return  res.json({ message: "Custmor Data store sucessfully" });
 
 
     } catch (err) {
-        console.log("eroor occures in coustomer routes", err);
-        res.status(500).json({ message: "something went wrong while uploading", err })
+        console.error("Error creating customer:", err.message, err.stack);
+       return  res.status(500).json({ message: "something went wrong while uploading", err })
     }
 })
 
@@ -78,11 +78,11 @@ router.get("/:phone", async (req, res) => {
             return res.status(404).json({ message: "Customer is not found" });
         }
 
-        res.status(200).json(customer);
+       return res.status(200).json(customer);
 
     } catch (err) {
         console.error("Error fetching customer:", err);
-        res.status(500).json({ message: `An error occurred: ${err.message}`, err });
+        return res.status(500).json({ message: `An error occurred: ${err.message}`, err });
     }
 });
 
@@ -91,9 +91,9 @@ router.get("/:phone", async (req, res) => {
 router.get("/", async (req, res) => {
     try {
         const custmor = await prisma.customer.findMany();
-        res.json(custmor);
+        return   res.json(custmor);
     } catch (err) {
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Server error" });
     }
 }
 

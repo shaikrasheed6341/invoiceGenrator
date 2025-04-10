@@ -82,10 +82,10 @@ router.post("/insertcameras", async (req, res) => {
             data: cameras,
             skipDuplicates: true // Prevents errors due to duplicate names
         });
-        res.json({ message: "your data is sucessfully inserted", data: insertedItems });
+        return  res.json({ message: "your data is sucessfully inserted", data: insertedItems });
     } catch (error) {
         console.error("Error inserting cameras:", error);
-        res.status(500).json({ message: "Server error", error });
+        return res.status(500).json({ message: "Server error", error });
     }
 });
 
@@ -96,11 +96,11 @@ router.get("/findbrand/:brand",async(req,res)=>{
         const finditeam = await prisma.item.findMany({
             where:{brand:brand}
         }) ; 
-        res.status(200).json(finditeam);
+        return  res.status(200).json(finditeam);
 
     }catch(err){
         console.log(err);
-        res.status(400).json({message:`error occur in iteam search ${err}`,err})
+        return   res.status(400).json({message:`error occur in iteam search ${err}`,err})
     }
 })
 //http://localhost:5000/iteam/update/Intel Core i5-10400F Processor

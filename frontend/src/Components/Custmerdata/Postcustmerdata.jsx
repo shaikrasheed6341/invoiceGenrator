@@ -137,13 +137,13 @@ const Postcustmer = () => {
           <div className="flex gap-4 mt-6">
             <button
               onClick={goToUpdatecustmer}
-              className="flex-1 bg-zinc-900 text-text text-zinc-100 font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1 bg-zinc-900  text-zinc-100 font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
             >
               Update Customer
             </button>
             <button
               onClick={goToItems}
-              className="flex-1 bg-zinc-900 text-text text-white font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1 bg-zinc-900  text-white font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
             >
               Next
             </button>
