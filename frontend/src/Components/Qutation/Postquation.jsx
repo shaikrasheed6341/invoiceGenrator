@@ -73,7 +73,7 @@ const PostQuotation = () => {
     }
 
     try {
-      await axios.post(`${BACKENDURL}/quation/data`, {
+      await axios.post(`${BACKENDURL}/quotation/data`, {
         number: formData.number,
         owneremail: formData.owneremail,
         customerphone: formData.customerphone,

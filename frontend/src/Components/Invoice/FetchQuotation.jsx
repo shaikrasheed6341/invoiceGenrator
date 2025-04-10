@@ -18,7 +18,7 @@ const FetchQuotation = () => {
     setError("");
 
     try {
-      const response = await fetch(`${BACKENDURL}/quation/getdata/${quotationNumber}`);
+      const response = await fetch(`${BACKENDURL}/quotation/getdata/${quotationNumber}`);
       const data = await response.json();
 
       if (!response.ok) {
