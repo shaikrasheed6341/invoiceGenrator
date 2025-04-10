@@ -18,7 +18,7 @@ const AllItemsTable = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BACKENDURL}/iteams/getalliteamdata`);
+      const response = await axios.get(`${BACKENDURL}/items/getalliteamdata`);
       setItems(response.data || []);
     } catch (error) {
       toast.error("Error fetching items", {

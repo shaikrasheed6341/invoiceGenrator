@@ -32,7 +32,7 @@ const InsertItems = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${BACKENDURL}/iteams/datas`, formData);
+      await axios.post(`${BACKENDURL}/items/datas`, formData);
       toast.success("Item added successfully", {
         position: "top-right",
         autoClose: 2000,
