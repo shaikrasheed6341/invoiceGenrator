@@ -1,93 +1,81 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id  String @id @default(uuid())
+  id        String @id @default(uuid())
   firstname String
-  lastname String
-  email  String @unique
-  password String 
-  
+  lastname  String
+  email     String @unique
+  password  String
 }
 
 model Owner {
-  id          String  @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
-  compneyname String  
-  address     String  
-  email       String  @unique
+  email       String      @unique
   phone       String?
   gstNumber   String?
+  address     String
+  compneyname String
   quotations  Quotation[]
 }
 
 model Customer {
-  id         String @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   address    String
+  phone      String      @unique
   gstnumber  String?
-  pannumber String?
-  phone      String @unique
+  pannumber  String?
   quotations Quotation[]
 }
 
 model Quotation {
-  id            String   @id @default(uuid())
-  number        Int      @unique
+  id            String          @id @default(uuid())
+  number        Int             @unique
   ownerId       String
   customerId    String
   bankdetailsId String?
-  owner         Owner    @relation(fields: [ownerId], references: [id])
-  customer      Customer @relation(fields: [customerId], references: [id])
-  bankdetails   BankDetails? @relation(fields: [bankdetailsId], references: [id])
-  items         QuotationItem[]  // Many-to-many relation via QuotationItem
+  bankdetails   BankDetails?    @relation(fields: [bankdetailsId], references: [id])
+  customer      Customer        @relation(fields: [customerId], references: [id])
+  owner         Owner           @relation(fields: [ownerId], references: [id])
+  items         QuotationItem[]
 }
 
 model Item {
-  id       String   @id @default(uuid())
-  name     String   @unique
-  brand    String
-  quantity Int?
-  rate     Float
-  tax      Float
-  quotations QuotationItem[]  // Many-to-many relation via QuotationItem
+  id         String          @id @default(uuid())
+  name       String          @unique
+  brand      String
+  quantity   Int?
+  rate       Float
+  tax        Float
+  quotations QuotationItem[]
 }
 
 model QuotationItem {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   quotationId String
   itemId      String
-  quantity    Int      // Store item-specific quantity
-  
-  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  quantity    Int
   item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
 
-  @@unique([quotationId, itemId])  // Ensures no duplicate entries
+  @@unique([quotationId, itemId])
 }
-
 
 model BankDetails {
-  id         String @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   ifsccode   String
-  accountno  String @unique
+  accountno  String      @unique
   bank       String
-  upid       String 
-  upidname String?
+  upid       String
+  upidname   String?
   quotations Quotation[]
 }
-
-
-
-
