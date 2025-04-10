@@ -6,11 +6,6 @@ const router = express.Router();
 
 
 
-
-
-
-
-// ✅ Create a new owner
 router.post("/insertownerdata", async (req, res) => {
   try {
     const { name, email, phone, gstNumber, compneyname, address } = req.body;
