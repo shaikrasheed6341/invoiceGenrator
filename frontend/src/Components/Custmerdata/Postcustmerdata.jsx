@@ -24,7 +24,7 @@ const Postcustmer = () => {
   const Custmerhandledata = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BACKENDURL}/custmor/custmor`, formData);
+      const res = await axios.post(`${BACKENDURL}/customer/custmor`, formData);
       toast.success(res.data.message, {
         position: "top-right",
         autoClose: 2000,
