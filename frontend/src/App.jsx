@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Layout from './Components/Navbar/Layout.jsx';
 import Dashboard from './Components/Navbar/Dashboard';
 import Submitownerdata from './Components/Ownerdata/Postowner';
@@ -13,30 +14,88 @@ import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
 import Landingpage from './Components/Landingpage/Landingpage.jsx';
 import TemplatetTwo from './Components/Invoice/TemplatetTwo.jsx';
-//  import Card from './Components/Cards/Card.jsx';
-// import Signup from './Components/Singnup/Signup.jsx';
-// import Login from './Components/Singnup/Login.jsx';
+import Login from './Components/Singnup/Login.jsx';
+import Signup from './Components/Singnup/Signup.jsx';
+import AuthCallback from './Components/Singnup/AuthCallback.jsx';
+import ProtectedRoute from './Components/ProtectedRoute.jsx';
 
 function App() {
   return (
-    <Routes>
-      {/* <Route path='/signup' element={<Layout><Signup /></Layout>} />
-      <Route path='/login' element={<Layout><Login /></Layout>} /> */}
-      <Route path="/" element={<Layout><Dashboard /></Layout>} />
-      <Route path='/Landinpage' element={<Layout><Landingpage /></Layout>}  />
-      <Route path="/submitownerdata" element={<Layout><Submitownerdata /></Layout>} />
-      <Route path="/postcustmer" element={<Layout><Postcustomer /></Layout>} />
-      <Route path="/updateowner" element={<Layout><Updateowner /></Layout>} />
-      <Route path="/updatecustmer" element={<Layout><Updatecustomer /></Layout>} />
-      <Route path="/selectiteams" element={<Layout><Insertitems /></Layout>} />
-      <Route path="/getalliteams" element={<Layout><AllItemsTable /></Layout>} />
-      <Route path="/bankdetails" element={<Layout><Bankdetails /></Layout>} />
-      <Route path="/postquation" element={<Layout><PostQuotation /></Layout>} />
-      <Route path="/fetch" element={<Layout><FetchQuotation /></Layout>} />
-      <Route path="/invoice" element={ <Invoice />} />
-      <Route path='/template' element={<TemplatetTwo />} />
-      {/* <Route path='/card' element={ <Layout><Card /> </Layout>} /> */}
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Layout><Login /></Layout>} />
+        <Route path="/signup" element={<Layout><Signup /></Layout>} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        
+        {/* Protected Routes */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout><Dashboard /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path='/Landinpage' element={
+          <ProtectedRoute>
+            <Layout><Landingpage /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/submitownerdata" element={
+          <ProtectedRoute>
+            <Layout><Submitownerdata /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/postcustmer" element={
+          <ProtectedRoute>
+            <Layout><Postcustomer /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/updateowner" element={
+          <ProtectedRoute>
+            <Layout><Updateowner /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/updatecustmer" element={
+          <ProtectedRoute>
+            <Layout><Updatecustomer /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/selectiteams" element={
+          <ProtectedRoute>
+            <Layout><Insertitems /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/getalliteams" element={
+          <ProtectedRoute>
+            <Layout><AllItemsTable /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/bankdetails" element={
+          <ProtectedRoute>
+            <Layout><Bankdetails /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/postquation" element={
+          <ProtectedRoute>
+            <Layout><PostQuotation /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/fetch" element={
+          <ProtectedRoute>
+            <Layout><FetchQuotation /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/invoice" element={
+          <ProtectedRoute>
+            <Invoice />
+          </ProtectedRoute>
+        } />
+        <Route path='/template' element={
+          <ProtectedRoute>
+            <TemplatetTwo />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </AuthProvider>
   );
 }
 

@@ -12,7 +12,7 @@ const AllItemsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState([]);
   const itemsPerPage = 10;
-  const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+  const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   // Fetch all items from backend
   const fetchItems = async () => {

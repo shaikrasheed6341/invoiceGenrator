@@ -4,7 +4,7 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 
 const InsertItems = () => {

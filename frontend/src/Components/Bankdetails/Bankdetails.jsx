@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const Bankdetails = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

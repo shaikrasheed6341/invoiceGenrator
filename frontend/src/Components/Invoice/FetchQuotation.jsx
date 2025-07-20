@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const FetchQuotation = () => {
   const [quotationNumber, setQuotationNumber] = useState("");

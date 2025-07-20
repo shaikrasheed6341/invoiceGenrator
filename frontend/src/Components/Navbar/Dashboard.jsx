@@ -11,12 +11,7 @@ const Dashboard = () => {
       <div>
         <Landingpage />
       </div>
-      <div className="flex-grow min-h-screen w-full ">
-        <Card />
-      </div>
-      <div className="div">
-        <Footer />
-      </div>
+      
       
     </div>
   );

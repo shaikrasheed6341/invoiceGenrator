@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const BACKENDURL= import.meta.env.VITE_BACKEND_URL
+
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const SubmitOwnerData = () => {
   const navigate = useNavigate();
@@ -23,12 +24,13 @@ const SubmitOwnerData = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("BACKENDURL:", BACKENDURL); // Debug log
     console.log("Sending data:", formData); // Debugging
     try {
       const result = await axios.post(
         `${BACKENDURL}/owners/insertownerdata`,
         formData,
-        
+           
       );
       console.log("Response:", result.data); // Debugging
       toast.success(result.data.message, {
