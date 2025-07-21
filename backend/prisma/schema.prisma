@@ -17,6 +17,9 @@ model User {
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  // One user has one owner (their business)
+  owner     Owner?
 }
 
 model Owner {
@@ -27,7 +30,13 @@ model Owner {
   gstNumber   String?
   address     String
   compneyname String
+  
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customers   Customer[]
   quotations  Quotation[]
+  items       Item[]
+  bankDetails BankDetails[]
 }
 
 model Customer {
@@ -37,6 +46,12 @@ model Customer {
   phone      String      @unique
   gstnumber  String?
   pannumber  String?
+  
+  // Many customers belong to one owner
+  ownerId    String
+  owner      Owner       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // One customer has many quotations
   quotations Quotation[]
 }
 
@@ -46,6 +61,8 @@ model Quotation {
   ownerId       String
   customerId    String
   bankdetailsId String?
+  
+  // Relations
   bankdetails   BankDetails?    @relation(fields: [bankdetailsId], references: [id])
   customer      Customer        @relation(fields: [customerId], references: [id])
   owner         Owner           @relation(fields: [ownerId], references: [id])
@@ -59,6 +76,12 @@ model Item {
   quantity   Int?
   rate       Float
   tax        Float
+  
+  // Many items belong to one owner
+  ownerId    String
+  owner      Owner           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // One item can be in many quotations
   quotations QuotationItem[]
 }
 
@@ -67,6 +90,8 @@ model QuotationItem {
   quotationId String
   itemId      String
   quantity    Int
+  
+  // Relations
   item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
   quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
 
@@ -81,5 +106,11 @@ model BankDetails {
   bank       String
   upid       String
   upidname   String?
+  
+  // Many bank details belong to one owner
+  ownerId    String
+  owner      Owner       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // One bank detail can be used in many quotations
   quotations Quotation[]
 }

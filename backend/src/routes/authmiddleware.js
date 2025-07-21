@@ -1,19 +1,38 @@
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
-// const authmiddle = (req, res, next) => {
-//   const token = req.header("Authorization");
+const prisma = new PrismaClient();
+const secretkey = "shaikraheed";
 
-//   if (!token) {
-//     return res.status(401).json({ error: "Access denied" });
-//   }
+const authmiddle = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
-//   try {
-//     const decoded = jwt.verify(token.replace("Bearer ", ""));
-//     req.userid = decoded.userid;
-//     next();
-//   } catch (error) {
-//     return res.status(403).json({ error: "Invalid token" });
-//   }
-// };
+    if (!token) {
+      return res.status(401).json({ error: "Access denied. No token provided." });
+    }
 
-// export default authmiddle;
+    const decoded = jwt.verify(token, secretkey);
+    
+    // Get user with owner information
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      include: {
+        owner: true
+      }
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid token. User not found." });
+    }
+
+    req.user = user;
+    req.userId = user.id;
+    next();
+  } catch (error) {
+    console.error("Auth middleware error:", error);
+    return res.status(403).json({ error: "Invalid token" });
+  }
+};
+
+export default authmiddle;

@@ -13,8 +13,16 @@ const AuthCallback = () => {
     const error = searchParams.get('error');
 
     if (error) {
-      toast.error('Authentication failed. Please try again.');
-      navigate('/login');
+      toast.error('❌ Authentication failed. Please try again.', {
+        position: 'top-right',
+        autoClose: 4000,
+        theme: 'dark',
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      setTimeout(() => navigate('/login'), 2000);
       return;
     }
 
@@ -24,12 +32,16 @@ const AuthCallback = () => {
       
       toast.success('🎉 Successfully logged in with Google!', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
         theme: 'dark',
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
 
       // Redirect to root route
-      setTimeout(() => navigate('/'), 2000);
+      setTimeout(() => navigate('/'), 3000);
     } else {
       navigate('/login');
     }

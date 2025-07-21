@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
+import Landingpage from "../Landingpage/Landingpage";
 import { useAuth } from "../../context/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -22,22 +23,34 @@ const Login = () => {
       if (result.success) {
         toast.success("🎉 Successfully Logged In!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 3000,
           theme: "dark",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => navigate("/"), 3000);
       } else {
         toast.error(result.error || "❌ Invalid Credentials", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 4000,
           theme: "dark",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
       }
     } catch (error) {
-      toast.error("❌ Login failed", {
+      toast.error("❌ Login failed. Please try again.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 4000,
         theme: "dark",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
     } finally {
       setLoading(false);
@@ -49,6 +62,7 @@ const Login = () => {
   };
 
   return (
+    <div className="div">
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-5">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
@@ -142,13 +156,11 @@ const Login = () => {
         </motion.button>
 
         <p className="text-center text-gray-200 mt-6">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-white font-semibold hover:underline">
-            Sign up
-          </a>
+          Welcome to ITPARTNER - Your Invoice Management Solution
         </p>
       </motion.div>
       <ToastContainer />
+    </div>
     </div>
   );
 };

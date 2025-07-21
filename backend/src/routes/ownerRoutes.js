@@ -1,30 +1,64 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import authmiddle from "./authmiddleware.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// Use auth middleware for all owner routes
+router.use(authmiddle);
 
+// Get current user's owner data
+router.get("/myowner", async (req, res) => {
+  try {
+    const userId = req.userId;
+    
+    const owner = await prisma.owner.findUnique({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+            avatar: true
+          }
+        }
+      }
+    });
+
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found for this user" });
+    }
+
+    return res.json({ owner });
+  } catch (error) {
+    console.error("Error fetching owner data:", error);
+    return res.status(500).json({ message: "Error fetching owner data", error: error.message });
+  }
+});
 
 router.post("/insertownerdata", async (req, res) => {
   try {
     const { name, email, phone, gstNumber, compneyname, address } = req.body;
+    const userId = req.userId;
 
     if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Only allow one owner per user
     const existingOwner = await prisma.owner.findUnique({
-      where: { email },
+      where: { userId },
     });
     if (existingOwner) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: "Owner already exists for this user" });
     }
 
-    console.log("Received data:", { name, email, phone, gstNumber, compneyname, address });
-
+    // Create owner and link to user
     const owner = await prisma.owner.create({
-      data: { name, email, phone, gstNumber, compneyname, address },
+      data: { name, email, phone, gstNumber, compneyname, address, userId },
     });
 
     return res.json({ message: "Your data was successfully stored", owner });
@@ -34,6 +68,44 @@ router.post("/insertownerdata", async (req, res) => {
   }
 });
 
+
+// Update owner data for authenticated user
+router.put("/updateowner", async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { name, email, phone, gstNumber, compneyname, address } = req.body;
+
+    if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Find owner by userId
+    const existingOwner = await prisma.owner.findUnique({
+      where: { userId },
+    });
+
+    if (!existingOwner) {
+      return res.status(404).json({ message: "Owner not found for this user" });
+    }
+
+    // Update owner data
+    const updatedOwner = await prisma.owner.update({
+      where: { userId },
+      data: { name, email, phone, gstNumber, compneyname, address },
+    });
+
+    return res.json({ 
+      message: "Owner details updated successfully", 
+      owner: updatedOwner 
+    });
+  } catch (error) {
+    console.error("Error updating owner:", error);
+    return res.status(500).json({ 
+      message: "Error updating owner details", 
+      error: error.message 
+    });
+  }
+});
 
 //http://localhost:5000/owners/john@example.com
 router.put("/:email", async(req,res)=>{

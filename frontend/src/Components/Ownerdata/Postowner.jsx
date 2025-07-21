@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
+import BusinessDetailsCard from "../Dashboard/BusinessDetailsCard";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Building2, Edit, Plus } from "lucide-react";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -12,10 +17,36 @@ const SubmitOwnerData = () => {
     name: "",
     email: "",
     phone: "",
-    compneyname: "", // Change to camelCase
+    compneyname: "",
     address: "",
     gstNumber: "",
   });
+  const [ownerData, setOwnerData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check if owner data already exists
+  useEffect(() => {
+    checkExistingOwner();
+  }, []);
+
+  const checkExistingOwner = async () => {
+    try {
+      const token = Cookies.get('token');
+      const response = await axios.get(`${BACKENDURL}/owners/myowner`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (response.data.owner) {
+        setOwnerData(response.data.owner);
+      }
+    } catch (error) {
+      console.error("Error checking owner data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,15 +55,20 @@ const SubmitOwnerData = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("BACKENDURL:", BACKENDURL); // Debug log
-    console.log("Sending data:", formData); // Debugging
+    console.log("BACKENDURL:", BACKENDURL);
+    console.log("Sending data:", formData);
     try {
+      const token = Cookies.get('token');
       const result = await axios.post(
         `${BACKENDURL}/owners/insertownerdata`,
         formData,
-           
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
-      console.log("Response:", result.data); // Debugging
+      console.log("Response:", result.data);
       toast.success(result.data.message, {
         position: "top-right",
         autoClose: 2000,
@@ -42,16 +78,11 @@ const SubmitOwnerData = () => {
         theme: "colored",
         transition: Bounce,
       });
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        compneyname: "", // Change to camelCase
-        address: "",
-        gstNumber: "",
-      });
+      
+      // Refresh owner data after successful registration
+      await checkExistingOwner();
     } catch (err) {
-      console.error("Error:", err.response?.data || err.message); // Exact error
+      console.error("Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Something went wrong!", {
         position: "top-right",
         autoClose: 2000,
@@ -64,80 +95,134 @@ const SubmitOwnerData = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="bg-white rounded-3xl shadow-lg w-full max-w-lg p-8">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-text">Owner Registration</h1>
-          <p className="text-sm text-text mt-3">Provide your details</p>
+  const handleEdit = () => {
+    navigate('/updateowner');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-600 mx-auto"></div>
+          <p className="mt-4 text-zinc-600">Loading...</p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <InputField
-            label="Full Name"
-            name="name"
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            label="Email Address"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            label="Company Name"
-            name="compneyname" // Change to camelCase
-            type="text"
-            value={formData.compneyname} // Change to camelCase
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            label="GST Number"
-            name="gstNumber"
-            type="text"
-            value={formData.gstNumber}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            label="Address"
-            name="address"
-            type="text"
-            value={formData.address}
-            onChange={handleChange}
-            required
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-primary text-text py-3.5 rounded-xl hover:bg-accent"
-          >
-            Register Now
-          </button>
-        </form>
       </div>
+    );
+  }
+
+  // If owner data exists, show business details card
+  if (ownerData) {
+    return (
+      <div className="min-h-screen bg-zinc-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-zinc-900 mb-2">Business Details</h1>
+            <p className="text-zinc-600">Your business information has been registered successfully.</p>
+          </div>
+          
+          <BusinessDetailsCard 
+            ownerData={ownerData} 
+            onEdit={handleEdit}
+          />
+          
+          <div className="mt-6 flex justify-center">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard')}
+              className="border-zinc-200 hover:bg-zinc-50"
+            >
+              Go to Dashboard
+            </Button>
+          </div>
+        </div>
+        <ToastContainer />
+      </div>
+    );
+  }
+
+  // Show registration form if no owner data exists
+  return (
+    <div className="min-h-screen flex items-center justify-center p-8 bg-zinc-50">
+      <Card className="w-full max-w-lg shadow-lg">
+        <CardHeader className="text-center pb-6">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center shadow-sm">
+              <Building2 className="w-6 h-6 text-white" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-zinc-900">Owner Registration</CardTitle>
+          <p className="text-sm text-zinc-600 mt-2">Provide your business details</p>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <InputField
+              label="Full Name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="Email Address"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="Company Name"
+              name="compneyname"
+              type="text"
+              value={formData.compneyname}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="GST Number"
+              name="gstNumber"
+              type="text"
+              value={formData.gstNumber}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="Address"
+              name="address"
+              type="text"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
+
+            <Button
+              type="submit"
+              className="w-full bg-zinc-900 hover:bg-zinc-800"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Register Now
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
       <ToastContainer />
     </div>
   );
 };
 
 const InputField = ({ label, name, type, value, onChange, required }) => (
-  <div className="relative">
-    <label className="absolute -top-2.5 left-3 px-2 bg-white text-xs text-primary">
+  <div className="space-y-2">
+    <label className="text-sm font-medium text-zinc-700">
       {label}
     </label>
     <input
@@ -146,7 +231,7 @@ const InputField = ({ label, name, type, value, onChange, required }) => (
       value={value}
       onChange={onChange}
       required={required}
-      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-text focus:outline-none focus:border-accent"
+      className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
     />
   </div>
 );

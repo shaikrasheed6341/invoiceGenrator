@@ -1,20 +1,8 @@
 import React from "react";
-import Landingpage from "../Landingpage/Landingpage";
-import Card from "../Cards/Card";
-import Footer from "./Footer";
+import UserDashboard from "../Dashboard/UserDashboard";
 
 const Dashboard = () => {
-  return (
-    
-    <div className="flex flex-col  min-h-screen   w-full ">
-    
-      <div>
-        <Landingpage />
-      </div>
-      
-      
-    </div>
-  );
+  return <UserDashboard />;
 };
 
 export default Dashboard;
