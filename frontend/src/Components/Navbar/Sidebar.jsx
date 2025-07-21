@@ -37,12 +37,12 @@ function Sidebar({ onCollapseChange }) {
   const ownersItems = [
     { 
       to: "/submitownerdata", 
-      label: "Insert Owner Data", 
+      label: "📝 Register Business", 
       icon: <Plus className="w-4 h-4" />
     },
     { 
       to: "/updateowner", 
-      label: "Update Owner", 
+      label: "✏️ Edit Business", 
       icon: <Edit className="w-4 h-4" />
     },
   ];
@@ -50,12 +50,12 @@ function Sidebar({ onCollapseChange }) {
   const customersItems = [
     { 
       to: "/postcustmer", 
-      label: "Insert Customer Data", 
+      label: "👤 Add Customer", 
       icon: <Plus className="w-4 h-4" />
     },
     { 
       to: "/updatecustmer", 
-      label: "Update Customer", 
+      label: "✏️ Edit Customer", 
       icon: <Edit className="w-4 h-4" />
     },
   ];
@@ -63,36 +63,44 @@ function Sidebar({ onCollapseChange }) {
   const itemsItems = [
     { 
       to: "/selectiteams", 
-      label: "Insert Items", 
+      label: "📦 Add Product", 
       icon: <Plus className="w-4 h-4" />
     },
     { 
       to: "/getalliteams", 
-      label: "All Items", 
+      label: "🔍 View Products", 
       icon: <Search className="w-4 h-4" />
     },
   ];
 
   const quotationsItems = [
     { 
-      to: "/bankdetails", 
-      label: "Bank Details", 
-      icon: <Building2 className="w-4 h-4" />
-    },
-    { 
       to: "/postquation", 
-      label: "Generate Quotation", 
+      label: "📄 Create Quote", 
       icon: <FileText className="w-4 h-4" />
     },
     { 
       to: "/fetch", 
-      label: "Fetch Quotation", 
+      label: "🔍 View Quotes", 
       icon: <Search className="w-4 h-4" />
     },
     { 
       to: "/invoice", 
-      label: "Invoice", 
+      label: "🧾 Generate Invoice", 
       icon: <FileText className="w-4 h-4" />
+    },
+  ];
+
+  const bankDetailsItems = [
+    { 
+      to: "/bankdetails", 
+      label: "🏦 Add Bank Details", 
+      icon: <Plus className="w-4 h-4" />
+    },
+    { 
+      to: "/bankdetails/update", 
+      label: "✏️ Edit Bank Details", 
+      icon: <Edit className="w-4 h-4" />
     },
   ];
 
@@ -213,7 +221,47 @@ function Sidebar({ onCollapseChange }) {
               </div>
             )}
           </div>
-
+          
+          {/* Bank Details */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              onClick={() => toggleDropdown('bankDetails')}
+              className={`w-full justify-between px-3 py-2.5 h-auto ${
+                activeDropdown === 'bankDetails' 
+                  ? "bg-zinc-100 text-zinc-900 font-medium" 
+                  : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <Building2 className="w-5 h-5" />
+                {!isCollapsed && <span className="text-sm">Bank Details</span>}
+              </div>
+              {!isCollapsed && (
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'bankDetails' ? 'rotate-180' : ''}`} />
+              )}
+            </Button>
+            {activeDropdown === 'bankDetails' && !isCollapsed && (
+              <div className="mt-1 ml-6 space-y-1">
+                {bankDetailsItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        isActive 
+                          ? "bg-zinc-100 text-zinc-900 font-medium" 
+                          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+                      }`
+                    }
+                  >
+                    {item.icon}
+                    <span className="text-sm">{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
           {/* Customers */}
           <div className="relative">
             <Button
@@ -336,6 +384,8 @@ function Sidebar({ onCollapseChange }) {
               </div>
             )}
           </div>
+
+
         </nav>
       </div>
 

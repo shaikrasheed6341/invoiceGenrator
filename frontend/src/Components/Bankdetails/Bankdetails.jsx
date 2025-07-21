@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const Bankdetails = () => {
   const navigate = useNavigate();
@@ -24,8 +25,16 @@ const Bankdetails = () => {
     e.preventDefault();
  
     try {
-      
-      const result = await axios.post(`${BACKENDURL}/bank/bankdetails`, formData);
+      const token = Cookies.get('token');
+      const result = await axios.post(
+        `${BACKENDURL}/bank/bankdetails`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       toast.success(result.data.message || "Bank details submitted successfully!", {
         position: "top-right",
         autoClose: 2000,
@@ -35,6 +44,17 @@ const Bankdetails = () => {
         theme: "colored",
         transition: Bounce,
       });
+      
+      // Refresh dashboard stats after successful submission
+      if (window.refreshDashboardStats) {
+        window.refreshDashboardStats();
+      }
+      
+      // Refresh bank account count
+      if (window.refreshBankAccountCount) {
+        window.refreshBankAccountCount();
+      }
+      
       setFormData({
         name: "",
         ifsccode: "",

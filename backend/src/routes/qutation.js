@@ -1,5 +1,6 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import authmiddle from './authmiddleware.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -94,6 +95,39 @@ router.post("/data", async (req, res) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: `An error occurred: ${err.message}` });
+    }
+});
+
+// http://localhost:5000/quotation/getdata
+router.get("/getdata", authmiddle, async (req, res) => {
+    try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Get all quotations for this owner
+        const quotations = await prisma.quotation.findMany({
+            where: { ownerId: owner.id },
+            include: {
+                customer: true,
+                bankdetails: true,
+                items: {
+                    include: {
+                        item: true,
+                    },
+                },
+            },
+        });
+
+        return res.status(200).json(quotations);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: `Failed to retrieve quotations: ${err.message}` });
     }
 });
 

@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import authmiddle from './authmiddleware.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -37,13 +38,21 @@ router.put('/:phone', async (req, res) => {
 
 
 //http://localhost:5000/custmor/custmor
-router.post("/custmor", async (req, res) => {
+router.post("/custmor", authmiddle, async (req, res) => {
     try {
-        const { name, address, phone ,gstnumber,pannumber} = req.body;
+        const { name, address, phone, gstnumber, pannumber } = req.body;
 
-        if (!name || !address || !phone  || !gstnumber ||!pannumber) {
-            return res.json({ message: "you need fill the all inputs " });
+        if (!name || !address || !phone || !gstnumber || !pannumber) {
+            return res.status(400).json({ message: "You need to fill all inputs" });
+        }
 
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
         }
 
         const customer = await prisma.customer.create({
@@ -52,18 +61,19 @@ router.post("/custmor", async (req, res) => {
                 address,
                 phone,
                 gstnumber,
-                pannumber
+                pannumber,
+                ownerId: owner.id // Link to the owner
             }
-        })
+        });
+        
         console.log(customer);
-        return  res.json({ message: "Custmor Data store sucessfully" });
-
+        return res.json({ message: "Customer data stored successfully" });
 
     } catch (err) {
         console.error("Error creating customer:", err.message, err.stack);
-       return  res.status(500).json({ message: "something went wrong while uploading", err })
+        return res.status(500).json({ message: "Something went wrong while uploading", err });
     }
-})
+});
 
 
 //http://localhost:5000/custmor/475879
@@ -88,16 +98,28 @@ router.get("/:phone", async (req, res) => {
 
 
 //http://localhost:5000/custmor/
-router.get("/", async (req, res) => {
+router.get("/", authmiddle, async (req, res) => {
     try {
-        const custmor = await prisma.customer.findMany();
-        return   res.json(custmor);
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Get customers for this owner
+        const customers = await prisma.customer.findMany({
+            where: { ownerId: owner.id }
+        });
+        
+        return res.json(customers);
     } catch (err) {
+        console.error("Error fetching customers:", err);
         return res.status(500).json({ message: "Server error" });
     }
-}
-
-)
+});
 
 
 

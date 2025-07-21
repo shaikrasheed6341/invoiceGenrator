@@ -1,5 +1,6 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import authmiddle from './authmiddleware.js';
 
 const prisma = new PrismaClient();
 
@@ -33,7 +34,7 @@ const router = express.Router();
 //         return res.status(500).json({ message: `Something went wrong: ${err.message}`, error: err });
 //     }
 // });
-router.post("/datas", async (req, res) => {
+router.post("/datas", authmiddle, async (req, res) => {
     console.log("Received request body:", req.body); // Debugging
 
     const { name, quantity, rate, tax, brand } = req.body;
@@ -44,6 +45,15 @@ router.post("/datas", async (req, res) => {
     }
 
     try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
         const item = await prisma.item.create({
             data: {
                 name,
@@ -51,6 +61,7 @@ router.post("/datas", async (req, res) => {
                 quantity: quantity ? parseInt(quantity, 10) : null, // ✅ Default to null if empty
                 rate: parseFloat(rate),
                 tax: parseInt(tax, 10),
+                ownerId: owner.id // Link to the owner
             },
         });
 
@@ -63,15 +74,28 @@ router.post("/datas", async (req, res) => {
 
 
 //http://localhost:5000/iteam/getalliteamdata
- router.get("/getalliteamdata",async(req,res)=>{
-    try{
-         const result = await prisma.item.findMany();
-          return res.json(result)  
-        }catch(err){
-            console.log(err)
-             return res.json({message:"uneable to fetch data",err})
+router.get("/getalliteamdata", authmiddle, async (req, res) => {
+    try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Get items for this owner
+        const result = await prisma.item.findMany({
+            where: { ownerId: owner.id }
+        });
+        
+        return res.json(result);
+    } catch (err) {
+        console.log(err);
+        return res.json({ message: "Unable to fetch data", err });
     }
- })
+});
 
 //when you insert bulk dasta
 //http://localhost:5000/iteam/insertcameras
