@@ -37,7 +37,7 @@ router.put('/:phone', async (req, res) => {
 
 
 
-//http://localhost:5000/custmor/custmor
+//http://localhost:5000/customer/custmor
 router.post("/custmor", authmiddle, async (req, res) => {
     try {
         const { name, address, phone, gstnumber, pannumber } = req.body;
@@ -121,7 +121,42 @@ router.get("/", authmiddle, async (req, res) => {
     }
 });
 
+//http://localhost:5000/customer/:id
+router.delete("/:id", authmiddle, async (req, res) => {
+    try {
+        const { id } = req.params;
 
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
 
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Check if customer exists and belongs to this owner
+        const customer = await prisma.customer.findFirst({
+            where: { 
+                id: parseInt(id),
+                ownerId: owner.id 
+            }
+        });
+
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found or you don't have permission to delete this customer." });
+        }
+
+        // Delete the customer
+        await prisma.customer.delete({
+            where: { id: parseInt(id) }
+        });
+
+        return res.json({ message: "Customer deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting customer:", err);
+        return res.status(500).json({ message: "Something went wrong while deleting customer" });
+    }
+});
 
 export default router;

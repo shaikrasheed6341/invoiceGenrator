@@ -55,6 +55,11 @@ const Bankdetails = () => {
         window.refreshBankAccountCount();
       }
       
+      // Refresh bank details list if it's open
+      if (window.refreshBankDetailsList) {
+        window.refreshBankDetailsList();
+      }
+      
       setFormData({
         name: "",
         ifsccode: "",

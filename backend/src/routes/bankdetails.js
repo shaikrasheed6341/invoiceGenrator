@@ -8,11 +8,16 @@ const router = express.Router();
 // Get bank details count for the current user
 router.get("/bankdetails/count", authmiddle, async (req, res) => {
   try {
+    console.log("🔍 User ID:", req.userId);
+    
     // Find the owner for the current user
     const owner = await prisma.owner.findUnique({
       where: { userId: req.userId },
       include: { bankDetails: true }
     });
+
+    console.log("👤 Owner found:", !!owner);
+    console.log("🏦 Bank details count:", owner?.bankDetails?.length || 0);
 
     if (!owner) {
       return res.status(404).json({ message: "Owner not found for this user." });
@@ -37,6 +42,8 @@ router.get("/bankdetails/count", authmiddle, async (req, res) => {
 // Get bank details for authenticated user
 router.get("/bankdetails", authmiddle, async (req, res) => {
     try {
+        console.log("🔍 User ID:", req.userId);
+        
         // Get the owner for the authenticated user
         const owner = await prisma.owner.findUnique({
             where: { userId: req.userId },
@@ -45,17 +52,23 @@ router.get("/bankdetails", authmiddle, async (req, res) => {
             }
         });
 
+        console.log("👤 Owner found:", !!owner);
+        console.log("🏦 Bank details count:", owner?.bankDetails?.length || 0);
+
         if (!owner) {
             return res.status(404).json({ message: "Owner not found. Please register your business first." });
         }
 
         // If no bank details found, check for orphaned records and link them
         if (owner.bankDetails.length === 0) {
+            console.log("🔍 Checking for orphaned bank details...");
             const orphanedBankDetails = await prisma.bankDetails.findMany({
                 where: {
                     ownerId: null
                 }
             });
+
+            console.log("📋 Orphaned bank details found:", orphanedBankDetails.length);
 
             if (orphanedBankDetails.length > 0) {
                 // Link orphaned bank details to this owner
@@ -76,12 +89,16 @@ router.get("/bankdetails", authmiddle, async (req, res) => {
                     }
                 });
 
+                console.log("✅ Updated bank details count:", updatedOwner.bankDetails.length);
+
                 return res.json({
                     message: "Bank details retrieved successfully",
                     bankDetails: updatedOwner.bankDetails
                 });
             }
         }
+
+        console.log("✅ Returning bank details:", owner.bankDetails.length);
 
         return res.json({
             message: "Bank details retrieved successfully",

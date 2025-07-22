@@ -80,6 +80,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleAuthCallback = (token) => {
+    // Console log the token for easy copying
+    console.log('🔑 AUTH CONTEXT TOKEN:', token);
+    console.log('📋 Copy this token for Postman: Bearer ' + token);
+    console.log('🎯 Use this in Postman Authorization header');
+    
     Cookies.set('token', token, { expires: 7, secure: true });
     // The user will be set when the component re-renders and useEffect runs
   };

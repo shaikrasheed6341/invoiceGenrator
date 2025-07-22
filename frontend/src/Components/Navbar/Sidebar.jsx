@@ -54,9 +54,9 @@ function Sidebar({ onCollapseChange }) {
       icon: <Plus className="w-4 h-4" />
     },
     { 
-      to: "/updatecustmer", 
-      label: "✏️ Edit Customer", 
-      icon: <Edit className="w-4 h-4" />
+      to: "/customers", 
+      label: "👥 View Customers", 
+      icon: <Users className="w-4 h-4" />
     },
   ];
 
@@ -98,7 +98,7 @@ function Sidebar({ onCollapseChange }) {
       icon: <Plus className="w-4 h-4" />
     },
     { 
-      to: "/bankdetails/update", 
+      to: "/bankdetails/list", 
       label: "✏️ Edit Bank Details", 
       icon: <Edit className="w-4 h-4" />
     },

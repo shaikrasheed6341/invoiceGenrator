@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
+
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 
@@ -24,7 +26,27 @@ const Postcustmer = () => {
   const Custmerhandledata = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BACKENDURL}/customer/custmor`, formData);
+      const token = Cookies.get('token');
+      if (!token) {
+        toast.error("Please login first", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      const res = await axios.post(`${BACKENDURL}/customer/custmor`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
       toast.success(res.data.message, {
         position: "top-right",
         autoClose: 2000,
@@ -41,7 +63,13 @@ const Postcustmer = () => {
         pannumber:"",
         gstnumber:"",
       });
+      
+      // Refresh dashboard stats
+      if (window.refreshDashboardStats) {
+        window.refreshDashboardStats();
+      }
     } catch (err) {
+      console.error("Customer registration error:", err);
       toast.error(err.response?.data?.message || "Submission failed", {
         position: "top-right",
         autoClose: 2000,

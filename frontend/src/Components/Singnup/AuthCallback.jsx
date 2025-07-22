@@ -27,6 +27,11 @@ const AuthCallback = () => {
     }
 
     if (token) {
+      // Console log the token for easy copying
+      console.log('🔑 GOOGLE AUTH TOKEN:', token);
+      console.log('📋 Copy this token for Postman: Bearer ' + token);
+      console.log('🎯 Use this in Postman Authorization header');
+      
       // Store the token and update auth context
       handleAuthCallback(token);
       

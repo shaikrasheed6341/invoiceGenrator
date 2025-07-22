@@ -1,17 +1,36 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
+
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const UpdateCustomer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [phone, setPhone] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     address: "",
+    gstnumber: "",
+    pannumber: ""
   });
+
+  // Check if we're editing an existing customer
+  useEffect(() => {
+    if (location.state?.customer) {
+      const customer = location.state.customer;
+      setPhone(customer.phone);
+      setFormData({
+        name: customer.name,
+        address: customer.address,
+        gstnumber: customer.gstnumber,
+        pannumber: customer.pannumber
+      });
+    }
+  }, [location.state]);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -35,7 +54,26 @@ const UpdateCustomer = () => {
       return;
     }
     try {
-      const response = await axios.put(`${BACKENDURL}/custmor/${phone}`, formData);
+      const token = Cookies.get('token');
+      if (!token) {
+        toast.error("Please login first", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      const response = await axios.put(`${BACKENDURL}/customer/${phone}`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       toast.success(response.data.message, {
         position: "top-right",
         autoClose: 2000,
@@ -45,9 +83,21 @@ const UpdateCustomer = () => {
         theme: "colored",
         transition: Bounce,
       });
-      setPhone("");
-      setFormData({ name: "", address: "" });
+      
+      // Navigate back to customer list if we came from there
+      if (location.state?.isEditing) {
+        navigate('/customers');
+      } else {
+        setPhone("");
+        setFormData({ name: "", address: "", gstnumber: "", pannumber: "" });
+      }
+      
+      // Refresh dashboard stats
+      if (window.refreshDashboardStats) {
+        window.refreshDashboardStats();
+      }
     } catch (err) {
+      console.error("Error updating customer:", err);
       toast.error(err.response?.data?.message || "Error updating customer.", {
         position: "top-right",
         autoClose: 2000,
@@ -57,18 +107,21 @@ const UpdateCustomer = () => {
         theme: "colored",
         transition: Bounce,
       });
-      console.error("Error updating customer:", err);
     }
   };
 
   const goBack = (e) => {
     e.preventDefault();
-    navigate(-1);
+    if (location.state?.isEditing) {
+      navigate('/customers');
+    } else {
+      navigate(-1);
+    }
   };
 
   const goToAllCustomers = (e) => {
     e.preventDefault();
-    navigate("/getallcustomers"); // Assuming there's a route for this
+    navigate("/customers");
   };
 
   return (
@@ -83,29 +136,32 @@ const UpdateCustomer = () => {
         {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-transparent bg-zinc-800 bg-clip-text animate-fade-in">
-            Update Customer
+            {location.state?.isEditing ? 'Edit Customer' : 'Update Customer'}
           </h1>
           <p className="text-sm text-zinc-900 mt-3 font-light tracking-wide">
-            Modify customer details seamlessly
+            {location.state?.isEditing ? 'Modify customer information' : 'Update customer details by phone number'}
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleUpdate} className="space-y-6">
-          <InputField
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
+          {!location.state?.isEditing && (
+            <InputField
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          )}
           <InputField
             label="Customer Name"
             name="name"
             type="text"
             value={formData.name}
             onChange={handleChange}
+            required
           />
           <InputField
             label="Address"
@@ -113,29 +169,46 @@ const UpdateCustomer = () => {
             type="text"
             value={formData.address}
             onChange={handleChange}
+            required
           />
-
+          <InputField
+            label="GST Number"
+            name="gstnumber"
+            type="text"
+            value={formData.gstnumber}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="PAN Number"
+            name="pannumber"
+            type="text"
+            value={formData.pannumber}
+            onChange={handleChange}
+            required
+          />
+          
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-zinc-900 text-white text-text font-semibold py-3.5 rounded-xl shadow-lg hover:bg-accent transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-accent/50"
+            className="w-full bg-zinc-900 text-white text-text font-semibold py-3.5 rounded-xl shadow-lg hover: transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-accent/50"
           >
-            Update Customer
+            {location.state?.isEditing ? 'Update Customer' : 'Update Customer'}
           </button>
 
           {/* Navigation Buttons */}
           <div className="flex gap-4 mt-6">
             <button
               onClick={goBack}
-              className="flex-1 bg-zinc-900 text-white text-text font-medium py-3 rounded-xl hover:bg-accent transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1 bg-zinc-900 text-zinc-100 font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
             >
-              Go Back
+              Back
             </button>
             <button
               onClick={goToAllCustomers}
-              className="flex-1 bg-zinc-900 text-white text-text font-medium py-3 rounded-xl hover:bg-accent transition-all duration-300 transform hover:-translate-y-1"
+              className="flex-1 bg-zinc-900 text-white font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
             >
-              Get All Customers
+              View All Customers
             </button>
           </div>
         </form>

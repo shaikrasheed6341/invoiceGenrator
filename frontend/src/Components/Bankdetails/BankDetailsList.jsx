@@ -18,6 +18,13 @@ const BankDetailsList = () => {
 
   useEffect(() => {
     fetchBankAccounts();
+    
+    // Expose refresh function to window for external access
+    window.refreshBankDetailsList = fetchBankAccounts;
+    
+    return () => {
+      delete window.refreshBankDetailsList;
+    };
   }, []);
 
   const fetchBankAccounts = async () => {
@@ -77,6 +84,11 @@ const BankDetailsList = () => {
         });
         
         fetchBankAccounts(); // Refresh the list
+        
+        // Refresh dashboard stats
+        if (window.refreshDashboardStats) {
+          window.refreshDashboardStats();
+        }
       } catch (error) {
         toast.error("Failed to delete bank account", {
           position: "top-right",
@@ -118,9 +130,9 @@ const BankDetailsList = () => {
             </div>
             <Button
               onClick={handleAddBankAccount}
-              className="bg-zinc-900 hover:bg-zinc-800"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 text-white h-4 mr-2" />
               Add Bank Account
             </Button>
           </div>
@@ -145,7 +157,7 @@ const BankDetailsList = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {bankAccounts.map((account) => (
               <BankAccountCard
                 key={account.id}
@@ -167,7 +179,7 @@ const BankAccountCard = ({ account, onEdit, onDelete }) => (
     <CardHeader className="pb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-lg flex items-center justify-center shadow-sm">
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>

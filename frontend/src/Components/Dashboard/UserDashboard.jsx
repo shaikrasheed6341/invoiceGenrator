@@ -4,20 +4,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import BusinessDetailsCard from "./BusinessDetailsCard";
-import BankAccountCounter from "../Bankdetails/BankAccountCounter";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+import { Card, CardContent } from "../ui/card";
 import { 
   Users, 
   Package, 
   FileText, 
   Building2, 
-  Plus, 
-  AlertTriangle,
-  Edit
 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -31,7 +25,7 @@ const UserDashboard = () => {
     bankDetails: 0
   });
   const [loading, setLoading] = useState(true);
-  const [statsLoading, setStatsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchOwnerData();
@@ -60,7 +54,6 @@ const UserDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      setStatsLoading(true);
       const token = Cookies.get('token');
       
       // Get owner first to ensure we have the owner ID
@@ -92,7 +85,7 @@ const UserDashboard = () => {
         axios.get(`${BACKENDURL}/quotation/getdata`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${BACKENDURL}/bank/bankdetails`, {
+        axios.get(`${BACKENDURL}/bank/bankdetails/count`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -103,12 +96,19 @@ const UserDashboard = () => {
         quotations: quotationsRes,
         bankDetails: bankDetailsRes
       });
+      
+      // Log the bank details count specifically
+      if (bankDetailsRes.status === 'fulfilled') {
+        console.log("🏦 Bank Details Count Response:", bankDetailsRes.value.data);
+        console.log("🏦 Bank Details Count:", bankDetailsRes.value.data?.count || 0);
+        console.log("🏦 Full Response:", bankDetailsRes.value);
+      }
 
       setStats({
         customers: customersRes.status === 'fulfilled' ? customersRes.value.data.length : 0,
         items: itemsRes.status === 'fulfilled' ? itemsRes.value.data.length : 0,
         quotations: quotationsRes.status === 'fulfilled' ? quotationsRes.value.data.length : 0,
-        bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.bankDetails?.length || 0 : 0
+        bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.data?.count || 0 : 0
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -119,8 +119,6 @@ const UserDashboard = () => {
         quotations: 0,
         bankDetails: 0
       });
-    } finally {
-      setStatsLoading(false);
     }
   };
 
@@ -180,28 +178,26 @@ const UserDashboard = () => {
             value={stats.customers}
             icon={<Users className="w-5 h-5" />}
             color="blue"
-            loading={statsLoading}
+            onClick={() => navigate('/customers')}
+            clickable={true}
           />
           <StatCard
             title="Products"
             value={stats.items}
             icon={<Package className="w-5 h-5" />}
             color="green"
-            loading={statsLoading}
           />
           <StatCard
             title="Quotations"
             value={stats.quotations}
             icon={<FileText className="w-5 h-5" />}
             color="purple"
-            loading={statsLoading}
           />
           <StatCard
             title="Bank Accounts"
             value={stats.bankDetails}
             icon={<Building2 className="w-5 h-5" />}
             color="orange"
-            loading={statsLoading}
           />
         </div>
 
@@ -212,7 +208,7 @@ const UserDashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon, color, loading }) => {
+const StatCard = ({ title, value, icon, color, onClick, clickable }) => {
   const colorClasses = {
     blue: "bg-blue-50 text-blue-600 border-blue-200",
     green: "bg-green-50 text-green-600 border-green-200",
@@ -221,20 +217,20 @@ const StatCard = ({ title, value, icon, color, loading }) => {
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-200">
+    <Card 
+      className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-200"
+      onClick={onClick}
+      style={{ cursor: clickable ? 'pointer' : 'default' }}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-zinc-500 truncate mb-2">{title}</p>
             <p className="text-3xl font-bold text-zinc-900">
-              {loading ? (
-                <span className="animate-pulse">...</span>
-              ) : (
-                value
-              )}
+              {value}
             </p>
           </div>
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ml-4 flex-shrink-0 border ${colorClasses[color]} ${loading ? 'animate-pulse' : ''}`}>
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ml-4 flex-shrink-0 border ${colorClasses[color]}`}>
             <div>
               {icon}
             </div>

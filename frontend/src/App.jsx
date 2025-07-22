@@ -6,9 +6,11 @@ import Submitownerdata from './Components/Ownerdata/Postowner';
 import Postcustomer from './Components/Custmerdata/Postcustmerdata';
 import Updateowner from './Components/Ownerdata/Updateowner';
 import Updatecustomer from './Components/Custmerdata/Updatecustmer';
+import CustomerList from './Components/Custmerdata/CustomerList';
 import Insertitems from './Components/Iteams/Insertiteams';
 import AllItemsTable from './Components/Iteams/SearchIteams';
 import Bankdetails from './Components/Bankdetails/Bankdetails';
+import BankDetailsList from './Components/Bankdetails/BankDetailsList';
 import PostQuotation from './Components/Qutation/Postquation';
 import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
@@ -62,6 +64,11 @@ function AppRoutes() {
           <Layout><Updatecustomer /></Layout>
         </ProtectedRoute>
       } />
+      <Route path="/customers" element={
+        <ProtectedRoute>
+          <Layout><CustomerList /></Layout>
+        </ProtectedRoute>
+      } />
       <Route path="/selectiteams" element={
         <ProtectedRoute>
           <Layout><Insertitems /></Layout>
@@ -75,6 +82,11 @@ function AppRoutes() {
       <Route path="/bankdetails" element={
         <ProtectedRoute>
           <Layout><Bankdetails /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/bankdetails/list" element={
+        <ProtectedRoute>
+          <Layout><BankDetailsList /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/postquation" element={
