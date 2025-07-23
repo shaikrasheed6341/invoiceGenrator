@@ -9,6 +9,7 @@ import Updatecustomer from './Components/Custmerdata/Updatecustmer';
 import CustomerList from './Components/Custmerdata/CustomerList';
 import Insertitems from './Components/Iteams/Insertiteams';
 import AllItemsTable from './Components/Iteams/SearchIteams';
+import ViewProducts from './Components/Iteams/ViewProducts';
 import Bankdetails from './Components/Bankdetails/Bankdetails';
 import BankDetailsList from './Components/Bankdetails/BankDetailsList';
 import PostQuotation from './Components/Qutation/Postquation';
@@ -74,9 +75,10 @@ function AppRoutes() {
           <Layout><Insertitems /></Layout>
         </ProtectedRoute>
       } />
-      <Route path="/getalliteams" element={
+
+      <Route path="/viewproducts" element={
         <ProtectedRoute>
-          <Layout><AllItemsTable /></Layout>
+          <Layout><ViewProducts /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/bankdetails" element={

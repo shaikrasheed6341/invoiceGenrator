@@ -67,9 +67,9 @@ function Sidebar({ onCollapseChange }) {
       icon: <Plus className="w-4 h-4" />
     },
     { 
-      to: "/getalliteams", 
-      label: "🔍 View Products", 
-      icon: <Search className="w-4 h-4" />
+      to: "/viewproducts", 
+      label: "📊 View Products", 
+      icon: <Package className="w-4 h-4" />
     },
   ];
 

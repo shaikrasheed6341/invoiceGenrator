@@ -88,7 +88,7 @@ const UpdateCustomer = () => {
       if (location.state?.isEditing) {
         navigate('/customers');
       } else {
-        setPhone("");
+      setPhone("");
         setFormData({ name: "", address: "", gstnumber: "", pannumber: "" });
       }
       
@@ -115,7 +115,7 @@ const UpdateCustomer = () => {
     if (location.state?.isEditing) {
       navigate('/customers');
     } else {
-      navigate(-1);
+    navigate(-1);
     }
   };
 
@@ -146,14 +146,14 @@ const UpdateCustomer = () => {
         {/* Form */}
         <form onSubmit={handleUpdate} className="space-y-6">
           {!location.state?.isEditing && (
-            <InputField
-              label="Phone Number"
-              name="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
+          <InputField
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
           )}
           <InputField
             label="Customer Name"
@@ -187,7 +187,7 @@ const UpdateCustomer = () => {
             onChange={handleChange}
             required
           />
-          
+
           {/* Submit Button */}
           <button
             type="submit"

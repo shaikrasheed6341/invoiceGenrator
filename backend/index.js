@@ -40,7 +40,7 @@ app.use(passport.initialize());
 app.use("/quotation", quotationRoutes);
 app.use("/customer", customerRoutes);
 app.use("/owners", ownerRoutes);
-app.use("/items", itemsRoutes);
+app.use("/iteam", itemsRoutes);
 app.use("/bank", bankDetailsRoutes);
 app.use("/auth", googleAuthRoutes);
 

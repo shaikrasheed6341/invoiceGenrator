@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -17,7 +18,7 @@ const InsertItems = () => {
     rate: "",
   });
 
-  const [successRows, setSuccessRows] = useState([]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,8 +33,13 @@ const InsertItems = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${BACKENDURL}/items/datas`, formData);
-      toast.success("Item added successfully", {
+      const token = Cookies.get('token');
+      await axios.post(`${BACKENDURL}/iteam/datas`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      toast.success("Product added successfully!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
@@ -43,9 +49,12 @@ const InsertItems = () => {
         transition: Bounce,
       });
 
-      setSuccessRows([...successRows, formData]);
+
 
       setFormData({ name: "", brand: "", quantity: null, tax: "", rate: "" }); // ✅ Reset to null
+      
+  
+      
     } catch (error) {
       toast.error(error.response?.data?.message || "Error adding item", {
         position: "top-right",
@@ -59,19 +68,7 @@ const InsertItems = () => {
     }
   };
 
-  const handleDeleteRow = (index) => {
-    const updatedRows = successRows.filter((_, i) => i !== index);
-    setSuccessRows(updatedRows);
-    toast.info("Item removed", {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      transition: Bounce,
-    });
-  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
@@ -86,7 +83,7 @@ const InsertItems = () => {
         </div>
 
         <form onSubmit={handleSubmitRow} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Product Name"
               name="name"
@@ -102,13 +99,6 @@ const InsertItems = () => {
               value={formData.brand}
               onChange={handleInputChange}
               required
-            />
-            <InputField
-              label="Quantity (Always Null)"
-              name="quantity"
-              type="text"
-              value="NULL" 
-              disabled // ✅ Cannot be changed
             />
             <InputField
               label="Tax (%)"
@@ -128,68 +118,17 @@ const InsertItems = () => {
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex justify-center">
             <button
               type="submit"
-              className="flex-1 bg-zinc-900 text-white font-semibold py-3.5 rounded-xl shadow-lg transition-all hover:-translate-y-1"
+              className="bg-zinc-900 text-white font-semibold py-3.5 px-8 rounded-xl shadow-lg transition-all hover:-translate-y-1 hover:bg-zinc-800"
             >
               Add Product
-            </button>
-            <button
-              onClick={() => navigate("/getalliteams")}
-              className="flex-1 bg-zinc-900 text-white font-medium py-3 rounded-xl transition-all hover:-translate-y-1"
-            >
-              Find Product
-            </button>
-            <button
-              onClick={() => navigate("/postquation")}
-              className="bg-zinc-900 text-white font-medium py-3 px-6 rounded-xl transition-all hover:-translate-y-1"
-            >
-              Next
             </button>
           </div>
         </form>
 
-        {successRows.length > 0 && (
-          <div className="mt-10">
-            <h2 className="text-2xl font-semibold text-zinc-800 mb-4">
-              Successfully Added Items
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse bg-white rounded-xl shadow-lg">
-                <thead className="bg-zinc-900 text-white">
-                  <tr>
-                    <th className="px-6 py-3 text-left">Product Name</th>
-                    <th className="px-6 py-3 text-left">Brand</th>
-                    <th className="px-6 py-3 text-left">Quantity</th>
-                    <th className="px-6 py-3 text-left">Tax (%)</th>
-                    <th className="px-6 py-3 text-left">Rate</th>
-                    <th className="px-6 py-3 text-left">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {successRows.map((row, index) => (
-                    <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="px-6 py-4">{row.name}</td>
-                      <td className="px-6 py-4">{row.brand}</td>
-                      <td className="px-6 py-4">NULL</td> 
-                      <td className="px-6 py-4">{row.tax}</td>
-                      <td className="px-6 py-4">{row.rate}</td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleDeleteRow(index)}
-                          className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+
       </div>
       <ToastContainer />
     </div>

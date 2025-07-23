@@ -79,7 +79,7 @@ const UserDashboard = () => {
         axios.get(`${BACKENDURL}/customer/`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${BACKENDURL}/items/getalliteamdata`, {
+        axios.get(`${BACKENDURL}/iteam/viewproducts`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
         axios.get(`${BACKENDURL}/quotation/getdata`, {
@@ -106,7 +106,7 @@ const UserDashboard = () => {
 
       setStats({
         customers: customersRes.status === 'fulfilled' ? customersRes.value.data.length : 0,
-        items: itemsRes.status === 'fulfilled' ? itemsRes.value.data.length : 0,
+        items: itemsRes.status === 'fulfilled' ? itemsRes.value.data.total || itemsRes.value.data.length : 0,
         quotations: quotationsRes.status === 'fulfilled' ? quotationsRes.value.data.length : 0,
         bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.data?.count || 0 : 0
       });
@@ -186,6 +186,8 @@ const UserDashboard = () => {
             value={stats.items}
             icon={<Package className="w-5 h-5" />}
             color="green"
+            onClick={() => navigate('/viewproducts')}
+            clickable={true}
           />
           <StatCard
             title="Quotations"
