@@ -1,11 +1,12 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import converter from 'number-to-words'
 
 // Utility function to convert number to words (Indian English)
 
 const TemplateTwo = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const quotation = location.state?.quotation;
 
     if (!quotation) {
@@ -31,6 +32,53 @@ const TemplateTwo = () => {
     const totalAmountInWords = converter.toWords(totalAmount)
     // console.log(totalAmountInWords)
 
+    const handleGoToDashboard = () => {
+        navigate('/dashboard');
+    };
+
+    const handleSaveInvoice = () => {
+        // Create a new window with the invoice content for printing/saving
+        const printWindow = window.open('', '_blank');
+        const invoiceContent = document.querySelector('.invoice-content');
+        
+        if (printWindow && invoiceContent) {
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Invoice - ${quotation.number}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .invoice-container { max-width: 800px; margin: 0 auto; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                            .total { font-weight: bold; text-align: right; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                            .footer { text-align: center; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="invoice-container">
+                            ${invoiceContent.innerHTML}
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            
+            // Try to print, if it fails, just show the window
+            try {
+                printWindow.print();
+            } catch (error) {
+                console.log('Print failed, showing window instead');
+            }
+        } else {
+            // Fallback: just print the current page
+            window.print();
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center p-10 relative overflow-hidden bg-gray-50">
 
@@ -39,77 +87,72 @@ const TemplateTwo = () => {
             <div className="absolute bottom-[-20%] right-[-20%] w-112 h-112 bg-gradient-to-l from-[#6B21A8]/20 to-[#0F172A]/10 rounded-full blur-3xl animate-float delay-1000"></div>
 
 
-            <div className="relative z-10 bg-white rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] w-full max-w-3xl p-6 transition-all duration-500 hover:shadow-[0_30px_90px_rgba(139,92,246,0.35)]">
-                <div className="text-start ml-30 mb-4 border-b border-gray-200 pt-2 pb-2">
-                    <h2 className="text-2xl font-extrabold text-transparent uppercase bg-[#0b6a9f] bg-clip-text">
+            <div className="relative z-10 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl shadow-[0_20px_60px_rgba(59,130,246,0.25)] w-full max-w-4xl p-8 transition-all duration-500 hover:shadow-[0_30px_90px_rgba(59,130,246,0.35)] invoice-content">
+                {/* Modern Template Header */}
+                <div className="text-center mb-8 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-lg">
+                    <h2 className="text-4xl font-bold mb-3">
                         {quotation.owner.compneyname}
                     </h2>
-                    <p className="text-md text-zinc-600 mt-1">{quotation.owner.address}</p>
-                    <div className="flex justify-start mt-1 space-x-3 text-md text-zinc-800">
-                        <div className="div flex space-x-8 ">
-                            <p><strong>Phone:</strong> {quotation.owner.phone}</p>
-
-                            <p><strong>GST:</strong> {quotation.owner.gstNumber}</p>
-                        </div>
-
-                    </div>
-                    <div>
-                        <p><strong>Email:</strong> {quotation.owner.email}</p>
+                    <p className="text-xl text-blue-100 mb-4">{quotation.owner.address}</p>
+                    <div className="flex justify-center space-x-8 text-blue-100">
+                        <span><strong>Email:</strong> {quotation.owner.email}</span>
+                        <span><strong>GST:</strong> {quotation.owner.gstNumber}</span>
+                        <span><strong>Phone:</strong> {quotation.owner.phone}</span>
                     </div>
                 </div>
 
                 {/* Quotation Info */}
-                <div className="flex justify-between items-center border-t-9 border-[#0b6a9f] bg-gradient-to-r from-gray-100 to-gray-50 p-2  mb-4">
-                    <h3 className="text-md font-semibold text-zinc-800  ">Quotation No: {quotation.number}</h3>
-                    <p className="text-md font-bold text-zinc-600">
+                <div className="flex justify-between items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-xl mb-6 shadow-lg">
+                    <h3 className="text-xl font-bold">Quotation No: {quotation.number}</h3>
+                    <p className="text-xl font-bold">
                         <strong>Date:</strong> {new Date().toLocaleDateString("en-IN")}
                     </p>
                 </div>
 
                 {/* Billing and Shipping Info */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-gray-50 p-2 rounded-xl">
-                        <h4 className="text-sm font-semibold text-zinc-800 mb-1">Bill To</h4>
-                        <p className="font-medium text-md text-zinc-700">{quotation.customer?.name}</p>
-                        <p className="text-sm text-zinc-600 mt-1">
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white p-4 rounded-2xl shadow-lg border-l-4 border-blue-500">
+                        <h4 className="text-lg font-bold text-blue-600 mb-3">Bill To</h4>
+                        <p className="font-bold text-lg text-gray-900 mb-2">{quotation.customer?.name}</p>
+                        <p className="text-gray-700 mb-1">
                             {quotation.customer?.address || "No address provided"}
                         </p>
-                        <p className="text-sm text-zinc-600 mt-1">
-                            {quotation.customer?.gstNumber || "No GST provided"}
+                        <p className="text-gray-700 mb-1">
+                            <strong>GST:</strong> {quotation.customer?.gstNumber || "No GST provided"}
                         </p>
-                        <p className="text-sm text-zinc-600 mt-1">
-                            {quotation.customer?.pannumber || "No Pan number provided"}
+                        <p className="text-gray-700">
+                            <strong>PAN:</strong> {quotation.customer?.pannumber || "No Pan number provided"}
                         </p>
                     </div>
-                    <div className="bg-gray-50 p-2 rounded-xl">
-                        <h4 className="text-sm font-semibold text-zinc-800 mb-1">Ship To</h4>
-                        <p className="font-medium text-md text-zinc-700">{quotation.customer?.name}</p>
-                        <p className="text-sm text-zinc-600 mt-1">
+                    <div className="bg-white p-4 rounded-2xl shadow-lg border-l-4 border-indigo-500">
+                        <h4 className="text-lg font-bold text-indigo-600 mb-3">Ship To</h4>
+                        <p className="font-bold text-lg text-gray-900 mb-2">{quotation.customer?.name}</p>
+                        <p className="text-gray-700">
                             {quotation.customer?.address || "No address provided"}
                         </p>
                     </div>
                 </div>
 
                 {/* Items Table */}
-                <div className="overflow-x-auto mb-4">
-                    <table className="w-full border-collapse  bg-white rounded-xl shadow-sm">
-                        <thead className=" border-t-4 border-b-4 border-[#0b6a9f] text-blcak">
-                            <tr >
-                                <th className="p-1 text-left text-md w-[40%]">Item</th>
-                                <th className="p-1 text-left text-md w-[10%]">Qty</th>
-                                <th className="p-1 text-left text-md w-[15%]">Rate</th>
-                                <th className="p-1 text-left text-md w-[15%]">Tax</th>
-                                <th className="p-1 text-left text-md w-[20%]">Amount</th>
+                <div className="overflow-x-auto mb-6">
+                    <table className="w-full border-collapse bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <thead className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+                            <tr>
+                                <th className="p-4 text-left text-lg font-bold">Item</th>
+                                <th className="p-4 text-left text-lg font-bold">Qty</th>
+                                <th className="p-4 text-left text-lg font-bold">Rate</th>
+                                <th className="p-4 text-left text-lg font-bold">Tax</th>
+                                <th className="p-4 text-left text-lg font-bold">Amount</th>
                             </tr>
                         </thead>
                         <tbody>
                             {quotation.items?.map((item, index) => (
-                                <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                                    <td className="p-2 text-md text-zinc-800 truncate">{item.item?.name || "N/A"}</td>
-                                    <td className="p-2 text-md text-zinc-800">{item.quantity || "0"}</td>
-                                    <td className="p-2 text-md text-zinc-800">₹ {item.item?.rate || "0"}</td>
-                                    <td className="p-2 text-md text-zinc-800">{item.item?.tax || "0"}%</td>
-                                    <td className="p-2 text-md text-zinc-800">
+                                <tr key={index} className="border-b border-gray-200 hover:bg-blue-50 transition-colors">
+                                    <td className="p-4 text-lg text-gray-900 font-medium">{item.item?.name || "N/A"}</td>
+                                    <td className="p-4 text-lg text-gray-900">{item.quantity || "0"}</td>
+                                    <td className="p-4 text-lg text-gray-900">₹ {item.item?.rate || "0"}</td>
+                                    <td className="p-4 text-lg text-gray-900">{item.item?.tax || "0"}%</td>
+                                    <td className="p-4 text-lg text-gray-900 font-bold">
                                         ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
                                     </td>
                                 </tr>
@@ -118,86 +161,99 @@ const TemplateTwo = () => {
                     </table>
                 </div>
 
-                <div className="div grid grid-cols-2">
-                    
-
-
+                <div className="grid grid-cols-2 gap-6 mb-6">
                     {/* Bank Details */}
                     {quotation.bankdetails && (
-                        <div className="bg-gray-50 p-4  rounded-xl mb-4">
-                            <h4 className="text-md font-semibold text-zinc-800 mb-1">Bank Details</h4>
-                            <p className="text-sm  my-0.5 text-zinc-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
-                            <p className="text-sm my-0.5 text-zinc-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
-                            <p className="text-sm my-0.5 text-zinc-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
+                        <div className="bg-white p-4 rounded-2xl shadow-lg border-l-4 border-green-500">
+                            <h4 className="text-lg font-bold text-green-600 mb-3">Bank Details</h4>
+                            <div className="space-y-2">
+                                <p className="text-lg text-gray-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
+                                <p className="text-lg text-gray-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
+                                <p className="text-lg text-gray-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
+                            </div>
                         </div>
-
                     )}
+                    
                     {/* Total Amount*/} 
-                    <div className="text-end  mt-4  bg-gray-50">
-                        <div>
-                        <h4 className="text-lg font-semibold my-1 border-b-2  text-zinc-800 mr-15">
-                        TAXABLE AMOUNT   <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
-                        </h4>
-                        </div>
-                        <h4 className="text-lg font-semibold  my-1 border-b-2 text-zinc-800 mr-15">
-                            TOTAL AMOUNT  <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
-                        </h4>
-                        <div className="w-70 text-start ml-4">
-                        <strong>In Words</strong>
-                        <p className="text-md  text-zinc-600 mt-1 underline capitalize">
-                            <div className="flex justify-end text-md text-black">{totalAmountInWords} Rupees </div>
-                        </p>
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-lg">
+                        <div className="text-center">
+                            <h4 className="text-2xl font-bold mb-2">
+                                TOTAL AMOUNT
+                            </h4>
+                            <h4 className="text-4xl font-bold mb-4">
+                                ₹ {totalAmount}
+                            </h4>
+                            <div className="text-center">
+                                <p className="text-lg font-medium">
+                                    {totalAmountInWords} Rupees
+                                </p>
+                            </div>
                         </div>
                     </div>
-
                 </div>
 
                 {/* Payment Details & QR Code */}
-                <div className="bg-gray-50 p-2 rounded-xl flex items-center justify-between mb-4">
-                    <div className="space-y-1">
-                        <h3 className="text-md font-semibold  my-1 text-zinc-800">Payment Details</h3>
-                        <p className="text-sm mt-0.5 text-zinc-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
-                        <p className="text-sm mt-0.5 text-zinc-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
+                <div className="bg-white p-6 rounded-2xl shadow-lg flex items-center justify-between mb-6 border-l-4 border-purple-500">
+                    <div className="space-y-3">
+                        <h3 className="text-xl font-bold text-purple-600">Payment Details</h3>
+                        <p className="text-lg text-gray-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
+                        <p className="text-lg text-gray-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
                     </div>
-                    <div className="flex mr-90">
-                        <img src="./qrcode.png" alt="QR Code" className="w-20 h-20" />
+                    <div className="flex">
+                        <img src="./qrcode.png" alt="QR Code" className="w-28 h-28 border-4 border-purple-200 rounded-xl" />
                     </div>
                 </div>
-                <div className="div grid grid-cols-2 ">
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-orange-500">
+                        <h3 className="text-xl font-bold text-orange-600 mb-4">Terms & Conditions</h3>
+                        <ul className="list-disc list-outside pl-6 text-lg text-gray-700 space-y-3">
+                            <li className="leading-relaxed">
+                                Goods once sold will not be taken back.
+                            </li>
+                            <li className="leading-relaxed">
+                                Bill hard copy is mandatory with the product in case of any warranty-related matter or replacement to the service centre.
+                            </li>
+                            <li className="leading-relaxed">
+                                No bank transfer will be accepted without prior intimation to us.
+                            </li>
+                            <li className="leading-relaxed">
+                                Service to product may take a minimum of 15 to 20 days, even for new products (CPU, Laptop, DVR/Cameras, or HDD).
+                            </li>
+                            <li className="leading-relaxed">
+                                An advance payment of 70% of the total project cost is required to initiate the work. The remaining 30% will be due upon completion or as per the agreed-upon payment schedule. Work will commence only after the advance payment has been received.
+                            </li>
+                        </ul>
+                    </div>
                     
-                <div className="bg-gray-50 p-3 rounded-xl mb-4 border border-gray-200">
-                
-                    <h3 className="text-sm font-semibold text-zinc-800 mb-2">Terms & Conditions</h3>
-                    <ul className="list-disc list-outside pl-4 text-sm text-zinc-600 space-y-1.5">
-                        <li className="leading-relaxed">
-                            Goods once sold will not be taken back.
-                        </li>
-                        <li className="leading-relaxed">
-                            Bill hard copy is mandatory with the product in case of any warranty-related matter or replacement to the service centre.
-                        </li>
-                        <li className="leading-relaxed">
-                            No bank transfer will be accepted without prior intimation to us.
-                        </li>
-                        <li className="leading-relaxed">
-                            Service to product may take a minimum of 15 to 20 days, even for new products (CPU, Laptop, DVR/Cameras, or HDD).
-                        </li>
-                        <li className="leading-relaxed">
-                            An advance payment of 70% of the total project cost is required to initiate the work. The remaining 30% will be due upon completion or as per the agreed-upon payment schedule. Work will commence only after the advance payment has been received.
-                        </li>
-                    </ul>
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-red-500 flex flex-col justify-center">
+                        <div className="text-center">
+                            <div className="border-2 border-gray-300 h-24 w-full mb-4 flex items-center justify-center">
+                                <span className="text-gray-500">Signature</span>
+                            </div>
+                            <p className="text-lg font-bold text-red-600 mb-1">AUTHORISED SIGNATORY FOR</p>
+                            <p className="text-xl font-bold text-gray-900">{quotation.owner.compneyname}</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="  justify-center my-10 bg-gray-50 ">
-                    <input className="border-x-zinc-900 ml-9 border-3 p-4 h-20 w-70 "  />
-                    <div className="ml-10"><p>AUTHORISED SIGNATOEY FOR</p>
-                    <p>{quotation.owner.compneyname}</p>
-                </div>    
-                    
-                </div>
-                
+
+                {/* Action Buttons */}
+                <div className="flex justify-center space-x-4 mb-4 mt-6">
+                    <button
+                        onClick={handleGoToDashboard}
+                        className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+                    >
+                        🏠 Go to Dashboard
+                    </button>
+                    <button
+                        onClick={handleSaveInvoice}
+                        className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+                    >
+                        💾 Save Invoice
+                    </button>
                 </div>
 
                 {/* Footer */}
-                <div className="text-center text-md font-semibold text-zinc-800 border-t border-gray-200 pt-2">
+                <div className="text-center text-3xl font-bold text-blue-600 border-t-2 border-blue-300 pt-6">
                     Thank You
                 </div>
             </div>

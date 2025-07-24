@@ -5,6 +5,35 @@ import authmiddle from './authmiddleware.js';
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// Get next available quotation number for current user
+// http://localhost:5000/quotation/next-number
+router.get("/next-number", authmiddle, async (req, res) => {
+    try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Get the highest quotation number for this owner
+        const lastQuotation = await prisma.quotation.findFirst({
+            where: { ownerId: owner.id },
+            orderBy: { number: 'desc' }
+        });
+
+        // If no quotations exist, start with 1, otherwise increment the last number
+        const nextNumber = lastQuotation ? lastQuotation.number + 1 : 1;
+
+        return res.status(200).json({ nextNumber });
+    } catch (err) {
+        console.error("Error getting next quotation number:", err);
+        return res.status(500).json({ message: `Failed to get next quotation number: ${err.message}` });
+    }
+});
+
 // http://localhost:5000/quotation/data
 router.post("/data", async (req, res) => {
     const { number, owneremail, customerphone, itemNames, itemQuantities, bankdetailsaccountno } = req.body;
@@ -35,8 +64,11 @@ router.post("/data", async (req, res) => {
         }
 
         // Fetch existing customer
-        const customerExist = await prisma.customer.findUnique({
-            where: { phone: customerphone },
+        const customerExist = await prisma.customer.findFirst({
+            where: { 
+                phone: customerphone,
+                ownerId: ownerExist.id
+            },
             select: { id: true },
         });
         if (!customerExist) {
@@ -44,8 +76,11 @@ router.post("/data", async (req, res) => {
         }
 
         // Fetch existing bank details
-        const bankExists = await prisma.bankDetails.findUnique({
-            where: { accountno: bankdetailsaccountno },
+        const bankExists = await prisma.bankDetails.findFirst({
+            where: { 
+                accountno: bankdetailsaccountno,
+                ownerId: ownerExist.id
+            },
             select: { id: true },
         });
         if (!bankExists) {
@@ -54,7 +89,10 @@ router.post("/data", async (req, res) => {
 
         // Fetch existing items
         const existingItems = await prisma.item.findMany({
-            where: { name: { in: itemNames } },
+            where: { 
+                name: { in: itemNames },
+                ownerId: ownerExist.id
+            },
             select: { id: true, name: true },
         });
 

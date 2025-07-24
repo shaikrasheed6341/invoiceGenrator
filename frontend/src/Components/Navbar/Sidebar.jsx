@@ -75,6 +75,11 @@ function Sidebar({ onCollapseChange }) {
 
   const quotationsItems = [
     { 
+      to: "/streamlined-quotation", 
+      label: "⚡ Live Builder", 
+      icon: <FileText className="w-4 h-4" />
+    },
+    { 
       to: "/postquation", 
       label: "📄 Create Quote", 
       icon: <FileText className="w-4 h-4" />

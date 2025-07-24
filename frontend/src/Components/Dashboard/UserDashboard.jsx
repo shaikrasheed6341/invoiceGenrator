@@ -194,13 +194,45 @@ const UserDashboard = () => {
             value={stats.quotations}
             icon={<FileText className="w-5 h-5" />}
             color="purple"
+            onClick={() => navigate('/fetch')}
+            clickable={true}
           />
           <StatCard
             title="Bank Accounts"
             value={stats.bankDetails}
             icon={<Building2 className="w-5 h-5" />}
             color="orange"
+            onClick={() => navigate('/bankdetails/list')}
+            clickable={true}
           />
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-zinc-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ActionCard
+              title="Live Quotation Builder"
+              description="Create quotations with real-time preview"
+              icon={<FileText className="w-6 h-6" />}
+              color="purple"
+              onClick={() => navigate('/live-quotation')}
+            />
+            <ActionCard
+              title="Add Customer"
+              description="Register a new customer"
+              icon={<Users className="w-6 h-6" />}
+              color="blue"
+              onClick={() => navigate('/postcustmer')}
+            />
+            <ActionCard
+              title="Add Product"
+              description="Add a new product to your inventory"
+              icon={<Package className="w-6 h-6" />}
+              color="green"
+              onClick={() => navigate('/selectiteams')}
+            />
+          </div>
         </div>
 
 
@@ -236,6 +268,34 @@ const StatCard = ({ title, value, icon, color, onClick, clickable }) => {
             <div>
               {icon}
             </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const ActionCard = ({ title, description, icon, color, onClick }) => {
+  const colorClasses = {
+    blue: "bg-blue-50 text-blue-600 border-blue-200",
+    green: "bg-green-50 text-green-600 border-green-200",
+    purple: "bg-purple-50 text-purple-600 border-purple-200",
+    orange: "bg-orange-50 text-orange-600 border-orange-200"
+  };
+
+  return (
+    <Card 
+      className="border-0 shadow-lg bg-white hover:shadow-xl transition-all duration-200 cursor-pointer"
+      onClick={onClick}
+    >
+      <CardContent className="p-6">
+        <div className="flex items-start space-x-4">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${colorClasses[color]}`}>
+            {icon}
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-zinc-900 mb-2">{title}</h3>
+            <p className="text-sm text-zinc-600">{description}</p>
           </div>
         </div>
       </CardContent>

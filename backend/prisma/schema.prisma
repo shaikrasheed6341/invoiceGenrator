@@ -43,7 +43,7 @@ model Customer {
   id         String      @id @default(uuid())
   name       String
   address    String
-  phone      String      @unique
+  phone      String
   gstnumber  String?
   pannumber  String?
   
@@ -53,11 +53,14 @@ model Customer {
   
   // One customer has many quotations
   quotations Quotation[]
+  
+  // Phone should be unique per owner, not globally
+  @@unique([ownerId, phone])
 }
 
 model Quotation {
   id            String          @id @default(uuid())
-  number        Int             @unique
+  number        Int
   ownerId       String
   customerId    String
   bankdetailsId String?
@@ -67,11 +70,14 @@ model Quotation {
   customer      Customer        @relation(fields: [customerId], references: [id])
   owner         Owner           @relation(fields: [ownerId], references: [id])
   items         QuotationItem[]
+  
+  // Quotation number should be unique per owner, not globally
+  @@unique([ownerId, number])
 }
 
 model Item {
   id         String          @id @default(uuid())
-  name       String          @unique
+  name       String
   brand      String
   quantity   Int?
   rate       Float
@@ -83,6 +89,9 @@ model Item {
   
   // One item can be in many quotations
   quotations QuotationItem[]
+  
+  // Item name should be unique per owner, not globally
+  @@unique([ownerId, name])
 }
 
 model QuotationItem {
@@ -102,7 +111,7 @@ model BankDetails {
   id         String      @id @default(uuid())
   name       String
   ifsccode   String
-  accountno  String      @unique
+  accountno  String
   bank       String
   upid       String
   upidname   String?
@@ -113,4 +122,7 @@ model BankDetails {
   
   // One bank detail can be used in many quotations
   quotations Quotation[]
+  
+  // Account number should be unique per owner, not globally
+  @@unique([ownerId, accountno])
 }

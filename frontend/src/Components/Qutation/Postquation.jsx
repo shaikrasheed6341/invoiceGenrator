@@ -6,12 +6,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-const PostQuotation = () => {
+const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     number: "",
-    owneremail: "",
+    owneremail: selectedOwner?.email || "",
     customerphone: "",
     bankdetailsaccountno: "",
     items: [{ name: "", quantity: "" }],
@@ -132,6 +132,26 @@ const PostQuotation = () => {
             Fill in the details to generate a quotation
           </p>
           <p className="text-xs text-gray-500 mt-1">Note: Remember your quotation number</p>
+          
+          {/* Selected Template and Owner Info */}
+          {(selectedTemplate || selectedOwner) && (
+            <div className="mt-6 space-y-3">
+              {selectedTemplate && (
+                <div className="inline-block bg-purple-50 px-4 py-2 rounded-xl">
+                  <p className="text-sm text-purple-800">
+                    <strong>Template:</strong> {selectedTemplate.name}
+                  </p>
+                </div>
+              )}
+              {selectedOwner && (
+                <div className="inline-block bg-blue-50 px-4 py-2 rounded-xl ml-2">
+                  <p className="text-sm text-blue-800">
+                    <strong>Owner:</strong> {selectedOwner.name} ({selectedOwner.compneyname})
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Form */}
@@ -151,6 +171,7 @@ const PostQuotation = () => {
             value={formData.owneremail}
             onChange={handleChange}
             required
+            disabled={selectedOwner}
           />
           <InputField
             label="Customer Phone"
@@ -225,13 +246,23 @@ const PostQuotation = () => {
             {loading ? "Submitting..." : "Create Quotation"}
           </button>
 
-          {/* Navigation Button */}
-          <button
-            onClick={() => navigate("/fetch")}
-            className="w-full text-zinc-900 font-medium py-3 rounded-xl border border-zinc-900 hover:bg-zinc-100 transition-all duration-300"
-          >
-            Go to Fetch Page
-          </button>
+          {/* Navigation Buttons */}
+          <div className="flex gap-4">
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="flex-1 text-zinc-600 font-medium py-3 rounded-xl border border-zinc-300 hover:bg-zinc-50 transition-all duration-300"
+              >
+                ← Back to Owner Selection
+              </button>
+            )}
+            <button
+              onClick={() => navigate("/fetch")}
+              className="flex-1 text-zinc-900 font-medium py-3 rounded-xl border border-zinc-900 hover:bg-zinc-100 transition-all duration-300"
+            >
+              Go to Fetch Page
+            </button>
+          </div>
         </form>
       </div>
       <ToastContainer />
@@ -240,7 +271,7 @@ const PostQuotation = () => {
 };
 
 // Reusable Input Field Component
-const InputField = ({ label, name, type, value, onChange, required }) => (
+const InputField = ({ label, name, type, value, onChange, required, disabled }) => (
   <div className="relative group">
     <label className="absolute -top-2.5 left-3 px-2 bg-gradient-to-r from-white/95 to-gray-100/90 text-xs font-medium text-primary transition-all duration-300 transform scale-95 origin-left group-focus-within:scale-100 group-focus-within:text-accent shadow-sm rounded-md">
       {label}
@@ -251,8 +282,11 @@ const InputField = ({ label, name, type, value, onChange, required }) => (
       value={value}
       onChange={onChange}
       required={required}
+      disabled={disabled}
       placeholder=""
-      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70"
+      className={`w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70 ${
+        disabled ? 'bg-gray-100 cursor-not-allowed' : ''
+      }`}
     />
   </div>
 );

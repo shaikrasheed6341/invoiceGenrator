@@ -13,6 +13,9 @@ import ViewProducts from './Components/Iteams/ViewProducts';
 import Bankdetails from './Components/Bankdetails/Bankdetails';
 import BankDetailsList from './Components/Bankdetails/BankDetailsList';
 import PostQuotation from './Components/Qutation/Postquation';
+import CreateQuotationFlow from './Components/Qutation/CreateQuotationFlow';
+import StreamlinedQuotation from './Components/Qutation/StreamlinedQuotation';
+import LiveQuotationBuilder from './Components/Qutation/LiveQuotationBuilder';
 import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
 import Landingpage from './Components/Landingpage/Landingpage.jsx';
@@ -94,6 +97,21 @@ function AppRoutes() {
       <Route path="/postquation" element={
         <ProtectedRoute>
           <Layout><PostQuotation /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/create-quotation" element={
+        <ProtectedRoute>
+          <Layout><CreateQuotationFlow /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/streamlined-quotation" element={
+        <ProtectedRoute>
+          <Layout><StreamlinedQuotation /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/live-quotation" element={
+        <ProtectedRoute>
+          <Layout><LiveQuotationBuilder /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/fetch" element={
