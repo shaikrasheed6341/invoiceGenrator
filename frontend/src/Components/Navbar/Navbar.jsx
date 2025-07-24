@@ -9,7 +9,7 @@ function Navbar() {
 
 
   return (
-    <nav className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-xl z-[9999] sticky top-0 backdrop-blur-sm">
+    <nav className="bg-gradient-to-r from-gray-100 to-gray-100 shadow-xl z-[9999] sticky top-0 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -19,9 +19,9 @@ function Navbar() {
                 src="./logo.png"
                 alt="Logo"
                 className="w-12 h-12 md:w-16 md:h-16 transition-all duration-300 hover:scale-110 drop-shadow-lg"
-              />
+              />  
             </Link>
-            <span className="text-white font-bold tracking-wider text-xl md:text-2xl bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+            <span className="text-black  font-bold tracking-wider text-xl md:text-2xl bg-gradient-to-r from-black to-gray-900 bg-clip-text text-transparent">
               ITPARTNER
             </span>
           </div>
@@ -37,7 +37,7 @@ function Navbar() {
             >
               <NavLink
                 to="/login"
-                className="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 hover:bg-gray-50 shadow-lg"
+                className="bg-white text-black px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 hover:bg-gray-50 shadow-lg"
               >
                 Login
               </NavLink>
