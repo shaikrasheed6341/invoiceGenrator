@@ -10,6 +10,10 @@ import {
   Package, 
   FileText, 
   Building2, 
+  BarChart3,
+  DollarSign,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
@@ -231,6 +235,48 @@ const UserDashboard = () => {
               icon={<Package className="w-6 h-6" />}
               color="green"
               onClick={() => navigate('/selectiteams')}
+            />
+          </div>
+        </div>
+
+        {/* Analytics Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-zinc-900 mb-4">Analytics & Tracking</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ActionCard
+              title="Owner Dashboard"
+              description="Complete business overview with tracking"
+              icon={<BarChart3 className="w-6 h-6" />}
+              color="blue"
+              onClick={() => navigate('/owner-dashboard')}
+            />
+            <ActionCard
+              title="Payment Tracking"
+              description="Monitor payments and send reminders"
+              icon={<DollarSign className="w-6 h-6" />}
+              color="green"
+              onClick={() => navigate('/payment-tracking')}
+            />
+            <ActionCard
+              title="Monthly Analytics"
+              description="Detailed monthly performance breakdown"
+              icon={<TrendingUp className="w-6 h-6" />}
+              color="purple"
+              onClick={() => navigate('/monthly-analytics')}
+            />
+            <ActionCard
+              title="Revenue Tracking"
+              description="Track revenue vs collected amounts"
+              icon={<Activity className="w-6 h-6" />}
+              color="orange"
+              onClick={() => navigate('/revenue-tracking')}
+            />
+            <ActionCard
+              title="Debug Analytics"
+              description="Test analytics API endpoints"
+              icon={<BarChart3 className="w-6 h-6" />}
+              color="red"
+              onClick={() => navigate('/analytics-debug')}
             />
           </div>
         </div>

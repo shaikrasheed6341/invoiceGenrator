@@ -25,6 +25,13 @@ import AuthCallback from './Components/Singnup/AuthCallback.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext';
 
+// Analytics Components
+import OwnerDashboard from './Components/Dashboard/OwnerDashboard';
+import PaymentTracking from './Components/Dashboard/PaymentTracking';
+import MonthlyAnalytics from './Components/Dashboard/MonthlyAnalytics';
+import RevenueTracking from './Components/Dashboard/RevenueTracking';
+import AnalyticsDebug from './Components/Dashboard/AnalyticsDebug';
+
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
@@ -127,6 +134,33 @@ function AppRoutes() {
       <Route path='/template' element={
         <ProtectedRoute>
           <TemplatetTwo />
+        </ProtectedRoute>
+      } />
+      
+      {/* Analytics Routes */}
+      <Route path="/owner-dashboard" element={
+        <ProtectedRoute>
+          <Layout><OwnerDashboard /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/payment-tracking" element={
+        <ProtectedRoute>
+          <Layout><PaymentTracking /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/monthly-analytics" element={
+        <ProtectedRoute>
+          <Layout><MonthlyAnalytics /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/revenue-tracking" element={
+        <ProtectedRoute>
+          <Layout><RevenueTracking /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/analytics-debug" element={
+        <ProtectedRoute>
+          <Layout><AnalyticsDebug /></Layout>
         </ProtectedRoute>
       } />
     </Routes>

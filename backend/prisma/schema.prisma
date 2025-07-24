@@ -20,6 +20,9 @@ model User {
   
   // One user has one owner (their business)
   owner     Owner?
+  
+  // User analytics
+  analytics UserAnalytics?
 }
 
 model Owner {
@@ -37,6 +40,13 @@ model Owner {
   quotations  Quotation[]
   items       Item[]
   bankDetails BankDetails[]
+  
+  // Owner dashboard
+  dashboard   OwnerDashboard?
+  
+  // Timestamps
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Customer {
@@ -56,6 +66,10 @@ model Customer {
   
   // Phone should be unique per owner, not globally
   @@unique([ownerId, phone])
+  
+  // Timestamps
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 model Quotation {
@@ -71,8 +85,15 @@ model Quotation {
   owner         Owner           @relation(fields: [ownerId], references: [id])
   items         QuotationItem[]
   
+  // Payment tracking
+  payment       Payment?
+  
   // Quotation number should be unique per owner, not globally
   @@unique([ownerId, number])
+  
+  // Timestamps
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model Item {
@@ -92,6 +113,10 @@ model Item {
   
   // Item name should be unique per owner, not globally
   @@unique([ownerId, name])
+  
+  // Timestamps
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
 }
 
 model QuotationItem {
@@ -105,6 +130,10 @@ model QuotationItem {
   quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
 
   @@unique([quotationId, itemId])
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model BankDetails {
@@ -125,4 +154,180 @@ model BankDetails {
   
   // Account number should be unique per owner, not globally
   @@unique([ownerId, accountno])
+  
+  // Timestamps
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+// Payment tracking model
+model Payment {
+  id            String      @id @default(uuid())
+  quotationId   String      @unique
+  quotation     Quotation   @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  
+  amount        Float
+  status        PaymentStatus @default(PENDING)
+  paymentMethod PaymentMethod
+  transactionId String?
+  paidAt        DateTime?
+  dueDate       DateTime?
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // Payment tracking
+  reminders     PaymentReminder[]
+}
+
+// Payment reminder tracking
+model PaymentReminder {
+  id        String   @id @default(uuid())
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  
+  sentAt    DateTime @default(now())
+  type      ReminderType
+  status    ReminderStatus @default(SENT)
+  
+  createdAt DateTime @default(now())
+}
+
+// User analytics and tracking
+model UserAnalytics {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Quotation statistics
+  totalQuotationsCreated Int @default(0)
+  totalRevenueGenerated  Float @default(0)
+  totalAmountCollected   Float @default(0)
+  totalAmountPending     Float @default(0)
+  
+  // Monthly tracking
+  monthlyStats MonthlyRevenue[]
+  
+  // Customer statistics
+  totalCustomersAdded    Int @default(0)
+  totalItemsAdded        Int @default(0)
+  
+  // Last activity
+  lastQuotationCreated   DateTime?
+  lastPaymentReceived    DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Monthly revenue tracking
+model MonthlyRevenue {
+  id        String   @id @default(uuid())
+  analyticsId String
+  analytics UserAnalytics @relation(fields: [analyticsId], references: [id], onDelete: Cascade)
+  
+  year      Int
+  month     Int // 1-12
+  
+  // Revenue metrics
+  totalRevenue    Float @default(0)
+  totalCollected  Float @default(0)
+  totalPending    Float @default(0)
+  
+  // Quotation metrics
+  quotationsCreated Int @default(0)
+  quotationsPaid    Int @default(0)
+  quotationsPending Int @default(0)
+  
+  // Customer metrics
+  newCustomersAdded Int @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Unique constraint for year-month combination per user
+  @@unique([analyticsId, year, month])
+}
+
+// Owner dashboard statistics
+model OwnerDashboard {
+  id        String   @id @default(uuid())
+  ownerId   String   @unique
+  owner     Owner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Overall statistics
+  totalRevenue        Float @default(0)
+  totalCollected      Float @default(0)
+  totalPending        Float @default(0)
+  totalQuotations     Int @default(0)
+  totalCustomers      Int @default(0)
+  totalItems          Int @default(0)
+  
+  // Monthly breakdown
+  monthlyBreakdown    MonthlyOwnerRevenue[]
+  
+  // Recent activity
+  lastQuotationDate   DateTime?
+  lastPaymentDate     DateTime?
+  lastCustomerAdded   DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Monthly owner revenue tracking
+model MonthlyOwnerRevenue {
+  id        String   @id @default(uuid())
+  dashboardId String
+  dashboard OwnerDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  
+  year      Int
+  month     Int // 1-12
+  
+  // Revenue metrics
+  revenue       Float @default(0)
+  collected     Float @default(0)
+  pending       Float @default(0)
+  
+  // Activity metrics
+  quotationsCreated Int @default(0)
+  quotationsPaid    Int @default(0)
+  customersAdded    Int @default(0)
+  itemsAdded        Int @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Unique constraint for year-month combination per owner
+  @@unique([dashboardId, year, month])
+}
+
+// Enums for payment tracking
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIAL
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  UPI
+  CHEQUE
+  CARD
+  OTHER
+}
+
+enum ReminderType {
+  DUE_DATE
+  OVERDUE
+  FOLLOW_UP
+}
+
+enum ReminderStatus {
+  SENT
+  DELIVERED
+  FAILED
 }

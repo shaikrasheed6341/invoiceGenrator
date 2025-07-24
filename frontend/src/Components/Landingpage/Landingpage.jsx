@@ -1,55 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { SpotlightPreview } from '../Herosection/SpotlightPreview';
+
 
 function Landingpage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 mix-blend-multiply" />
-        </div>
-        
-        <div className="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl text-center sm:text-left"
-          >
-            <h1 className="text-3xl font-extrabold sm:text-5xl text-white">
-              Create Professional
-              <strong className="block font-extrabold text-indigo-400">
-                Invoices Instantly
-              </strong>
-            </h1>
-
-            <p className="mt-4 max-w-lg sm:text-xl/relaxed text-gray-300">
-              Generate beautiful, professional invoices in seconds. Streamline your billing process and get paid faster.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-4 text-center">
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="/submitownerdata"
-                className="block w-full rounded bg-indigo-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring sm:w-auto"
-              >
-                Get Started
-              </motion.a>
-
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="#features"
-                className="block w-full rounded bg-white/10 px-12 py-3 text-sm font-medium text-white shadow hover:bg-white/20 focus:outline-none focus:ring sm:w-auto"
-              >
-                Learn More
-              </motion.a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <SpotlightPreview />
+      
 
       {/* Features Section */}
       <section id="features" className="py-20 bg-gray-900/50">
