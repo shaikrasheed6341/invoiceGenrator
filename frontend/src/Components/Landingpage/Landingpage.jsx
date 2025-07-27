@@ -5,12 +5,12 @@ import { SpotlightPreview } from '../Herosection/SpotlightPreview';
 
 function Landingpage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-slate-950">
+      <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_4px),linear-gradient(to_bottom,#4f4f4f2e_4px,transparent_4px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_80%_100%_at_50%_0%,#000_20%,transparent_100%)]"></div>
       <SpotlightPreview />
-      
-
+    
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-900/50">
+      <section id="features" className="py-20 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -72,7 +72,7 @@ function Landingpage() {
       </section>
 
       {/* Download Section */}
-      <section className="py-20 bg-gray-800/50">
+      <section className="py-20 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -145,7 +145,7 @@ function Landingpage() {
       </section>
 
       {/* Advantages Section */}
-      <section className="py-20 bg-gray-900">
+      <section className="py-20 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
@@ -218,7 +218,7 @@ function Landingpage() {
       </section>
 
       {/* Simple Footer */}
-      <footer className="bg-gray-900 py-8">
+      <footer className="bg-transparent py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <p className="text-gray-400">© 2024 Invoice Generator. All rights reserved.</p>
