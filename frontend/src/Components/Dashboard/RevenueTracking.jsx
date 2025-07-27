@@ -15,8 +15,37 @@ import {
   PieChart,
   Activity,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Calendar,
+  Target
 } from 'lucide-react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Filler
+} from 'chart.js';
+import { Bar, Doughnut, Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Filler
+);
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -25,6 +54,7 @@ const RevenueTracking = () => {
   const [revenueData, setRevenueData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [chartPeriod, setChartPeriod] = useState('monthly');
 
   useEffect(() => {
     fetchRevenueData();
@@ -102,6 +132,182 @@ const RevenueTracking = () => {
     return item.status === filter;
   }) || [];
 
+  // Prepare chart data
+  const prepareChartData = () => {
+    if (!revenueData?.details) return null;
+
+    const monthlyData = {};
+    const statusData = {
+      PAID: 0,
+      PENDING: 0,
+      OVERDUE: 0,
+      PARTIAL: 0
+    };
+
+    revenueData.details.forEach(item => {
+      const date = new Date(item.createdAt);
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData[monthYear]) {
+        monthlyData[monthYear] = {
+          total: 0,
+          collected: 0,
+          pending: 0
+        };
+      }
+      
+      monthlyData[monthYear].total += item.totalAmount;
+      monthlyData[monthYear].collected += item.collectedAmount;
+      monthlyData[monthYear].pending += item.pendingAmount;
+      
+      statusData[item.status] += 1;
+    });
+
+    return { monthlyData, statusData };
+  };
+
+  const chartData = prepareChartData();
+
+  // Revenue Trend Chart
+  const revenueTrendData = chartData ? {
+    labels: Object.keys(chartData.monthlyData).slice(-6),
+    datasets: [
+      {
+        label: 'Total Revenue',
+        data: Object.values(chartData.monthlyData).slice(-6).map(d => d.total),
+        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+        borderColor: 'rgba(59, 130, 246, 1)',
+        borderWidth: 2,
+        borderRadius: 4,
+      },
+      {
+        label: 'Collected',
+        data: Object.values(chartData.monthlyData).slice(-6).map(d => d.collected),
+        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+        borderColor: 'rgba(34, 197, 94, 1)',
+        borderWidth: 2,
+        borderRadius: 4,
+      },
+      {
+        label: 'Pending',
+        data: Object.values(chartData.monthlyData).slice(-6).map(d => d.pending),
+        backgroundColor: 'rgba(249, 115, 22, 0.8)',
+        borderColor: 'rgba(249, 115, 22, 1)',
+        borderWidth: 2,
+        borderRadius: 4,
+      }
+    ]
+  } : null;
+
+  // Payment Status Doughnut Chart
+  const paymentStatusData = chartData ? {
+    labels: ['Paid', 'Pending', 'Overdue', 'Partial'],
+    datasets: [{
+      data: [
+        chartData.statusData.PAID,
+        chartData.statusData.PENDING,
+        chartData.statusData.OVERDUE,
+        chartData.statusData.PARTIAL
+      ],
+      backgroundColor: [
+        'rgba(34, 197, 94, 0.8)',
+        'rgba(249, 115, 22, 0.8)',
+        'rgba(239, 68, 68, 0.8)',
+        'rgba(59, 130, 246, 0.8)'
+      ],
+      borderColor: [
+        'rgba(34, 197, 94, 1)',
+        'rgba(249, 115, 22, 1)',
+        'rgba(239, 68, 68, 1)',
+        'rgba(59, 130, 246, 1)'
+      ],
+      borderWidth: 2,
+    }]
+  } : null;
+
+  // Collection Rate Line Chart
+  const collectionRateData = chartData ? {
+    labels: Object.keys(chartData.monthlyData).slice(-6),
+    datasets: [{
+      label: 'Collection Rate (%)',
+      data: Object.values(chartData.monthlyData).slice(-6).map(d => 
+        d.total > 0 ? ((d.collected / d.total) * 100).toFixed(1) : 0
+      ),
+      borderColor: 'rgba(147, 51, 234, 1)',
+      backgroundColor: 'rgba(147, 51, 234, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: 'rgba(147, 51, 234, 1)',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 6,
+    }]
+  } : null;
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Revenue Analytics',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return formatCurrency(value).replace('₹', '₹');
+          }
+        }
+      }
+    }
+  };
+
+  const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+      title: {
+        display: true,
+        text: 'Payment Status Distribution',
+      },
+    },
+  };
+
+  const lineOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Collection Rate Trend',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: function(value) {
+            return value + '%';
+          }
+        }
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50">
@@ -165,6 +371,66 @@ const RevenueTracking = () => {
                 trendUp={true}
               />
             </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Revenue Trend Chart */}
+              <Card className="border-0 shadow-lg bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-zinc-900">Revenue Trend</h3>
+                    <BarChart3 className="w-5 h-5 text-zinc-400" />
+                  </div>
+                  <div className="h-80">
+                    {revenueTrendData ? (
+                      <Bar data={revenueTrendData} options={chartOptions} />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-zinc-500">
+                        No data available for chart
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Payment Status Distribution */}
+              <Card className="border-0 shadow-lg bg-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-zinc-900">Payment Status</h3>
+                    <PieChart className="w-5 h-5 text-zinc-400" />
+                  </div>
+                  <div className="h-80">
+                    {paymentStatusData ? (
+                      <Doughnut data={paymentStatusData} options={doughnutOptions} />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-zinc-500">
+                        No data available for chart
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Collection Rate Trend */}
+            <Card className="border-0 shadow-lg bg-white mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-zinc-900">Collection Rate Trend</h3>
+                  <Target className="w-5 h-5 text-zinc-400" />
+                </div>
+                <div className="h-80">
+                  {collectionRateData ? (
+                    <Line data={collectionRateData} options={lineOptions} />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-zinc-500">
+                      No data available for chart
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Revenue Breakdown */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

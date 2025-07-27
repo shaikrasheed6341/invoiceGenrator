@@ -170,15 +170,27 @@ router.get("/getdata", authmiddle, async (req, res) => {
 });
 
 // http://localhost:5000/quotation/getdata/102
-router.get("/getdata/:number", async (req, res) => {
+router.get("/getdata/:number", authmiddle, async (req, res) => {
     try {
         const quationnumber = parseInt(req.params.number, 10);
         if (isNaN(quationnumber)) {
             return res.status(400).json({ message: "Invalid quotation number" });
         }
 
-        const finalresult = await prisma.quotation.findUnique({
-            where: { number: quationnumber },
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        const finalresult = await prisma.quotation.findFirst({
+            where: { 
+                number: quationnumber,
+                ownerId: owner.id // Ensure quotation belongs to authenticated user
+            },
             include: {
                 owner: true,
                 customer: true,
@@ -192,14 +204,14 @@ router.get("/getdata/:number", async (req, res) => {
         });
 
         if (!finalresult) {
-            return res.json({ message: "No data found for this quotation number" });
+            return res.status(404).json({ message: "No data found for this quotation number" });
         }
 
-        console.log(finalresult);
+        console.log("Found quotation:", finalresult);
         return res.status(200).json(finalresult);
     } catch (err) {
         console.log(err);
-        return res.json({ message: `Failed to retrieve data: ${err.message}` });
+        return res.status(500).json({ message: `Failed to retrieve data: ${err.message}` });
     }
 });
 

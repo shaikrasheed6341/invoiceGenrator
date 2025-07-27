@@ -21,7 +21,9 @@ import {
   Activity,
   Target,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
@@ -32,11 +34,28 @@ const OwnerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [statusFilter, setStatusFilter] = useState('PENDING');
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showStatusDropdown && !event.target.closest('.status-dropdown')) {
+        setShowStatusDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStatusDropdown]);
 
   const fetchDashboardData = async () => {
     try {
@@ -59,6 +78,30 @@ const OwnerDashboard = () => {
       toast.error(`Failed to load dashboard data: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updatePaymentStatus = async (quotationId, newStatus) => {
+    try {
+      setUpdatingStatus(quotationId);
+      const token = Cookies.get('token');
+      
+      const response = await axios.patch(`${BACKENDURL}/analytics/update-payment-status`, {
+        quotationId,
+        status: newStatus
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      toast.success(`Payment status updated to ${newStatus}`);
+      fetchDashboardData(); // Refresh data
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      toast.error(`Failed to update payment status: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setUpdatingStatus(null);
     }
   };
 
@@ -128,7 +171,7 @@ const OwnerDashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="mb-4 sm:mb-0">
               <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
-                Welcome back, {dashboardData.owner.name}! 👋
+                Welcome back, {dashboardData.owner.name}! ��
               </h1>
               <p className="text-md text-zinc-600">
                 {dashboardData.owner.companyName} • Complete Business Overview
@@ -290,35 +333,117 @@ const OwnerDashboard = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-zinc-900">Recent Quotations</h3>
-                  <button
-                    onClick={() => navigate('/fetch')}
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    View All
-                  </button>
+                  <div className="flex items-center space-x-4">
+                    {/* Status Filter Dropdown */}
+                    <div className="relative status-dropdown">
+                      <button
+                        onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                        className="flex items-center space-x-2 px-3 py-2 bg-zinc-100 rounded-lg hover:bg-zinc-200 transition-colors"
+                      >
+                        <span className="text-sm font-medium">
+                          {statusFilter === 'PENDING' ? 'Pending' : 'Completed'}
+                        </span>
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                      
+                      {showStatusDropdown && (
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-zinc-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                          <button
+                            onClick={() => {
+                              setStatusFilter('PENDING');
+                              setShowStatusDropdown(false);
+                            }}
+                            className={`w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 ${
+                              statusFilter === 'PENDING' ? 'bg-blue-50 text-blue-700' : 'text-zinc-700'
+                            }`}
+                          >
+                            Pending
+                          </button>
+                          <button
+                            onClick={() => {
+                              setStatusFilter('PAID');
+                              setShowStatusDropdown(false);
+                            }}
+                            className={`w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 ${
+                              statusFilter === 'PAID' ? 'bg-blue-50 text-blue-700' : 'text-zinc-700'
+                            }`}
+                          >
+                            Completed
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <button
+                      onClick={() => navigate('/fetch')}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    >
+                      View All
+                    </button>
+                  </div>
                 </div>
+                
                 <div className="space-y-3">
-                  {dashboardData.recentActivity.quotations.slice(0, 5).map((quotation) => (
+                  {dashboardData.recentActivity.quotations
+                    .filter(quotation => {
+                      const paymentStatus = quotation.payment?.status || 'PENDING';
+                      return statusFilter === 'PENDING' ? paymentStatus === 'PENDING' : paymentStatus === 'PAID';
+                    })
+                    .slice(0, 5)
+                    .map((quotation) => (
                     <div key={quotation.id} className="flex items-center justify-between p-3 bg-zinc-50 rounded-lg">
                       <div>
-                        <div className="font-medium">#{quotation.number}</div>
+                        <button
+                          onClick={() => navigate('/fetch', { state: { quotationNumber: quotation.number } })}
+                          className="font-medium text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                        >
+                          #{quotation.number}
+                        </button>
                         <div className="text-sm text-zinc-600">{quotation.customer.name}</div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-medium">
-                          {formatCurrency(quotation.items.reduce((sum, qi) => 
-                            sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100)), 0
-                          ))}
+                      <div className="flex items-center space-x-3">
+                        <div className="text-right">
+                          <div className="font-medium">
+                            {formatCurrency(quotation.items.reduce((sum, qi) => 
+                              sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100)), 0
+                            ))}
+                          </div>
+                          <div className={`text-sm ${
+                            quotation.payment?.status === 'PAID' ? 'text-green-600' : 
+                            quotation.payment?.status === 'OVERDUE' ? 'text-red-600' : 'text-orange-600'
+                          }`}>
+                            {quotation.payment?.status || 'PENDING'}
+                          </div>
                         </div>
-                        <div className={`text-sm ${
-                          quotation.payment?.status === 'PAID' ? 'text-green-600' : 
-                          quotation.payment?.status === 'OVERDUE' ? 'text-red-600' : 'text-orange-600'
-                        }`}>
-                          {quotation.payment?.status || 'PENDING'}
-                        </div>
+                        
+                        {/* Mark as Completed Button */}
+                        {quotation.payment?.status !== 'PAID' && (
+                          <button
+                            onClick={() => updatePaymentStatus(quotation.id, 'PAID')}
+                            disabled={updatingStatus === quotation.id}
+                            className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors disabled:opacity-50"
+                          >
+                            {updatingStatus === quotation.id ? (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b border-green-600"></div>
+                            ) : (
+                              <Check className="w-3 h-3" />
+                            )}
+                            <span className="text-xs">Mark Complete</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
+                  
+                  {dashboardData.recentActivity.quotations
+                    .filter(quotation => {
+                      const paymentStatus = quotation.payment?.status || 'PENDING';
+                      return statusFilter === 'PENDING' ? paymentStatus === 'PENDING' : paymentStatus === 'PAID';
+                    }).length === 0 && (
+                    <div className="text-center py-4 text-zinc-500">
+                      No {statusFilter === 'PENDING' ? 'pending' : 'completed'} quotations found.
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -544,6 +669,8 @@ const GrowthTab = ({ dashboardData }) => {
 };
 
 const ActivityTab = ({ dashboardData, formatDate }) => {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-6">
       <Card className="border-0 shadow-lg bg-white">
@@ -557,7 +684,12 @@ const ActivityTab = ({ dashboardData, formatDate }) => {
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <div className="font-medium">Quotation #{quotation.number}</div>
+                    <button
+                      onClick={() => navigate('/fetch', { state: { quotationNumber: quotation.number } })}
+                      className="font-medium text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                    >
+                      Quotation #{quotation.number}
+                    </button>
                     <div className="text-sm text-zinc-600">
                       {quotation.customer.name} • {formatDate(quotation.createdAt)}
                     </div>

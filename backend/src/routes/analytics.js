@@ -71,6 +71,18 @@ router.get("/dashboard", async (req, res) => {
       }
     });
 
+    // Get all quotations to count pending ones (quotations without payment records)
+    const allQuotations = await prisma.quotation.findMany({
+      where: { ownerId: owner.id },
+      include: {
+        payment: true
+      }
+    });
+
+    // Count quotations without payment records as PENDING
+    const quotationsWithoutPayment = allQuotations.filter(q => !q.payment).length;
+    const quotationsWithPayment = allQuotations.filter(q => q.payment).length;
+
     // Get overdue payments
     const overduePayments = await prisma.payment.findMany({
       where: {
@@ -124,7 +136,7 @@ router.get("/dashboard", async (req, res) => {
       },
       paymentStatus: {
         paid: paymentStats.find(p => p.status === 'PAID')?._count.status || 0,
-        pending: paymentStats.find(p => p.status === 'PENDING')?._count.status || 0,
+        pending: (paymentStats.find(p => p.status === 'PENDING')?._count.status || 0) + quotationsWithoutPayment,
         overdue: paymentStats.find(p => p.status === 'OVERDUE')?._count.status || 0,
         partial: paymentStats.find(p => p.status === 'PARTIAL')?._count.status || 0
       },
@@ -736,6 +748,116 @@ router.post("/send-reminder", async (req, res) => {
   } catch (error) {
     console.error("Error sending payment reminder:", error);
     return res.status(500).json({ message: "Error sending payment reminder", error: error.message });
+  }
+});
+
+// Update payment status (mark as completed)
+router.patch("/update-payment-status", async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { quotationId, status } = req.body;
+
+    // Verify the quotation belongs to the authenticated user
+    const quotation = await prisma.quotation.findFirst({
+      where: {
+        id: quotationId,
+        owner: {
+          userId: userId
+        }
+      },
+      include: {
+        payment: true,
+        items: {
+          include: {
+            item: true
+          }
+        }
+      }
+    });
+
+    if (!quotation) {
+      return res.status(404).json({ message: "Quotation not found" });
+    }
+
+    // Calculate total amount
+    const totalAmount = quotation.items.reduce((sum, qi) => {
+      return sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
+    }, 0);
+
+    // Update or create payment record
+    const updatedPayment = await prisma.payment.upsert({
+      where: {
+        quotationId: quotationId
+      },
+      update: {
+        status: status,
+        amount: totalAmount,
+        paidAt: status === 'PAID' ? new Date() : null,
+        paymentMethod: 'CASH' // Default payment method
+      },
+      create: {
+        quotationId: quotationId,
+        status: status,
+        amount: totalAmount,
+        paidAt: status === 'PAID' ? new Date() : null,
+        paymentMethod: 'CASH',
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+      }
+    });
+
+    // Update analytics if payment is completed
+    if (status === 'PAID') {
+      await prisma.userAnalytics.upsert({
+        where: { userId },
+        update: {
+          totalAmountCollected: {
+            increment: totalAmount
+          },
+          totalAmountPending: {
+            decrement: totalAmount
+          },
+          lastPaymentReceived: new Date()
+        },
+        create: {
+          userId,
+          totalAmountCollected: totalAmount,
+          lastPaymentReceived: new Date()
+        }
+      });
+
+      // Update owner dashboard
+      const owner = await prisma.owner.findUnique({
+        where: { userId }
+      });
+
+      if (owner) {
+        await prisma.ownerDashboard.upsert({
+          where: { ownerId: owner.id },
+          update: {
+            totalCollected: {
+              increment: totalAmount
+            },
+            totalPending: {
+              decrement: totalAmount
+            },
+            lastPaymentDate: new Date()
+          },
+          create: {
+            ownerId: owner.id,
+            totalCollected: totalAmount,
+            lastPaymentDate: new Date()
+          }
+        });
+      }
+    }
+
+    return res.json({ 
+      message: "Payment status updated successfully",
+      payment: updatedPayment
+    });
+  } catch (error) {
+    console.error("Error updating payment status:", error);
+    return res.status(500).json({ message: "Error updating payment status", error: error.message });
   }
 });
 

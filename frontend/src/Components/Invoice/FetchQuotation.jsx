@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const FetchQuotation = () => {
@@ -7,9 +8,19 @@ const FetchQuotation = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const fetchQuotation = async () => {
-    if (!quotationNumber) {
+  // Handle pre-filled quotation number from navigation
+  useEffect(() => {
+    if (location.state?.quotationNumber) {
+      setQuotationNumber(location.state.quotationNumber.toString());
+      // Automatically fetch the quotation
+      fetchQuotationWithNumber(location.state.quotationNumber.toString());
+    }
+  }, [location.state]);
+
+  const fetchQuotationWithNumber = async (number) => {
+    if (!number) {
       setError("Please enter a quotation number.");
       return;
     }
@@ -18,21 +29,42 @@ const FetchQuotation = () => {
     setError("");
 
     try {
-      const response = await fetch(`${BACKENDURL}/quotation/getdata/${quotationNumber}`);
+      const token = Cookies.get('token');
+      console.log("Fetching quotation number:", number);
+      
+      const response = await fetch(`${BACKENDURL}/quotation/getdata/${number}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch quotation");
       }
 
-      // Navigate to invoice page with fetched data
+      // Check if data has the expected structure
+      if (!data || !data.number) {
+        throw new Error("Invalid quotation data received");
+      }
+
+      console.log("Navigating to invoice with data:", data);
+      // Navigate to invoice page with fetched data using default template
       navigate("/invoice", { state: { quotation: data } });
-      navigate("/template", { state: { quotation: data } });
     } catch (err) {
+      console.error("Error fetching quotation:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchQuotation = async () => {
+    await fetchQuotationWithNumber(quotationNumber);
   };
 
   return (
