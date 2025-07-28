@@ -107,11 +107,11 @@ const InvoicePreview = ({ quotation }) => {
 
         {/* Total Amount */}
         <div className="text-right mb-4">
-          <h4 className="text-md font-semibold text-zinc-800 mr-15">
-            Total Amount: <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
+          <h4 className="text-sm font-semibold text-zinc-800 mr-15">
+            Total Amount: <span className="text-sm font-bold text-zinc-900">₹ {totalAmount}</span>
           </h4>
-          <p className="text-md mr-4 text-zinc-600 mt-1 capitalize">
-            <div className="flex justify-end text-sm text-black">{totalAmountInWords} Rupees </div>
+          <p className="text-xs mr-4 text-zinc-600 mt-1 capitalize leading-tight">
+            <div className="flex justify-end text-xs text-black">{totalAmountInWords} Rupees </div>
           </p>
         </div>
 

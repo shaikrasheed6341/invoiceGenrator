@@ -129,17 +129,17 @@ const TemplateTwoPreview = ({ quotation }) => {
           {/* Total Amount*/} 
           <div className="text-end mt-4 bg-gray-50">
             <div>
-              <h4 className="text-lg font-semibold my-1 border-b-2 text-zinc-800 mr-15">
-                TAXABLE AMOUNT <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
+              <h4 className="text-md font-semibold my-1 border-b-2 text-zinc-800 mr-15">
+                TAXABLE AMOUNT <span className="text-sm font-bold text-zinc-900">₹ {totalAmount}</span>
               </h4>
             </div>
-            <h4 className="text-lg font-semibold my-1 border-b-2 text-zinc-800 mr-15">
-              TOTAL AMOUNT <span className="text-md font-bold text-zinc-900">₹ {totalAmount}</span>
+            <h4 className="text-md font-semibold my-1 border-b-2 text-zinc-800 mr-15">
+              TOTAL AMOUNT <span className="text-sm font-bold text-zinc-900">₹ {totalAmount}</span>
             </h4>
             <div className="w-70 text-start ml-4">
-              <strong>In Words</strong>
-              <p className="text-md text-zinc-600 mt-1 underline capitalize">
-                <div className="flex justify-end text-md text-black">{totalAmountInWords} Rupees </div>
+              <strong className="text-xs">In Words</strong>
+              <p className="text-xs text-zinc-600 mt-1 underline capitalize leading-tight">
+                <div className="flex justify-end text-xs text-black">{totalAmountInWords} Rupees </div>
               </p>
             </div>
           </div>

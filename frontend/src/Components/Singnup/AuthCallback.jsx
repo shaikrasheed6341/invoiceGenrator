@@ -53,10 +53,10 @@ const AuthCallback = () => {
   }, [searchParams, navigate, handleAuthCallback]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600">
-      <div className="bg-white/20 backdrop-blur-xl shadow-2xl border border-white/30 rounded-3xl p-10 text-center">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950">
+      <div className="bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 rounded-3xl p-10 text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        <p className="text-white text-lg">Completing authentication...</p>
+        <p className="text-white text-lg font-medium">Completing authentication...</p>
       </div>
     </div>
   );

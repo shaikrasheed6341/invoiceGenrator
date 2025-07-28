@@ -11,9 +11,9 @@ const Invoice = () => {
 
   if (!quotation) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.2)_0%,_rgba(15,23,42,0)_70%)] pointer-events-none"></div>
-        <div className="relative z-10 bg-gradient-to-br from-white/95 to-gray-100/90 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] p-8 text-xl text-zinc-800">
+        <div className="relative z-10 bg-gradient-to-br from-white/95 to-gray-100/90 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] p-4 sm:p-8 text-lg sm:text-xl text-zinc-800">
           No Quotation Found!
         </div>
       </div>
@@ -46,20 +46,134 @@ const Invoice = () => {
         <html>
           <head>
             <title>Invoice - ${quotation.number}</title>
+            <script src="https://cdn.tailwindcss.com"></script>
             <style>
-              body { font-family: Arial, sans-serif; margin: 20px; }
-              .invoice-container { max-width: 800px; margin: 0 auto; }
-              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #f2f2f2; }
-              .total { font-weight: bold; text-align: right; }
-              .header { text-align: center; margin-bottom: 20px; }
-              .footer { text-align: center; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }
+              @media print {
+                body { 
+                  margin: 0; 
+                  padding: 10px; 
+                  font-size: 12px;
+                  line-height: 1.2;
+                }
+                .no-print { display: none !important; }
+                .invoice-container { 
+                  max-width: 100%; 
+                  margin: 0; 
+                  padding: 10px;
+                  box-shadow: none;
+                }
+                table { 
+                  margin: 10px 0; 
+                  font-size: 11px;
+                }
+                th, td { 
+                  padding: 6px; 
+                }
+                .card {
+                  padding: 8px;
+                  margin-bottom: 8px;
+                }
+                .info-section {
+                  padding: 8px;
+                  margin-bottom: 8px;
+                }
+                h2 { font-size: 18px; margin-bottom: 8px; }
+                h3 { font-size: 14px; margin-bottom: 6px; }
+                h4 { font-size: 12px; margin-bottom: 4px; }
+                p { margin-bottom: 4px; }
+                ul { margin-bottom: 8px; }
+                li { margin-bottom: 2px; }
+                .mb-6 { margin-bottom: 6px !important; }
+                .mb-4 { margin-bottom: 4px !important; }
+                .p-4 { padding: 6px !important; }
+                .p-3 { padding: 4px !important; }
+                .pt-4 { padding-top: 6px !important; }
+              }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 20px; 
+                background-color: #f9fafb;
+              }
+              .invoice-container { 
+                max-width: 800px; 
+                margin: 0 auto; 
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              }
+              table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin: 20px 0; 
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
+              th, td { 
+                border: 1px solid #e5e7eb; 
+                padding: 12px; 
+                text-align: left; 
+              }
+              th { 
+                background-color: #374151; 
+                color: white;
+                font-weight: bold;
+              }
+              .total { 
+                font-weight: bold; 
+                text-align: right; 
+              }
+              .header { 
+                text-align: center; 
+                margin-bottom: 20px; 
+                border-bottom: 2px solid #d1d5db;
+                padding-bottom: 20px;
+              }
+              .footer { 
+                text-align: center; 
+                margin-top: 20px; 
+                border-top: 2px solid #d1d5db; 
+                padding-top: 10px; 
+                font-weight: bold;
+                font-size: 18px;
+              }
+              .card {
+                background: white;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 16px;
+                border: 1px solid #e5e7eb;
+              }
+              .info-section {
+                background: #f3f4f6;
+                padding: 16px;
+                border-radius: 8px;
+                margin-bottom: 16px;
+              }
+              .button {
+                background: #374151;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                margin: 8px;
+                font-weight: bold;
+              }
+              .button:hover {
+                background: #4b5563;
+              }
             </style>
           </head>
           <body>
             <div class="invoice-container">
               ${invoiceContent.innerHTML}
+            </div>
+            <div class="no-print" style="text-align: center; margin-top: 20px;">
+              <button class="button" onclick="window.print()">Print Invoice</button>
+              <button class="button" onclick="window.close()">Close</button>
             </div>
           </body>
         </html>
@@ -69,7 +183,9 @@ const Invoice = () => {
       
       // Try to print, if it fails, just show the window
       try {
-        printWindow.print();
+        setTimeout(() => {
+          printWindow.print();
+        }, 1000);
       } catch (error) {
         console.log('Print failed, showing window instead');
       }
@@ -80,21 +196,20 @@ const Invoice = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-10 relative overflow-hidden bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-10 relative overflow-hidden bg-gray-50">
 
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.2)_0%,_rgba(15,23,42,0)_70%)] pointer-events-none"></div>
       <div className="absolute top-[-15%] left-[-15%] w-96 h-96 bg-gradient-to-r from-[#8B5CF6]/20 to-[#1E3A8A]/10 rounded-full blur-3xl animate-float"></div>
       <div className="absolute bottom-[-20%] right-[-20%] w-112 h-112 bg-gradient-to-l from-[#6B21A8]/20 to-[#0F172A]/10 rounded-full blur-3xl animate-float delay-1000"></div>
 
-
-      <div className="relative z-10 bg-white rounded-lg shadow-lg w-full max-w-4xl p-8 transition-all duration-500 invoice-content">
+      <div className="relative z-10 bg-white rounded-lg shadow-lg w-full max-w-4xl p-4 sm:p-6 lg:p-8 transition-all duration-500 invoice-content">
         {/* Standard Template Header */}
-        <div className="text-center mb-6 border-b-2 border-gray-300 pb-4">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-4 sm:mb-6 border-b-2 border-gray-300 pb-4">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
             {quotation.owner.compneyname}
           </h2>
-          <p className="text-lg text-gray-600 mb-3">{quotation.owner.address}</p>
-          <div className="flex justify-center space-x-6 text-sm text-gray-700">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-3">{quotation.owner.address}</p>
+          <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 lg:space-x-6 text-xs sm:text-sm text-gray-700">
             <span><strong>Email:</strong> {quotation.owner.email}</span>
             <span><strong>GST:</strong> {quotation.owner.gstNumber}</span>
             <span><strong>Phone:</strong> {quotation.owner.phone}</span>
@@ -102,51 +217,51 @@ const Invoice = () => {
         </div>
 
         {/* Quotation Info */}
-        <div className="flex justify-between items-center bg-gray-100 p-4 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Quotation No: {quotation.number}</h3>
-          <p className="text-lg font-semibold text-gray-700">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-100 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
+          <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-0">Quotation No: {quotation.number}</h3>
+          <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-700">
             <strong>Date:</strong> {new Date().toLocaleDateString("en-IN")}
           </p>
         </div>
 
         {/* Billing and Shipping Info */}
-        <div className="grid grid-cols-2 gap-6 mb-6">
-          <div className="border border-gray-300 p-4">
-            <h4 className="text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Bill To</h4>
-            <p className="font-semibold text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
-            <p className="text-gray-700">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+          <div className="border border-gray-300 p-3 sm:p-4 rounded">
+            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Bill To</h4>
+            <p className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
+            <p className="text-xs sm:text-sm text-gray-700">
               {quotation.customer?.address || "No address provided"}
             </p>
           </div>
-          <div className="border border-gray-300 p-4">
-            <h4 className="text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Ship To</h4>
-            <p className="font-semibold text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
-            <p className="text-gray-700">
+          <div className="border border-gray-300 p-3 sm:p-4 rounded">
+            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Ship To</h4>
+            <p className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
+            <p className="text-xs sm:text-sm text-gray-700">
               {quotation.customer?.address || "No address provided"}
             </p>
           </div>
         </div>
 
         {/* Items Table */}
-        <div className="overflow-x-auto mb-6">
-          <table className="w-full border-collapse border border-gray-300">
+        <div className="overflow-x-auto mb-4 sm:mb-6">
+          <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm lg:text-base">
             <thead className="bg-gray-800 text-white">
               <tr>
-                <th className="p-3 text-left text-lg font-semibold border border-gray-300">Item</th>
-                <th className="p-3 text-left text-lg font-semibold border border-gray-300">Qty</th>
-                <th className="p-3 text-left text-lg font-semibold border border-gray-300">Rate</th>
-                <th className="p-3 text-left text-lg font-semibold border border-gray-300">Tax</th>
-                <th className="p-3 text-left text-lg font-semibold border border-gray-300">Amount</th>
+                <th className="p-2 sm:p-3 text-left font-semibold border border-gray-300">Item</th>
+                <th className="p-2 sm:p-3 text-left font-semibold border border-gray-300">Qty</th>
+                <th className="p-2 sm:p-3 text-left font-semibold border border-gray-300">Rate</th>
+                <th className="p-2 sm:p-3 text-left font-semibold border border-gray-300">Tax</th>
+                <th className="p-2 sm:p-3 text-left font-semibold border border-gray-300">Amount</th>
               </tr>
             </thead>
             <tbody>
               {quotation.items?.map((item, index) => (
                 <tr key={index} className="border-b border-gray-300 hover:bg-gray-50 transition-colors">
-                  <td className="p-3 text-lg text-gray-900 border border-gray-300">{item.item?.name || "N/A"}</td>
-                  <td className="p-3 text-lg text-gray-900 border border-gray-300">{item.quantity || "0"}</td>
-                  <td className="p-3 text-lg text-gray-900 border border-gray-300">₹ {item.item?.rate || "0"}</td>
-                  <td className="p-3 text-lg text-gray-900 border border-gray-300">{item.item?.tax || "0"}%</td>
-                  <td className="p-3 text-lg text-gray-900 border border-gray-300 font-semibold">
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.name || "N/A"}</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.quantity || "0"}</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">₹ {item.item?.rate || "0"}</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.tax || "0"}%</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300 font-semibold">
                     ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
                   </td>
                 </tr>
@@ -156,41 +271,40 @@ const Invoice = () => {
         </div>
 
         {/* Total Amount */}
-        <div className="text-right mb-6 border-t-2 border-gray-300 pt-4">
-          <h4 className="text-2xl font-bold text-gray-900 mb-2">
-            Total Amount: <span className="text-3xl font-bold text-gray-900">₹ {totalAmount}</span>
+        <div className="text-right mb-4 sm:mb-6 mr-4 sm:mr-8 lg:mr-20 border-t-2 border-gray-300 pt-4">
+          <h4 className="text-sm sm:text-base lg:text-xl font-bold text-gray-900 mb-2">
+            Total Amount: <span className="text-base sm:text-lg lg:text-2xl font-bold text-gray-900">₹ {totalAmount}</span>
           </h4>
-          <p className="text-lg text-gray-700 capitalize">
+          <p className="text-xs sm:text-sm text-gray-700 capitalize leading-tight">
             <strong>In Words:</strong> {totalAmountInWords} Rupees
           </p>
         </div>
 
         {/* Bank Details */}
         {quotation.bankdetails && (
-          <div className="border border-gray-300 p-4 mb-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-300 pb-1">Bank Details</h4>
-            <div className="grid grid-cols-1 gap-2">
-              <p className="text-lg text-gray-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
-              <p className="text-lg text-gray-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
-              <p className="text-lg text-gray-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
+          <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
+            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 border-b border-gray-300 pb-1">Bank Details</h4>
+            <div className="grid grid-cols-1 gap-1 sm:gap-2">
+              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
+              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
+              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
             </div>
           </div>
         )}
 
-        {/* Payment Details & QR Code */}
-        <div className="border border-gray-300 p-4 mb-6 flex items-center justify-between">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-gray-900">Payment Details</h3>
-            <p className="text-lg text-gray-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
-            <p className="text-lg text-gray-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
-          </div>
-          <div className="flex">
-            <img src="./qrcode.png" alt="QR Code" className="w-24 h-24 border border-gray-300" />
+        {/* Payment Details */}
+        <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
+          <div className="space-y-1 sm:space-y-2">
+            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Payment Details</h3>
+            <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
+            <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
           </div>
         </div>
-        <div className="border border-gray-300 p-4 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-300 pb-1">Terms & Conditions</h3>
-          <ul className="list-disc list-outside pl-6 text-lg text-gray-700 space-y-2">
+
+        {/* Terms & Conditions */}
+        <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
+          <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 border-b border-gray-300 pb-1">Terms & Conditions</h3>
+          <ul className="list-disc list-outside pl-4 sm:pl-6 text-xs sm:text-sm lg:text-lg text-gray-700 space-y-1 sm:space-y-2">
             <li className="leading-relaxed">
               Goods once sold will not be taken back.
             </li>
@@ -210,23 +324,23 @@ const Invoice = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center space-x-4 mb-4 mt-6">
+        <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4 mt-4 sm:mt-6">
           <button
             onClick={handleGoToDashboard}
-            className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+            className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg text-sm sm:text-base"
           >
             🏠 Go to Dashboard
           </button>
           <button
             onClick={handleSaveInvoice}
-            className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg"
+            className="bg-green-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg text-sm sm:text-base"
           >
             💾 Save Invoice
           </button>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-2xl font-bold text-gray-900 border-t-2 border-gray-300 pt-4">
+        <div className="text-center text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 border-t-2 border-gray-300 pt-4">
           Thank You
         </div>
       </div>
