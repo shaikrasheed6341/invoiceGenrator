@@ -271,13 +271,6 @@ const UserDashboard = () => {
               color="orange"
               onClick={() => navigate('/revenue-tracking')}
             />
-            <ActionCard
-              title="Debug Analytics"
-              description="Test analytics API endpoints"
-              icon={<BarChart3 className="w-6 h-6" />}
-              color="red"
-              onClick={() => navigate('/analytics-debug')}
-            />
           </div>
         </div>
 

@@ -39,8 +39,8 @@ router.get("/dashboard", async (req, res) => {
       return res.status(404).json({ message: "Owner not found" });
     }
 
-    // Get recent quotations with payment status
-    const recentQuotations = await prisma.quotation.findMany({
+    // Get ALL quotations for this owner to calculate total revenue
+    const allQuotations = await prisma.quotation.findMany({
       where: { ownerId: owner.id },
       include: {
         customer: true,
@@ -50,10 +50,13 @@ router.get("/dashboard", async (req, res) => {
             item: true
           }
         }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 10
+      }
     });
+
+    // Get recent quotations for display (last 10)
+    const recentQuotations = allQuotations
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 10);
 
     // Get payment statistics
     const paymentStats = await prisma.payment.groupBy({
@@ -68,14 +71,6 @@ router.get("/dashboard", async (req, res) => {
       },
       _sum: {
         amount: true
-      }
-    });
-
-    // Get all quotations to count pending ones (quotations without payment records)
-    const allQuotations = await prisma.quotation.findMany({
-      where: { ownerId: owner.id },
-      include: {
-        payment: true
       }
     });
 
@@ -104,8 +99,8 @@ router.get("/dashboard", async (req, res) => {
       orderBy: { dueDate: 'asc' }
     });
 
-    // Calculate total revenue and collected amounts
-    const totalRevenue = recentQuotations.reduce((sum, q) => {
+    // Calculate total revenue from ALL quotations for this owner
+    const totalRevenue = allQuotations.reduce((sum, q) => {
       return sum + q.items.reduce((itemSum, qi) => {
         return itemSum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
       }, 0);
@@ -130,15 +125,27 @@ router.get("/dashboard", async (req, res) => {
         totalRevenue: totalRevenue,
         totalCollected: totalCollected,
         totalPending: totalPending,
-        totalQuotations: recentQuotations.length,
+        totalQuotations: allQuotations.length,
         totalCustomers: await prisma.customer.count({ where: { ownerId: owner.id } }),
         totalItems: await prisma.item.count({ where: { ownerId: owner.id } })
       },
       paymentStatus: {
-        paid: paymentStats.find(p => p.status === 'PAID')?._count.status || 0,
-        pending: (paymentStats.find(p => p.status === 'PENDING')?._count.status || 0) + quotationsWithoutPayment,
-        overdue: paymentStats.find(p => p.status === 'OVERDUE')?._count.status || 0,
-        partial: paymentStats.find(p => p.status === 'PARTIAL')?._count.status || 0
+        paid: {
+          count: paymentStats.find(p => p.status === 'PAID')?._count.status || 0,
+          amount: paymentStats.find(p => p.status === 'PAID')?._sum.amount || 0
+        },
+        pending: {
+          count: (paymentStats.find(p => p.status === 'PENDING')?._count.status || 0) + quotationsWithoutPayment,
+          amount: paymentStats.find(p => p.status === 'PENDING')?._sum.amount || 0
+        },
+        overdue: {
+          count: paymentStats.find(p => p.status === 'OVERDUE')?._count.status || 0,
+          amount: paymentStats.find(p => p.status === 'OVERDUE')?._sum.amount || 0
+        },
+        partial: {
+          count: paymentStats.find(p => p.status === 'PARTIAL')?._count.status || 0,
+          amount: paymentStats.find(p => p.status === 'PARTIAL')?._sum.amount || 0
+        }
       },
       recentActivity: {
         quotations: recentQuotations.slice(0, 5),
@@ -147,10 +154,19 @@ router.get("/dashboard", async (req, res) => {
       monthlyBreakdown: owner.dashboard?.monthlyBreakdown || []
     };
 
-    console.log("Dashboard data prepared:", {
+    console.log("Dashboard data prepared for owner:", {
       ownerId: dashboardData.owner.id,
+      ownerName: dashboardData.owner.name,
       totalQuotations: dashboardData.overview.totalQuotations,
-      totalRevenue: dashboardData.overview.totalRevenue
+      totalRevenue: dashboardData.overview.totalRevenue,
+      totalCollected: dashboardData.overview.totalCollected,
+      totalPending: dashboardData.overview.totalPending,
+      paymentStatus: {
+        paid: { count: dashboardData.paymentStatus.paid.count, amount: dashboardData.paymentStatus.paid.amount },
+        pending: { count: dashboardData.paymentStatus.pending.count, amount: dashboardData.paymentStatus.pending.amount },
+        overdue: { count: dashboardData.paymentStatus.overdue.count, amount: dashboardData.paymentStatus.overdue.amount },
+        partial: { count: dashboardData.paymentStatus.partial.count, amount: dashboardData.paymentStatus.partial.amount }
+      }
     });
     
     return res.json(dashboardData);
@@ -250,6 +266,15 @@ router.get("/revenue", async (req, res) => {
       paidQuotations: revenueData.filter(r => r.status === 'PAID').length,
       pendingQuotations: revenueData.filter(r => ['PENDING', 'OVERDUE'].includes(r.status)).length
     };
+
+    console.log("Revenue tracking for owner:", {
+      ownerId: owner.id,
+      ownerName: owner.name,
+      totalRevenue: summary.totalRevenue,
+      totalCollected: summary.totalCollected,
+      totalPending: summary.totalPending,
+      totalQuotations: summary.totalQuotations
+    });
 
     return res.json({
       summary,

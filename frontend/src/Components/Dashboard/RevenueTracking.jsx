@@ -17,7 +17,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Calendar,
-  Target
+  Target,
+  ArrowLeft
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -324,12 +325,23 @@ const RevenueTracking = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
-            Revenue Tracking
-          </h1>
-          <p className="text-md text-zinc-600">
-            Monitor total revenue vs collected amounts and payment status
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
+                Revenue Tracking
+              </h1>
+              <p className="text-md text-zinc-600">
+                Monitor total revenue vs collected amounts and payment status
+              </p>
+            </div>
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center space-x-2 px-4 py-2 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Go Back</span>
+            </button>
+          </div>
         </div>
 
         {revenueData && revenueData.summary.totalQuotations > 0 ? (

@@ -16,7 +16,8 @@ import {
   PieChart,
   Activity,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  ArrowLeft
 } from 'lucide-react';
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -103,12 +104,23 @@ const MonthlyAnalytics = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
-            Monthly Analytics
-          </h1>
-          <p className="text-md text-zinc-600">
-            Detailed breakdown of your business performance
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
+                Monthly Analytics
+              </h1>
+              <p className="text-md text-zinc-600">
+                Detailed breakdown of your business performance
+              </p>
+            </div>
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center space-x-2 px-4 py-2 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Go Back</span>
+            </button>
+          </div>
         </div>
 
         {/* Month/Year Selector */}

@@ -171,7 +171,7 @@ const OwnerDashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="mb-4 sm:mb-0">
               <h1 className="text-2xl lg:text-4xl font-bold text-zinc-900 mb-2">
-                Welcome back, {dashboardData.owner.name}! ��
+                Welcome back, {dashboardData.owner.name}! 
               </h1>
               <p className="text-md text-zinc-600">
                 {dashboardData.owner.companyName} • Complete Business Overview
@@ -287,15 +287,24 @@ const OwnerDashboard = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-zinc-600">Paid</span>
-                      <span className="font-semibold text-green-600">{dashboardData.paymentStatus.paid}</span>
+                      <div className="text-right">
+                        <div className="font-semibold text-green-600">{dashboardData.paymentStatus.paid.count}</div>
+                        <div className="text-xs text-green-500">{formatCurrency(dashboardData.paymentStatus.paid.amount)}</div>
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-zinc-600">Pending</span>
-                      <span className="font-semibold text-orange-600">{dashboardData.paymentStatus.pending}</span>
+                      <div className="text-right">
+                        <div className="font-semibold text-orange-600">{dashboardData.paymentStatus.pending.count}</div>
+                        <div className="text-xs text-orange-500">{formatCurrency(dashboardData.paymentStatus.pending.amount)}</div>
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-zinc-600">Overdue</span>
-                      <span className="font-semibold text-red-600">{dashboardData.paymentStatus.overdue}</span>
+                      <div className="text-right">
+                        <div className="font-semibold text-red-600">{dashboardData.paymentStatus.overdue.count}</div>
+                        <div className="text-xs text-red-500">{formatCurrency(dashboardData.paymentStatus.overdue.amount)}</div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -577,19 +586,31 @@ const PaymentsTab = ({ dashboardData, formatCurrency, formatDate }) => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-zinc-600">Paid</span>
-                <span className="font-bold text-green-600">{dashboardData.paymentStatus.paid}</span>
+                <div className="text-right">
+                  <div className="font-bold text-green-600">{dashboardData.paymentStatus.paid.count}</div>
+                  <div className="text-xs text-green-500">{formatCurrency(dashboardData.paymentStatus.paid.amount)}</div>
+                </div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-zinc-600">Pending</span>
-                <span className="font-bold text-orange-600">{dashboardData.paymentStatus.pending}</span>
+                <div className="text-right">
+                  <div className="font-bold text-orange-600">{dashboardData.paymentStatus.pending.count}</div>
+                  <div className="text-xs text-orange-500">{formatCurrency(dashboardData.paymentStatus.pending.amount)}</div>
+                </div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-zinc-600">Overdue</span>
-                <span className="font-bold text-red-600">{dashboardData.paymentStatus.overdue}</span>
+                <div className="text-right">
+                  <div className="font-bold text-red-600">{dashboardData.paymentStatus.overdue.count}</div>
+                  <div className="text-xs text-red-500">{formatCurrency(dashboardData.paymentStatus.overdue.amount)}</div>
+                </div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-zinc-600">Partial</span>
-                <span className="font-bold text-blue-600">{dashboardData.paymentStatus.partial}</span>
+                <div className="text-right">
+                  <div className="font-bold text-blue-600">{dashboardData.paymentStatus.partial.count}</div>
+                  <div className="text-xs text-blue-500">{formatCurrency(dashboardData.paymentStatus.partial.amount)}</div>
+                </div>
               </div>
             </div>
           </CardContent>
