@@ -81,8 +81,38 @@ const BusinessDetailsCard = ({ ownerData, onEdit }) => {
               icon={<Landmark className="w-3 h-3" />}
             />
             <DetailItem 
-              label="Business Address" 
-              value={formatValue(ownerData.address)}
+              label="Recipient Name" 
+              value={formatValue(ownerData.recipientName)}
+              icon={<User className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="House/Flat Number" 
+              value={formatValue(ownerData.houseNumber)}
+              icon={<MapPin className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="Street Name" 
+              value={formatValue(ownerData.streetName)}
+              icon={<MapPin className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="Locality/Area" 
+              value={formatValue(ownerData.locality)}
+              icon={<MapPin className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="City" 
+              value={formatValue(ownerData.city)}
+              icon={<MapPin className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="PIN Code" 
+              value={formatValue(ownerData.pinCode)}
+              icon={<MapPin className="w-3 h-3" />}
+            />
+            <DetailItem 
+              label="State" 
+              value={formatValue(ownerData.state)}
               icon={<MapPin className="w-3 h-3" />}
             />
           </div>

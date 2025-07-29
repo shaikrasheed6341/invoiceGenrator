@@ -266,14 +266,21 @@ const CustomerCard = ({ customer, onEdit, onDelete }) => {
             </div>
           </div>
         </div>
-{/* Address */}
+{/* Address Details */}
 <div className="flex items-start space-x-3 group/item mt-4">
           <div className="w-8 h-8 bg-zinc-50 rounded-lg flex items-center justify-center group-hover/item:bg-zinc-100 transition-colors mt-0.5">
             <MapPin className="w-3.5 h-3.5 text-zinc-600" />
           </div>
-          <div className="flex-1  min-w-0">
+          <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Address</p>
-            <p className="text-sm font-semibold text-gray-900 leading-relaxed">{customer.address}</p>
+            <div className="text-sm font-semibold text-gray-900 leading-relaxed">
+              {customer.recipientName && <p>{customer.recipientName}</p>}
+              {customer.houseNumber && <p>{customer.houseNumber}</p>}
+              {customer.streetName && <p>{customer.streetName}</p>}
+              {customer.locality && <p>{customer.locality}</p>}
+              {customer.city && customer.pinCode && <p>{customer.city} - {customer.pinCode}</p>}
+              {customer.state && <p>{customer.state}</p>}
+            </div>
           </div>
         </div>
         {/* Created Date */}

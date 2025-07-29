@@ -153,6 +153,24 @@ const StreamlinedQuotation = () => {
     }, 0);
   };
 
+  const calculateSubtotal = () => {
+    return quotationItems.reduce((total, item) => {
+      if (item.item) {
+        return total + (item.quantity * item.item.rate);
+      }
+      return total;
+    }, 0);
+  };
+
+  const calculateTotalTax = () => {
+    return quotationItems.reduce((total, item) => {
+      if (item.item) {
+        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+      }
+      return total;
+    }, 0);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -486,7 +504,7 @@ const StreamlinedQuotation = () => {
                       <option value="">Select item</option>
                       {Array.isArray(items) && items.map((product) => (
                         <option key={product.id} value={product.id}>
-                          {product.name} - ₹{product.rate} ({product.tax}% tax)
+                          {product.name} - ₹{Number(product.rate).toLocaleString('en-IN')} ({product.tax}% tax)
                         </option>
                       ))}
                     </select>
@@ -516,8 +534,23 @@ const StreamlinedQuotation = () => {
 
             {/* Total Calculation */}
             <div className="bg-gray-50 p-4 rounded-xl">
-              <h3 className="text-lg font-semibold text-zinc-800 mb-2">Total Amount</h3>
-              <p className="text-2xl font-bold text-zinc-900">₹ {calculateTotal().toFixed(2)}</p>
+              <h3 className="text-lg font-semibold text-zinc-800 mb-3">Amount Breakdown</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Subtotal (Before Tax):</span>
+                  <span className="font-medium">₹ {Number(calculateSubtotal()).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Total Tax:</span>
+                  <span className="font-medium text-blue-600">₹ {Number(calculateTotalTax()).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div className="border-t border-gray-300 pt-2 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">Total Amount:</span>
+                    <span className="text-2xl font-bold text-zinc-900">₹ {Number(calculateTotal()).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Submit Button */}

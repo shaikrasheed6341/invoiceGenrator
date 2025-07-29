@@ -31,7 +31,16 @@ model Owner {
   email       String      @unique
   phone       String?
   gstNumber   String?
-  address     String
+  
+  // Detailed address fields
+  recipientName    String?
+  houseNumber      String?
+  streetName       String?
+  locality         String?
+  city             String?
+  pinCode          String?
+  state            String?
+  
   compneyname String
   
   userId      String      @unique
@@ -52,10 +61,18 @@ model Owner {
 model Customer {
   id         String      @id @default(uuid())
   name       String
-  address    String
   phone      String
   gstnumber  String?
   pannumber  String?
+  
+  // Detailed address fields
+  recipientName    String?
+  houseNumber      String?
+  streetName       String?
+  locality         String?
+  city             String?
+  pinCode          String?
+  state            String?
   
   // Many customers belong to one owner
   ownerId    String

@@ -41,11 +41,24 @@ router.get("/myowner", async (req, res) => {
 
 router.post("/insertownerdata", async (req, res) => {
   try {
-    const { name, email, phone, gstNumber, compneyname, address } = req.body;
+    const { 
+      name, 
+      email, 
+      phone, 
+      gstNumber, 
+      compneyname, 
+      recipientName,
+      houseNumber,
+      streetName,
+      locality,
+      city,
+      pinCode,
+      state
+    } = req.body;
     const userId = req.userId;
 
-    if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!name || !email || !phone || !gstNumber || !compneyname) {
+      return res.status(400).json({ message: "Name, email, phone, GST number, and company name are required" });
     }
 
     // Only allow one owner per user
@@ -58,7 +71,21 @@ router.post("/insertownerdata", async (req, res) => {
 
     // Create owner and link to user
     const owner = await prisma.owner.create({
-      data: { name, email, phone, gstNumber, compneyname, address, userId },
+      data: { 
+        name, 
+        email, 
+        phone, 
+        gstNumber, 
+        compneyname, 
+        recipientName,
+        houseNumber,
+        streetName,
+        locality,
+        city,
+        pinCode,
+        state,
+        userId 
+      },
     });
 
     return res.json({ message: "Your data was successfully stored", owner });
@@ -73,10 +100,23 @@ router.post("/insertownerdata", async (req, res) => {
 router.put("/updateowner", async (req, res) => {
   try {
     const userId = req.userId;
-    const { name, email, phone, gstNumber, compneyname, address } = req.body;
+    const { 
+      name, 
+      email, 
+      phone, 
+      gstNumber, 
+      compneyname, 
+      recipientName,
+      houseNumber,
+      streetName,
+      locality,
+      city,
+      pinCode,
+      state
+    } = req.body;
 
-    if (!name || !email || !phone || !gstNumber || !compneyname || !address) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!name || !email || !phone || !gstNumber || !compneyname) {
+      return res.status(400).json({ message: "Name, email, phone, GST number, and company name are required" });
     }
 
     // Find owner by userId
@@ -91,7 +131,20 @@ router.put("/updateowner", async (req, res) => {
     // Update owner data
     const updatedOwner = await prisma.owner.update({
       where: { userId },
-      data: { name, email, phone, gstNumber, compneyname, address },
+      data: { 
+        name, 
+        email, 
+        phone, 
+        gstNumber, 
+        compneyname, 
+        recipientName,
+        houseNumber,
+        streetName,
+        locality,
+        city,
+        pinCode,
+        state
+      },
     });
 
     return res.json({ 

@@ -11,11 +11,20 @@ const UpdateCustomer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [phone, setPhone] = useState("");
+  const [searchPhone, setSearchPhone] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [customerFound, setCustomerFound] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    address: "",
     gstnumber: "",
-    pannumber: ""
+    pannumber: "",
+    recipientName: "",
+    houseNumber: "",
+    streetName: "",
+    locality: "",
+    city: "",
+    pinCode: "",
+    state: ""
   });
 
   // Check if we're editing an existing customer
@@ -23,11 +32,19 @@ const UpdateCustomer = () => {
     if (location.state?.customer) {
       const customer = location.state.customer;
       setPhone(customer.phone);
+      setSearchPhone(customer.phone);
+      setCustomerFound(true);
       setFormData({
         name: customer.name,
-        address: customer.address,
         gstnumber: customer.gstnumber,
-        pannumber: customer.pannumber
+        pannumber: customer.pannumber,
+        recipientName: customer.recipientName || "",
+        houseNumber: customer.houseNumber || "",
+        streetName: customer.streetName || "",
+        locality: customer.locality || "",
+        city: customer.city || "",
+        pinCode: customer.pinCode || "",
+        state: customer.state || ""
       });
     }
   }, [location.state]);
@@ -36,6 +53,88 @@ const UpdateCustomer = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Search for customer by phone number
+  const handleSearchCustomer = async (e) => {
+    e.preventDefault();
+    if (!searchPhone) {
+      toast.error("Please enter a phone number to search.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        toast.error("Please login first", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      const response = await axios.get(`${BACKENDURL}/customer/get/${searchPhone}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const customer = response.data;
+      setPhone(customer.phone);
+      setCustomerFound(true);
+      setFormData({
+        name: customer.name,
+        gstnumber: customer.gstnumber || "",
+        pannumber: customer.pannumber || "",
+        recipientName: customer.recipientName || "",
+        houseNumber: customer.houseNumber || "",
+        streetName: customer.streetName || "",
+        locality: customer.locality || "",
+        city: customer.city || "",
+        pinCode: customer.pinCode || "",
+        state: customer.state || ""
+      });
+
+      toast.success("Customer found! You can now update their details.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+
+    } catch (err) {
+      console.error("Error searching customer:", err);
+      toast.error(err.response?.data?.message || "Customer not found.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+      setCustomerFound(false);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   // Handle Update Request
@@ -68,7 +167,7 @@ const UpdateCustomer = () => {
         return;
       }
 
-      const response = await axios.put(`${BACKENDURL}/customer/${phone}`, formData, {
+      const response = await axios.put(`${BACKENDURL}/customer/update/${phone}`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -89,7 +188,18 @@ const UpdateCustomer = () => {
         navigate('/customers');
       } else {
       setPhone("");
-        setFormData({ name: "", address: "", gstnumber: "", pannumber: "" });
+        setFormData({ 
+        name: "", 
+        gstnumber: "", 
+        pannumber: "",
+        recipientName: "",
+        houseNumber: "",
+        streetName: "",
+        locality: "",
+        city: "",
+        pinCode: "",
+        state: ""
+      });
       }
       
       // Refresh dashboard stats
@@ -144,17 +254,36 @@ const UpdateCustomer = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleUpdate} className="space-y-6">
-          {!location.state?.isEditing && (
-          <InputField
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-          )}
+        {!location.state?.isEditing && !customerFound && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-zinc-800 mb-4">Search Customer</h3>
+            <div className="flex gap-3">
+              <input
+                type="tel"
+                placeholder="Enter phone number to search"
+                value={searchPhone}
+                onChange={(e) => setSearchPhone(e.target.value)}
+                className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70"
+              />
+              <button
+                type="button"
+                onClick={handleSearchCustomer}
+                disabled={isSearching}
+                className="px-6 py-3 bg-zinc-900 text-white font-semibold rounded-xl shadow-lg hover:bg-zinc-800 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSearching ? "Searching..." : "Search"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {customerFound && (
+          <form onSubmit={handleUpdate} className="space-y-6">
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm">
+                <strong>Customer Found:</strong> {phone}
+              </p>
+            </div>
           <InputField
             label="Customer Name"
             name="name"
@@ -164,12 +293,54 @@ const UpdateCustomer = () => {
             required
           />
           <InputField
-            label="Address"
-            name="address"
+            label="Recipient Name"
+            name="recipientName"
             type="text"
-            value={formData.address}
+            value={formData.recipientName}
+            onChange={handleChange}
+          />
+          <InputField
+            label="House/Flat Number"
+            name="houseNumber"
+            type="text"
+            value={formData.houseNumber}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Street Name"
+            name="streetName"
+            type="text"
+            value={formData.streetName}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Locality/Area"
+            name="locality"
+            type="text"
+            value={formData.locality}
+            onChange={handleChange}
+          />
+          <InputField
+            label="City"
+            name="city"
+            type="text"
+            value={formData.city}
             onChange={handleChange}
             required
+          />
+          <InputField
+            label="PIN Code"
+            name="pinCode"
+            type="text"
+            value={formData.pinCode}
+            onChange={handleChange}
+          />
+          <InputField
+            label="State"
+            name="state"
+            type="text"
+            value={formData.state}
+            onChange={handleChange}
           />
           <InputField
             label="GST Number"
@@ -212,6 +383,111 @@ const UpdateCustomer = () => {
             </button>
           </div>
         </form>
+        )}
+
+        {/* Show form for editing existing customer */}
+        {location.state?.isEditing && (
+          <form onSubmit={handleUpdate} className="space-y-6">
+            <InputField
+              label="Customer Name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="Recipient Name"
+              name="recipientName"
+              type="text"
+              value={formData.recipientName}
+              onChange={handleChange}
+            />
+            <InputField
+              label="House/Flat Number"
+              name="houseNumber"
+              type="text"
+              value={formData.houseNumber}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Street Name"
+              name="streetName"
+              type="text"
+              value={formData.streetName}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Locality/Area"
+              name="locality"
+              type="text"
+              value={formData.locality}
+              onChange={handleChange}
+            />
+            <InputField
+              label="City"
+              name="city"
+              type="text"
+              value={formData.city}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="PIN Code"
+              name="pinCode"
+              type="text"
+              value={formData.pinCode}
+              onChange={handleChange}
+            />
+            <InputField
+              label="State"
+              name="state"
+              type="text"
+              value={formData.state}
+              onChange={handleChange}
+            />
+            <InputField
+              label="GST Number"
+              name="gstnumber"
+              type="text"
+              value={formData.gstnumber}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              label="PAN Number"
+              name="pannumber"
+              type="text"
+              value={formData.pannumber}
+              onChange={handleChange}
+              required
+            />
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-zinc-900 text-white text-text font-semibold py-3.5 rounded-xl shadow-lg hover: transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-accent/50"
+            >
+              Update Customer
+            </button>
+
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={goBack}
+                className="flex-1 bg-zinc-900 text-zinc-100 font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+              >
+                Back
+              </button>
+              <button
+                onClick={goToAllCustomers}
+                className="flex-1 bg-zinc-900 text-white font-medium py-3 rounded-xl hover: transition-all duration-300 transform hover:-translate-y-1"
+              >
+                View All Customers
+              </button>
+            </div>
+          </form>
+        )}
       </div>
       <ToastContainer />
     </div>

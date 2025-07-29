@@ -20,6 +20,22 @@ const Invoice = () => {
     );
   }
 
+  const calculateSubtotal = (items) => {
+    return (
+      items?.reduce((total, item) => {
+        return total + (item.quantity * item.item.rate);
+      }, 0).toFixed(2) || "0.00"
+    );
+  };
+
+  const calculateTotalTax = (items) => {
+    return (
+      items?.reduce((total, item) => {
+        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+      }, 0).toFixed(2) || "0.00"
+    );
+  };
+
   const calculateTotalAmount = (items) => {
     return (
       items?.reduce((total, item) => {
@@ -28,8 +44,10 @@ const Invoice = () => {
     );
   };
 
+  const subtotal = calculateSubtotal(quotation.items);
+  const totalTax = calculateTotalTax(quotation.items);
   const totalAmount = calculateTotalAmount(quotation.items);
-  const totalAmountInWords =converter.toWords(totalAmount)
+  const totalAmountInWords = converter.toWords(totalAmount);
   // console.log(totalAmountInWords)
 
   const handleGoToDashboard = () => {
@@ -217,26 +235,26 @@ const Invoice = () => {
         </div>
 
         {/* Quotation Info */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-100 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
-          <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-0">Quotation No: {quotation.number}</h3>
-          <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-700">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-100 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-0">Quotation No: {quotation.number}</h3>
+          <p className="text-xs sm:text-sm font-semibold text-gray-700">
             <strong>Date:</strong> {new Date().toLocaleDateString("en-IN")}
           </p>
         </div>
 
         {/* Billing and Shipping Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-          <div className="border border-gray-300 p-3 sm:p-4 rounded">
-            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Bill To</h4>
-            <p className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
-            <p className="text-xs sm:text-sm text-gray-700">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <div className="border border-gray-300 p-2 sm:p-3 rounded">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 border-b border-gray-300 pb-1">Bill To</h4>
+            <p className="font-semibold text-xs sm:text-sm text-gray-900 mb-1">{quotation.customer?.name}</p>
+            <p className="text-xs text-gray-700">
               {quotation.customer?.address || "No address provided"}
             </p>
           </div>
-          <div className="border border-gray-300 p-3 sm:p-4 rounded">
-            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 border-b border-gray-300 pb-1">Ship To</h4>
-            <p className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 mb-1">{quotation.customer?.name}</p>
-            <p className="text-xs sm:text-sm text-gray-700">
+          <div className="border border-gray-300 p-2 sm:p-3 rounded">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 border-b border-gray-300 pb-1">Ship To</h4>
+            <p className="font-semibold text-xs sm:text-sm text-gray-900 mb-1">{quotation.customer?.name}</p>
+            <p className="text-xs text-gray-700">
               {quotation.customer?.address || "No address provided"}
             </p>
           </div>
@@ -259,10 +277,10 @@ const Invoice = () => {
                 <tr key={index} className="border-b border-gray-300 hover:bg-gray-50 transition-colors">
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.name || "N/A"}</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.quantity || "0"}</td>
-                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">₹ {item.item?.rate || "0"}</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">₹ {Number(item.item?.rate || 0).toLocaleString('en-IN')}</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.tax || "0"}%</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300 font-semibold">
-                    ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
+                    ₹ {Number(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
               ))}
@@ -271,40 +289,51 @@ const Invoice = () => {
         </div>
 
         {/* Total Amount */}
-        <div className="text-right mb-4 sm:mb-6 mr-4 sm:mr-8 lg:mr-20 border-t-2 border-gray-300 pt-4">
-          <h4 className="text-sm sm:text-base lg:text-xl font-bold text-gray-900 mb-2">
-            Total Amount: <span className="text-base sm:text-lg lg:text-2xl font-bold text-gray-900">₹ {totalAmount}</span>
-          </h4>
-          <p className="text-xs sm:text-sm text-gray-700 capitalize leading-tight">
-            <strong>In Words:</strong> {totalAmountInWords} Rupees
+        <div className="text-right mb-4 sm:mb-6 mr-4 sm:mr-8 lg:mx-28  ">
+          <div className="space-y-1 mb-2">
+            <div className="flex justify-end items-center">
+              <span className="text-sm sm:text-base text-gray-600 mr-4">Subtotal :</span>
+              <span className="text-sm sm:text-base font-medium">₹ {Number(subtotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-end items-center">
+              <span className="text-sm sm:text-base text-gray-600 mr-8">Total Tax :</span>
+              <span className="text-sm sm:text-base font-medium text-red-600">₹ {Number(totalTax).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-end items-center border-t-2 border-black  pt-2">
+              <span className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 mr-4">Total Amount:</span>
+              <span className="text-base sm:text-lg lg:text-lg font-bold text-gray-900">₹ {Number(totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+          <p className="text-sm sm:text-sm lg:text-sm text-gray-700 capitalize leading-tight">
+             {totalAmountInWords} Rupees
           </p>
         </div>
 
         {/* Bank Details */}
         {quotation.bankdetails && (
-          <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
-            <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 border-b border-gray-300 pb-1">Bank Details</h4>
-            <div className="grid grid-cols-1 gap-1 sm:gap-2">
-              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
-              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
-              <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
+          <div className="border border-gray-300 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2 border-b border-gray-300 pb-1">Bank Details</h4>
+            <div className="grid grid-cols-1 gap-1">
+              <p className="text-xs text-gray-700"><strong>Bank Name:</strong> {quotation.bankdetails.bank}</p>
+              <p className="text-xs text-gray-700"><strong>Account No:</strong> {quotation.bankdetails.accountno}</p>
+              <p className="text-xs text-gray-700"><strong>IFSC Code:</strong> {quotation.bankdetails.ifsccode}</p>
             </div>
           </div>
         )}
 
         {/* Payment Details */}
-        <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
-          <div className="space-y-1 sm:space-y-2">
-            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Payment Details</h3>
-            <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
-            <p className="text-xs sm:text-sm lg:text-lg text-gray-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
+        <div className="border border-gray-300 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
+          <div className="space-y-1">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-900">Payment Details</h3>
+            <p className="text-xs text-gray-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
+            <p className="text-xs text-gray-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
           </div>
         </div>
 
         {/* Terms & Conditions */}
-        <div className="border border-gray-300 p-3 sm:p-4 mb-4 sm:mb-6 rounded">
-          <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 border-b border-gray-300 pb-1">Terms & Conditions</h3>
-          <ul className="list-disc list-outside pl-4 sm:pl-6 text-xs sm:text-sm lg:text-lg text-gray-700 space-y-1 sm:space-y-2">
+        <div className="border border-gray-300 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2 border-b border-gray-300 pb-1">Terms & Conditions</h3>
+          <ul className="list-disc list-outside pl-3 sm:pl-4 text-xs text-gray-700 space-y-0.5 sm:space-y-1">
             <li className="leading-relaxed">
               Goods once sold will not be taken back.
             </li>

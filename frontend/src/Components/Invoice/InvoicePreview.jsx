@@ -13,6 +13,22 @@ const InvoicePreview = ({ quotation }) => {
     );
   }
 
+  const calculateSubtotal = (items) => {
+    return (
+      items?.reduce((total, item) => {
+        return total + (item.quantity * item.item.rate);
+      }, 0).toFixed(2) || "0.00"
+    );
+  };
+
+  const calculateTotalTax = (items) => {
+    return (
+      items?.reduce((total, item) => {
+        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+      }, 0).toFixed(2) || "0.00"
+    );
+  };
+
   const calculateTotalAmount = (items) => {
     return (
       items?.reduce((total, item) => {
@@ -21,6 +37,8 @@ const InvoicePreview = ({ quotation }) => {
     );
   };
 
+  const subtotal = calculateSubtotal(quotation.items);
+  const totalTax = calculateTotalTax(quotation.items);
   const totalAmount = calculateTotalAmount(quotation.items);
   const totalAmountInWords = converter.toWords(totalAmount);
 
@@ -87,10 +105,10 @@ const InvoicePreview = ({ quotation }) => {
                   <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                     <td className="p-2 text-md text-zinc-800 truncate">{item.item?.name || "N/A"}</td>
                     <td className="p-2 text-md text-zinc-800">{item.quantity || "0"}</td>
-                    <td className="p-2 text-md text-zinc-800">₹ {item.item?.rate || "0"}</td>
+                    <td className="p-2 text-md text-zinc-800">₹ {Number(item.item?.rate || 0).toLocaleString('en-IN')}</td>
                     <td className="p-2 text-md text-zinc-800">{item.item?.tax || "0"}%</td>
                     <td className="p-2 text-md text-zinc-800">
-                      ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
+                      ₹ {Number(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                   </tr>
                 ))
@@ -107,10 +125,21 @@ const InvoicePreview = ({ quotation }) => {
 
         {/* Total Amount */}
         <div className="text-right mb-4">
-          <h4 className="text-sm font-semibold text-zinc-800 mr-15">
-            Total Amount: <span className="text-sm font-bold text-zinc-900">₹ {totalAmount}</span>
-          </h4>
-          <p className="text-xs mr-4 text-zinc-600 mt-1 capitalize leading-tight">
+          <div className="space-y-1">
+            <div className="flex justify-end items-center">
+              <span className="text-sm text-zinc-600 mr-4">Subtotal (Before Tax):</span>
+              <span className="text-sm font-medium">₹ {Number(subtotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-end items-center">
+              <span className="text-sm text-zinc-600 mr-4">Total Tax:</span>
+              <span className="text-sm font-medium text-blue-600">₹ {Number(totalTax).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-end items-center border-t border-gray-300 pt-1">
+              <span className="text-sm font-semibold text-zinc-800 mr-4">Total Amount:</span>
+              <span className="text-sm font-bold text-zinc-900">₹ {Number(totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+          <p className="text-xs mr-4 text-zinc-600 mt-2 capitalize leading-tight">
             <div className="flex justify-end text-xs text-black">{totalAmountInWords} Rupees </div>
           </p>
         </div>

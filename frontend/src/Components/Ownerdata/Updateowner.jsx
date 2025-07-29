@@ -21,8 +21,14 @@ const UpdateOwner = () => {
     email: "",
     phone: "",
     compneyname: "",
-    address: "",
     gstNumber: "",
+    recipientName: "",
+    houseNumber: "",
+    streetName: "",
+    locality: "",
+    city: "",
+    pinCode: "",
+    state: "",
   });
 
   // Fetch current owner data
@@ -46,8 +52,14 @@ const UpdateOwner = () => {
           email: response.data.owner.email || "",
           phone: response.data.owner.phone || "",
           compneyname: response.data.owner.compneyname || "",
-          address: response.data.owner.address || "",
           gstNumber: response.data.owner.gstNumber || "",
+          recipientName: response.data.owner.recipientName || "",
+          houseNumber: response.data.owner.houseNumber || "",
+          streetName: response.data.owner.streetName || "",
+          locality: response.data.owner.locality || "",
+          city: response.data.owner.city || "",
+          pinCode: response.data.owner.pinCode || "",
+          state: response.data.owner.state || "",
         });
       }
     } catch (error) {
@@ -75,8 +87,14 @@ const UpdateOwner = () => {
       email: ownerData.email || "",
       phone: ownerData.phone || "",
       compneyname: ownerData.compneyname || "",
-      address: ownerData.address || "",
       gstNumber: ownerData.gstNumber || "",
+      recipientName: ownerData.recipientName || "",
+      houseNumber: ownerData.houseNumber || "",
+      streetName: ownerData.streetName || "",
+      locality: ownerData.locality || "",
+      city: ownerData.city || "",
+      pinCode: ownerData.pinCode || "",
+      state: ownerData.state || "",
     });
   };
 
@@ -243,12 +261,53 @@ const UpdateOwner = () => {
                     required
                   />
                   <InputField
-                    label="Business Address"
-                    name="address"
+                    label="Recipient Name"
+                    name="recipientName"
                     type="text"
-                    value={formData.address}
+                    value={formData.recipientName}
                     onChange={handleChange}
-                    required
+                  />
+                  <InputField
+                    label="House/Flat Number"
+                    name="houseNumber"
+                    type="text"
+                    value={formData.houseNumber}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="Street Name"
+                    name="streetName"
+                    type="text"
+                    value={formData.streetName}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="Locality/Area"
+                    name="locality"
+                    type="text"
+                    value={formData.locality}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="City"
+                    name="city"
+                    type="text"
+                    value={formData.city}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="PIN Code"
+                    name="pinCode"
+                    type="text"
+                    value={formData.pinCode}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="State"
+                    name="state"
+                    type="text"
+                    value={formData.state}
+                    onChange={handleChange}
                   />
                 </div>
 

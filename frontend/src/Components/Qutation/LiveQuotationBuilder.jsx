@@ -122,9 +122,16 @@ const LiveQuotationBuilder = () => {
         quantity: item.quantity
       }));
 
-    const totalAmount = validItems.reduce((total, item) => {
-      return total + item.quantity * item.item.rate * (1 + item.item.tax / 100);
+    // Calculate detailed breakdown
+    const subtotal = validItems.reduce((total, item) => {
+      return total + (item.quantity * item.item.rate);
     }, 0);
+
+    const totalTax = validItems.reduce((total, item) => {
+      return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+    }, 0);
+
+    const totalAmount = subtotal + totalTax;
 
     setPreviewData({
       owner: owner,
@@ -132,7 +139,9 @@ const LiveQuotationBuilder = () => {
       bankdetails: formData.selectedBankDetails,
       items: validItems,
       number: formData.quotationNumber,
-      totalAmount: totalAmount
+      totalAmount: totalAmount,
+      subtotal: subtotal,
+      totalTax: totalTax
     });
   };
 
@@ -465,7 +474,7 @@ const LiveQuotationBuilder = () => {
                         <option value="">Select item</option>
                         {items.map((product) => (
                           <option key={product.id} value={product.id}>
-                            {product.name} - ₹{product.rate}
+                            {product.name} - ₹{Number(product.rate).toLocaleString('en-IN')}
                           </option>
                         ))}
                       </select>
@@ -494,10 +503,23 @@ const LiveQuotationBuilder = () => {
 
               {/* Total Calculation */}
               <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-semibold mb-2">Total Amount</h3>
-                <p className="text-2xl font-bold text-gray-900">
-                  ₹ {previewData.totalAmount.toFixed(2)}
-                </p>
+                <h3 className="text-lg font-semibold mb-3">Amount Breakdown</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Subtotal (Before Tax):</span>
+                    <span className="font-medium">₹ {Number(previewData.subtotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Total Tax:</span>
+                    <span className="font-medium text-blue-600">₹ {Number(previewData.totalTax || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="border-t border-gray-300 pt-2 mt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-semibold">Total Amount:</span>
+                      <span className="text-2xl font-bold text-gray-900">₹ {Number(previewData.totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

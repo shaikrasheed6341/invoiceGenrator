@@ -18,8 +18,14 @@ const SubmitOwnerData = () => {
     email: "",
     phone: "",
     compneyname: "",
-    address: "",
     gstNumber: "",
+    recipientName: "",
+    houseNumber: "",
+    streetName: "",
+    locality: "",
+    city: "",
+    pinCode: "",
+    state: "",
   });
   const [ownerData, setOwnerData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -197,12 +203,53 @@ const SubmitOwnerData = () => {
               required
             />
             <InputField
-              label="Address"
-              name="address"
+              label="Recipient Name"
+              name="recipientName"
               type="text"
-              value={formData.address}
+              value={formData.recipientName}
               onChange={handleChange}
-              required
+            />
+            <InputField
+              label="House/Flat Number"
+              name="houseNumber"
+              type="text"
+              value={formData.houseNumber}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Street Name"
+              name="streetName"
+              type="text"
+              value={formData.streetName}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Locality/Area"
+              name="locality"
+              type="text"
+              value={formData.locality}
+              onChange={handleChange}
+            />
+            <InputField
+              label="City"
+              name="city"
+              type="text"
+              value={formData.city}
+              onChange={handleChange}
+            />
+            <InputField
+              label="PIN Code"
+              name="pinCode"
+              type="text"
+              value={formData.pinCode}
+              onChange={handleChange}
+            />
+            <InputField
+              label="State"
+              name="state"
+              type="text"
+              value={formData.state}
+              onChange={handleChange}
             />
 
             <Button

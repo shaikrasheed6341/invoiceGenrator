@@ -5,10 +5,87 @@ import authmiddle from './authmiddleware.js';
 const prisma = new PrismaClient();
 const router = express.Router();
 
-//http://localhost:5000/custmor/345678456
+// Update customer by phone (authenticated route)
+router.put('/update/:phone', authmiddle, async (req, res) => {
+    const { phone } = req.params;
+    const { 
+        name, 
+        gstnumber,
+        pannumber,
+        recipientName,
+        houseNumber,
+        streetName,
+        locality,
+        city,
+        pinCode,
+        state
+    } = req.body;
+    
+    try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        // Find customer by phone and owner
+        const existingCustomer = await prisma.customer.findFirst({
+            where: { 
+                phone: phone,
+                ownerId: owner.id
+            }
+        });
+        
+        if (!existingCustomer) {
+            return res.status(404).json({ message: "Customer not found or you don't have permission to update this customer." });
+        }
+
+        const updatedCustomer = await prisma.customer.update({
+            where: { id: existingCustomer.id },
+            data: { 
+                name, 
+                gstnumber,
+                pannumber,
+                recipientName,
+                houseNumber,
+                streetName,
+                locality,
+                city,
+                pinCode,
+                state
+            }
+        });
+        
+        console.log(updatedCustomer);
+        return res.json({ 
+            message: "Customer updated successfully", 
+            customer: updatedCustomer 
+        });
+
+    } catch (err) {
+        console.error("Error updating customer:", err);
+        return res.status(500).json({ message: "Error updating customer", error: err.message });
+    }
+});
+
+// Legacy route for backward compatibility (deprecated)
 router.put('/:phone', async (req, res) => {
     const { phone } = req.params;
-    const { name, address,gstnumber,pannumber } = req.body;
+    const { 
+        name, 
+        gstnumber,
+        pannumber,
+        recipientName,
+        houseNumber,
+        streetName,
+        locality,
+        city,
+        pinCode,
+        state
+    } = req.body;
     try {
         const existcustmer = await prisma.customer.findUnique({
             where: { phone }
@@ -18,7 +95,18 @@ router.put('/:phone', async (req, res) => {
         }
         const updatecustmer = await prisma.customer.update({
             where: { phone },
-            data: { name, address,gstnumber,pannumber}
+            data: { 
+                name, 
+                gstnumber,
+                pannumber,
+                recipientName,
+                houseNumber,
+                streetName,
+                locality,
+                city,
+                pinCode,
+                state
+            }
         })
         console.log(updatecustmer)
         return res.json({ message: `sucesssfully updated custmer `,updatecustmer })
@@ -40,10 +128,22 @@ router.put('/:phone', async (req, res) => {
 //http://localhost:5000/customer/custmor
 router.post("/custmor", authmiddle, async (req, res) => {
     try {
-        const { name, address, phone, gstnumber, pannumber } = req.body;
+        const { 
+            name, 
+            phone, 
+            gstnumber, 
+            pannumber,
+            recipientName,
+            houseNumber,
+            streetName,
+            locality,
+            city,
+            pinCode,
+            state
+        } = req.body;
 
-        if (!name || !address || !phone || !gstnumber || !pannumber) {
-            return res.status(400).json({ message: "You need to fill all inputs" });
+        if (!name || !phone) {
+            return res.status(400).json({ message: "Name and phone are required" });
         }
 
         // Get the owner for the authenticated user
@@ -58,10 +158,16 @@ router.post("/custmor", authmiddle, async (req, res) => {
         const customer = await prisma.customer.create({
             data: {
                 name,
-                address,
                 phone,
                 gstnumber,
                 pannumber,
+                recipientName,
+                houseNumber,
+                streetName,
+                locality,
+                city,
+                pinCode,
+                state,
                 ownerId: owner.id // Link to the owner
             }
         });
@@ -76,7 +182,39 @@ router.post("/custmor", authmiddle, async (req, res) => {
 });
 
 
-//http://localhost:5000/custmor/475879
+// Get customer by phone (authenticated route)
+router.get("/get/:phone", authmiddle, async (req, res) => {
+    const { phone } = req.params;
+    try {
+        // Get the owner for the authenticated user
+        const owner = await prisma.owner.findUnique({
+            where: { userId: req.userId }
+        });
+
+        if (!owner) {
+            return res.status(404).json({ message: "Owner not found. Please register your business first." });
+        }
+
+        const customer = await prisma.customer.findFirst({
+            where: { 
+                phone: String(phone),
+                ownerId: owner.id
+            }
+        });
+
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" });
+        }
+
+       return res.status(200).json(customer);
+
+    } catch (err) {
+        console.error("Error fetching customer:", err);
+        return res.status(500).json({ message: `An error occurred: ${err.message}`, err });
+    }
+});
+
+// Legacy route for backward compatibility (deprecated)
 router.get("/:phone", async (req, res) => {
     const { phone } = req.params;
     try {
