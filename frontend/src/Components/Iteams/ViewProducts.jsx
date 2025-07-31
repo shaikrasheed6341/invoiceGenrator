@@ -45,17 +45,22 @@ const ViewProducts = () => {
     if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
       try {
         const token = Cookies.get('token');
-        await axios.delete(`http://localhost:5000/iteam/delete/${productId}`, {
+        const response = await axios.delete(`http://localhost:5000/iteam/delete/${productId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
 
-        toast.success('Product deleted successfully');
+        if (response.data.message) {
+          toast.success(response.data.message);
+        } else {
+          toast.success('Product deleted successfully');
+        }
         fetchProducts(); // Refresh the list
       } catch (error) {
         console.error('Error deleting product:', error);
-        toast.error('Error deleting product');
+        const errorMessage = error.response?.data?.message || 'Error deleting product';
+        toast.error(errorMessage);
       }
     }
   };

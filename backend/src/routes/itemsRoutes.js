@@ -1,6 +1,8 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import authmiddle from './authmiddleware.js';
+import { validate } from '../middleware/validation.js';
+import { idParamSchema } from '../validations/schemas.js';
 
 const prisma = new PrismaClient();
 
@@ -261,8 +263,11 @@ router.put("/update/:name", authmiddle, async(req,res)=>{
 
 // New route to delete a product
 //http://localhost:5000/iteam/delete/:id
-router.delete("/delete/:id", authmiddle, async(req,res)=>{
+router.delete("/delete/:id", authmiddle, validate(idParamSchema, 'params'), async(req,res)=>{
     const{id} = req.params;
+    
+    console.log('Delete request received for product ID:', id);
+    console.log('User ID:', req.userId);
     
     try{
         // Get the owner for the authenticated user
@@ -271,23 +276,31 @@ router.delete("/delete/:id", authmiddle, async(req,res)=>{
         });
 
         if (!owner) {
+            console.log('Owner not found for user ID:', req.userId);
             return res.status(404).json({ message: "Owner not found. Please register your business first." });
         }
 
+        console.log('Owner found:', owner.id);
+
         const existingProduct = await prisma.item.findFirst({
             where:{
-                id: parseInt(id),
+                id: id, // Use the UUID string directly, not parseInt
                 ownerId: owner.id
             },
         })
         
+        console.log('Existing product found:', existingProduct);
+        
         if(!existingProduct){
+          console.log('Product not found or no permission');
           return res.status(400).json({message:"Product not found or you don't have permission to delete it"})
         }
         
         await prisma.item.delete({
-            where :{id: parseInt(id)},
+            where :{id: id}, // Use the UUID string directly, not parseInt
         })
+        
+        console.log('Product deleted successfully');
        return res.json({message:"Product deleted successfully"});
     }catch(err){
         console.log("error deleting product",err)

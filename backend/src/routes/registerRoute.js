@@ -1,17 +1,17 @@
 import express from 'express';
 import bcrypt from "bcrypt";
 import { PrismaClient } from '@prisma/client';
+import { validate } from '../middleware/validation.js';
+import { userRegistrationSchema } from '../validations/schemas.js';
 
 const prisma = new PrismaClient();
-
 const router = express.Router();
+
 //http://localhost:5000/register/signup
-router.post('/signup', async(req,res)=>{
+router.post('/signup', validate(userRegistrationSchema), async(req,res)=>{
     const{firstname,lastname,email,password} = req.body;
-   if(!firstname || !lastname || !email || !password){
-     return res.status(401).json({message:"you need to fill all inputs"})
-   }
-   try{ 
+    
+    try{ 
          const hashedpassword  = await bcrypt.hash(password,10);
          console.log(hashedpassword);
          const userdata = await prisma.user.create({

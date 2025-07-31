@@ -211,34 +211,6 @@ const UserDashboard = () => {
           />
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-zinc-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <ActionCard
-              title="Live Quotation Builder"
-              description="Create quotations with real-time preview"
-              icon={<FileText className="w-6 h-6" />}
-              color="purple"
-              onClick={() => navigate('/live-quotation')}
-            />
-            <ActionCard
-              title="Add Customer"
-              description="Register a new customer"
-              icon={<Users className="w-6 h-6" />}
-              color="blue"
-              onClick={() => navigate('/postcustmer')}
-            />
-            <ActionCard
-              title="Add Product"
-              description="Add a new product to your inventory"
-              icon={<Package className="w-6 h-6" />}
-              color="green"
-              onClick={() => navigate('/selectiteams')}
-            />
-          </div>
-        </div>
-
         {/* Analytics Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-zinc-900 mb-4">Analytics & Tracking</h2>
@@ -270,6 +242,34 @@ const UserDashboard = () => {
               icon={<Activity className="w-6 h-6" />}
               color="orange"
               onClick={() => navigate('/revenue-tracking')}
+            />
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-zinc-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ActionCard
+              title="Live Quotation Builder"
+              description="Create quotations with real-time preview"
+              icon={<FileText className="w-6 h-6" />}
+              color="purple"
+              onClick={() => navigate('/live-quotation')}
+            />
+            <ActionCard
+              title="Add Customer"
+              description="Register a new customer"
+              icon={<Users className="w-6 h-6" />}
+              color="blue"
+              onClick={() => navigate('/postcustmer')}
+            />
+            <ActionCard
+              title="Add Product"
+              description="Add a new product to your inventory"
+              icon={<Package className="w-6 h-6" />}
+              color="green"
+              onClick={() => navigate('/selectiteams')}
             />
           </div>
         </div>
