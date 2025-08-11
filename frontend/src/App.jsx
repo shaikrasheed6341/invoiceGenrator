@@ -20,10 +20,12 @@ import FetchQuotation from './Components/Invoice/FetchQuotation';
 import Invoice from './Components/Invoice/Invoice';
 import Landingpage from './Components/Landingpage/Landingpage.jsx';
 import TemplatetTwo from './Components/Invoice/TemplatetTwo.jsx';
+import PremiumInvoice from './Components/Invoice/PremiumInvoice.jsx';
 import Login from './Components/Singnup/Login.jsx';
 import AuthCallback from './Components/Singnup/AuthCallback.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext';
+import InvoiceInstructions from './Components/Ownerdata/InvoiceInstructions';
 
 // Analytics Components
 import OwnerDashboard from './Components/Dashboard/OwnerDashboard';
@@ -68,6 +70,11 @@ function AppRoutes() {
       <Route path="/updateowner" element={
         <ProtectedRoute>
           <Layout><Updateowner /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/invoice-instructions" element={
+        <ProtectedRoute>
+          <Layout><InvoiceInstructions /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/updatecustmer" element={
@@ -134,6 +141,11 @@ function AppRoutes() {
       <Route path='/template' element={
         <ProtectedRoute>
           <TemplatetTwo />
+        </ProtectedRoute>
+      } />
+      <Route path="/premium-invoice" element={
+        <ProtectedRoute>
+          <PremiumInvoice />
         </ProtectedRoute>
       } />
       

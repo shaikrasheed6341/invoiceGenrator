@@ -39,11 +39,11 @@ const router = express.Router();
 router.post("/datas", authmiddle, async (req, res) => {
     console.log("Received request body:", req.body); // Debugging
 
-    const { name, rate, tax, brand } = req.body; // Removed quantity from destructuring
+    const { name, rate, brand } = req.body; // Removed tax from destructuring
 
-    if (!name?.trim() || !brand?.trim() || !rate || !tax) {
-        console.log("Require all input fields except quantity");
-        return res.status(400).json({ message: "Fill all input fields (name, brand, rate, tax) with valid values" });
+    if (!name?.trim() || !brand?.trim() || !rate) {
+        console.log("Require all input fields except quantity and tax");
+        return res.status(400).json({ message: "Fill all input fields (name, brand, rate) with valid values" });
     }
 
     try {
@@ -58,10 +58,9 @@ router.post("/datas", authmiddle, async (req, res) => {
 
         // Validate numeric fields
         const rateValue = parseFloat(rate);
-        const taxValue = parseInt(tax, 10);
         
-        if (isNaN(rateValue) || isNaN(taxValue)) {
-            return res.status(400).json({ message: "Rate and tax must be valid numbers" });
+        if (isNaN(rateValue)) {
+            return res.status(400).json({ message: "Rate must be a valid number" });
         }
 
         const item = await prisma.item.create({
@@ -70,7 +69,6 @@ router.post("/datas", authmiddle, async (req, res) => {
                 brand,
                 quantity: null, // Always set to null as quantity is hidden
                 rate: rateValue,
-                tax: taxValue,
                 ownerId: owner.id // Link to the owner
             },
         });
@@ -128,7 +126,6 @@ router.get("/viewproducts", authmiddle, async (req, res) => {
                 name: true,
                 brand: true,
                 rate: true,
-                tax: true,
                 quantity: true
             },
             orderBy: {
@@ -215,7 +212,7 @@ router.get("/findbrand/:brand", authmiddle, async(req,res)=>{
 //http://localhost:5000/iteam/update/Intel Core i5-10400F Processor
 router.put("/update/:name", authmiddle, async(req,res)=>{
     const{name} = req.params;
-    const {rate, tax, brand} = req.body; // Removed quantity from destructuring
+    const {rate, brand} = req.body; // Removed tax from destructuring
     
     try{
         // Get the owner for the authenticated user
@@ -240,19 +237,17 @@ router.put("/update/:name", authmiddle, async(req,res)=>{
         
         // Validate numeric fields for update
         const rateValue = parseFloat(rate);
-        const taxValue = parseInt(tax, 10);
         
-        if (isNaN(rateValue) || isNaN(taxValue)) {
-            return res.status(400).json({ message: "Rate and tax must be valid numbers" });
+        if (isNaN(rateValue)) {
+            return res.status(400).json({ message: "Rate must be a valid number" });
         }
 
         const updateiteam = await prisma.item.update({
             where :{id: existingiteam.id},
             data:{
                 rate: rateValue,
-                tax: taxValue,
                 brand
-            }, // Removed quantity from update
+            }, // Removed tax from update
         })
        return res.json({message:"Product updated successfully", updateiteam});
     }catch(err){

@@ -36,7 +36,7 @@ router.get("/next-number", authmiddle, async (req, res) => {
 
 // http://localhost:5000/quotation/data
 router.post("/data", async (req, res) => {
-    const { number, owneremail, customerphone, itemNames, itemQuantities, bankdetailsaccountno } = req.body;
+    const { number, owneremail, customerphone, itemNames, itemQuantities, itemTaxes, bankdetailsaccountno } = req.body;
     const parsedNumber = parseInt(number, 10);
 
     try {
@@ -118,6 +118,7 @@ router.post("/data", async (req, res) => {
                     create: existingItems.map((item, index) => ({
                         item: { connect: { id: item.id } },
                         quantity: itemQuantities[index] || 1, // Default to 1 if missing
+                        tax: itemTaxes && itemTaxes[index] ? parseFloat(itemTaxes[index]) : 0, // Default to 0 if no tax provided
                     })),
                 },
             },

@@ -23,7 +23,7 @@ const LiveQuotationBuilder = () => {
     quotationNumber: "",
     selectedCustomer: null,
     selectedBankDetails: null,
-    quotationItems: [{ itemId: "", quantity: 1, item: null }]
+    quotationItems: [{ itemId: "", quantity: 1, tax: 0, item: null }]
   });
 
   // Live preview data
@@ -119,7 +119,8 @@ const LiveQuotationBuilder = () => {
       .filter(item => item.itemId && item.item)
       .map(item => ({
         item: item.item,
-        quantity: item.quantity
+        quantity: item.quantity,
+        tax: item.tax || 0
       }));
 
     // Calculate detailed breakdown
@@ -128,7 +129,7 @@ const LiveQuotationBuilder = () => {
     }, 0);
 
     const totalTax = validItems.reduce((total, item) => {
-      return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+      return total + (item.quantity * item.item.rate * (item.tax / 100));
     }, 0);
 
     const totalAmount = subtotal + totalTax;
@@ -177,7 +178,7 @@ const LiveQuotationBuilder = () => {
   const addItem = () => {
     setFormData(prev => ({
       ...prev,
-      quotationItems: [...prev.quotationItems, { itemId: "", quantity: 1, item: null }]
+      quotationItems: [...prev.quotationItems, { itemId: "", quantity: 1, tax: 0, item: null }]
     }));
   };
 
@@ -245,7 +246,8 @@ const LiveQuotationBuilder = () => {
         customerphone: formData.selectedCustomer.phone,
         bankdetailsaccountno: formData.selectedBankDetails.accountno,
         itemNames: validItems.map(item => item.item.name),
-        itemQuantities: validItems.map(item => item.quantity)
+        itemQuantities: validItems.map(item => item.quantity),
+        itemTaxes: validItems.map(item => item.tax || 0)
       };
 
       const response = await axios.post(`${BACKENDURL}/quotation/data`, quotationData, {
@@ -485,6 +487,19 @@ const LiveQuotationBuilder = () => {
                         value={item.quantity}
                         onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value))}
                         min="1"
+                        placeholder="Qty"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="w-20">
+                      <input
+                        type="number"
+                        value={item.tax}
+                        onChange={(e) => handleItemChange(index, 'tax', parseFloat(e.target.value) || 0)}
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Tax %"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>

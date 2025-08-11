@@ -20,7 +20,7 @@ const StreamlinedQuotation = () => {
   const [bankDetails, setBankDetails] = useState([]);
   const [selectedBankDetails, setSelectedBankDetails] = useState(null);
   const [quotationItems, setQuotationItems] = useState([
-    { itemId: "", quantity: 1, item: null }
+    { itemId: "", quantity: 1, tax: 0, item: null }
   ]);
 
   const templates = [
@@ -37,6 +37,13 @@ const StreamlinedQuotation = () => {
       description: "Contemporary design with enhanced styling",
       preview: "/page1.jpg",
       component: "TemplateTwo"
+    },
+    {
+      id: 3,
+      name: "Premium Template",
+      description: "Beautiful international design with premium styling",
+      preview: "/page2.jpg",
+      component: "PremiumInvoice"
     }
   ];
 
@@ -57,39 +64,59 @@ const StreamlinedQuotation = () => {
       
       if (ownerResponse.data.owner) {
         setOwner(ownerResponse.data.owner);
+        console.log("Owner data loaded:", ownerResponse.data.owner);
       }
 
-      // Fetch customers
+      // Fetch customers - returns array directly
       const customersResponse = await axios.get(`${BACKENDURL}/customer/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setCustomers(Array.isArray(customersResponse.data) ? customersResponse.data : []);
+      const customersData = Array.isArray(customersResponse.data) ? customersResponse.data : [];
+      setCustomers(customersData);
+      console.log("Customers data loaded:", customersData.length, "customers");
 
-      // Fetch items
+      // Fetch items - returns { success: true, data: [...], total: ... }
       const itemsResponse = await axios.get(`${BACKENDURL}/iteam/viewproducts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setItems(Array.isArray(itemsResponse.data.data) ? itemsResponse.data.data : []);
+      let itemsData = [];
+      if (itemsResponse.data.success && Array.isArray(itemsResponse.data.data)) {
+        itemsData = itemsResponse.data.data;
+      } else if (Array.isArray(itemsResponse.data)) {
+        itemsData = itemsResponse.data;
+      }
+      setItems(itemsData);
+      console.log("Items data loaded:", itemsData.length, "items");
 
-      // Fetch bank details
+      // Fetch bank details - returns { message: "...", bankDetails: [...] }
       try {
         const bankResponse = await axios.get(`${BACKENDURL}/bank/bankdetails`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setBankDetails(Array.isArray(bankResponse.data.bankDetails) ? bankResponse.data.bankDetails : []);
+        let bankData = [];
+        if (bankResponse.data.bankDetails && Array.isArray(bankResponse.data.bankDetails)) {
+          bankData = bankResponse.data.bankDetails;
+        } else if (Array.isArray(bankResponse.data)) {
+          bankData = bankResponse.data;
+        }
+        setBankDetails(bankData);
+        console.log("Bank details loaded:", bankData.length, "bank details");
       } catch (bankError) {
         console.error("Error fetching bank details:", bankError);
         setBankDetails([]);
       }
 
-      // Get next quotation number
+      // Get next quotation number - returns { nextNumber: number }
       const numberResponse = await axios.get(`${BACKENDURL}/quotation/next-number`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setQuotationNumber(numberResponse.data.nextNumber);
+      const nextNumber = numberResponse.data.nextNumber || 1;
+      setQuotationNumber(nextNumber);
+      console.log("Quotation number loaded:", nextNumber);
 
     } catch (error) {
       console.error("Error fetching initial data:", error);
+      console.error("Error response:", error.response?.data);
       toast.error("Failed to load initial data", {
         position: "top-right",
         autoClose: 2000,
@@ -133,7 +160,7 @@ const StreamlinedQuotation = () => {
   };
 
   const addItem = () => {
-    setQuotationItems([...quotationItems, { itemId: "", quantity: 1, item: null }]);
+    setQuotationItems([...quotationItems, { itemId: "", quantity: 1, tax: 0, item: null }]);
   };
 
   const removeItem = (index) => {
@@ -146,7 +173,8 @@ const StreamlinedQuotation = () => {
   const calculateTotal = () => {
     return quotationItems.reduce((total, item) => {
       if (item.item) {
-        const itemTotal = item.quantity * item.item.rate * (1 + item.item.tax / 100);
+        const itemTax = item.tax || 0;
+        const itemTotal = item.quantity * item.item.rate * (1 + itemTax / 100);
         return total + itemTotal;
       }
       return total;
@@ -165,7 +193,8 @@ const StreamlinedQuotation = () => {
   const calculateTotalTax = () => {
     return quotationItems.reduce((total, item) => {
       if (item.item) {
-        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+        const itemTax = item.tax || 0;
+        return total + (item.quantity * item.item.rate * (itemTax / 100));
       }
       return total;
     }, 0);
@@ -242,7 +271,8 @@ const StreamlinedQuotation = () => {
         customerphone: selectedCustomer.phone,
         bankdetailsaccountno: selectedBankDetails.accountno,
         itemNames: validItems.map(item => item.item.name),
-        itemQuantities: validItems.map(item => item.quantity)
+        itemQuantities: validItems.map(item => item.quantity),
+        itemTaxes: validItems.map(item => item.tax || 0)
       };
 
       const response = await axios.post(`${BACKENDURL}/quotation/data`, quotationData, {
@@ -265,6 +295,8 @@ const StreamlinedQuotation = () => {
       // Navigate to the appropriate template
       if (selectedTemplate && selectedTemplate.component === "TemplateTwo") {
         navigate('/template', { state: { quotation: response.data } });
+      } else if (selectedTemplate && selectedTemplate.component === "PremiumInvoice") {
+        navigate('/premium-invoice', { state: { quotation: response.data } });
       } else {
         navigate('/invoice', { state: { quotation: response.data } });
       }
@@ -469,11 +501,22 @@ const StreamlinedQuotation = () => {
                   <div>
                     <p className="text-sm text-zinc-600"><strong>Name:</strong> {selectedCustomer.name}</p>
                     <p className="text-sm text-zinc-600"><strong>Phone:</strong> {selectedCustomer.phone}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-zinc-600"><strong>Address:</strong> {selectedCustomer.address}</p>
                     <p className="text-sm text-zinc-600"><strong>GST:</strong> {selectedCustomer.gstnumber || 'N/A'}</p>
                     <p className="text-sm text-zinc-600"><strong>PAN:</strong> {selectedCustomer.pannumber || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-zinc-600">
+                      <strong>Address:</strong> {
+                        [
+                          selectedCustomer.houseNumber,
+                          selectedCustomer.streetName,
+                          selectedCustomer.locality,
+                          selectedCustomer.city,
+                          selectedCustomer.pinCode,
+                          selectedCustomer.state
+                        ].filter(Boolean).join(', ') || 'N/A'
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
@@ -504,7 +547,7 @@ const StreamlinedQuotation = () => {
                       <option value="">Select item</option>
                       {Array.isArray(items) && items.map((product) => (
                         <option key={product.id} value={product.id}>
-                          {product.name} - ₹{Number(product.rate).toLocaleString('en-IN')} ({product.tax}% tax)
+                          {product.name} - ₹{Number(product.rate).toLocaleString('en-IN')}
                         </option>
                       ))}
                     </select>
@@ -515,8 +558,21 @@ const StreamlinedQuotation = () => {
                       value={item.quantity}
                       onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value))}
                       min="1"
+                      placeholder="Qty"
                       className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70"
                       required
+                    />
+                  </div>
+                  <div className="w-24">
+                    <input
+                      type="number"
+                      value={item.tax || 0}
+                      onChange={(e) => handleItemChange(index, 'tax', parseFloat(e.target.value) || 0)}
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      placeholder="Tax %"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-text shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-secondary/70"
                     />
                   </div>
                   {quotationItems.length > 1 && (

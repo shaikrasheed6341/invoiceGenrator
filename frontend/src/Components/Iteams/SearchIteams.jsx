@@ -119,7 +119,6 @@ const AllItemsTable = () => {
                   <th className="px-6 py-3 text-left">Name</th>
                   <th className="px-6 py-3 text-left">Brand</th>
                   <th className="px-6 py-3 text-left">Quantity</th>
-                  <th className="px-6 py-3 text-left">Tax (%)</th>
                   <th className="px-6 py-3 text-left">Rate</th>
                   <th className="px-6 py-3 text-left">Select</th>
                 </tr>
@@ -135,7 +134,6 @@ const AllItemsTable = () => {
                     <td className="px-6 py-4">{item.name}</td>
                     <td className="px-6 py-4">{item.brand}</td>
                     <td className="px-6 py-4">{item.quantity}</td>
-                    <td className="px-6 py-4">{item.tax}</td>
                     <td className="px-6 py-4">{item.rate}</td>
                     <td className="px-6 py-4">
                       <input
@@ -199,7 +197,6 @@ const AllItemsTable = () => {
                     <th className="px-6 py-3 text-left">Name</th>
                     <th className="px-6 py-3 text-left">Brand</th>
                     <th className="px-6 py-3 text-left">Quantity</th>
-                    <th className="px-6 py-3 text-left">Tax (%)</th>
                     <th className="px-6 py-3 text-left">Rate</th>
                     <th className="px-6 py-3 text-left">Action</th>
                   </tr>
@@ -214,7 +211,6 @@ const AllItemsTable = () => {
                       <td className="px-6 py-4">{item.name}</td>
                       <td className="px-6 py-4">{item.brand}</td>
                       <td className="px-6 py-4">{item.quantity}</td>
-                      <td className="px-6 py-4">{item.tax}</td>
                       <td className="px-6 py-4">{item.rate}</td>
                       <td className="px-6 py-4">
                         <button

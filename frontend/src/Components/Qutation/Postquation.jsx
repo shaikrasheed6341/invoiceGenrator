@@ -14,7 +14,7 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
     owneremail: selectedOwner?.email || "",
     customerphone: "",
     bankdetailsaccountno: "",
-    items: [{ name: "", quantity: "" }],
+    items: [{ name: "", quantity: "", tax: "0" }],
   });
 
   const handleChange = (e) => {
@@ -28,7 +28,7 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
   };
 
   const addItemField = () => {
-    setFormData({ ...formData, items: [...formData.items, { name: "", quantity: "" }] });
+    setFormData({ ...formData, items: [...formData.items, { name: "", quantity: "", tax: "0" }] });
   };
 
   const removeItemField = (index) => {
@@ -57,6 +57,7 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
 
     const itemNames = formData.items.map((item) => item.name.trim()).filter(Boolean);
     const itemQuantities = formData.items.map((item) => parseInt(item.quantity, 10) || 1);
+    const itemTaxes = formData.items.map((item) => parseFloat(item.tax) || 0);
 
     if (itemNames.length === 0) {
       toast.error("At least one item is required.", {
@@ -80,6 +81,7 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
         bankdetailsaccountno: formData.bankdetailsaccountno,
         itemNames,
         itemQuantities,
+        itemTaxes,
       });
 
       toast.success("Quotation created successfully!", {
@@ -96,7 +98,7 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
         owneremail: "",
         customerphone: "",
         bankdetailsaccountno: "",
-        items: [{ name: "", quantity: "" }],
+        items: [{ name: "", quantity: "", tax: "0" }],
       });
     } catch (error) {
       toast.error(error.response?.data?.message || "Error creating quotation", {
@@ -213,6 +215,18 @@ const PostQuotation = ({ selectedTemplate, selectedOwner, onBack }) => {
                     value={item.quantity}
                     onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
                     required
+                  />
+                </div>
+                <div className="w-24">
+                  <InputField
+                    label="Tax %"
+                    name={`item-tax-${index}`}
+                    type="number"
+                    value={item.tax}
+                    onChange={(e) => handleItemChange(index, "tax", e.target.value)}
+                    min="0"
+                    max="100"
+                    step="0.01"
                   />
                 </div>
                 {index > 0 && (

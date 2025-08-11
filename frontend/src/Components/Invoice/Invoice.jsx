@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import converter from 'number-to-words'
+import axios from "axios";
+import Cookies from "js-cookie";
+
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 // Utility function to convert number to words (Indian English)
 
@@ -8,6 +12,28 @@ const Invoice = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const quotation = location.state?.quotation;
+  const [invoiceInstructions, setInvoiceInstructions] = useState("");
+
+  useEffect(() => {
+    if (quotation) {
+      fetchInvoiceInstructions();
+    }
+  }, [quotation]);
+
+  const fetchInvoiceInstructions = async () => {
+    try {
+      const token = Cookies.get('token');
+      const response = await axios.get(`${BACKENDURL}/owners/invoice-instructions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        setInvoiceInstructions(response.data.invoiceInstructions || "");
+      }
+    } catch (error) {
+      console.error("Error fetching invoice instructions:", error);
+    }
+  };
 
   if (!quotation) {
     return (
@@ -31,7 +57,7 @@ const Invoice = () => {
   const calculateTotalTax = (items) => {
     return (
       items?.reduce((total, item) => {
-        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+        return total + (item.quantity * item.item.rate * (item.tax / 100));
       }, 0).toFixed(2) || "0.00"
     );
   };
@@ -39,7 +65,7 @@ const Invoice = () => {
   const calculateTotalAmount = (items) => {
     return (
       items?.reduce((total, item) => {
-        return total + item.quantity * item.item.rate * (1 + item.item.tax / 100);
+        return total + item.quantity * item.item.rate * (1 + item.tax / 100);
       }, 0).toFixed(2) || "0.00"
     );
   };
@@ -278,9 +304,9 @@ const Invoice = () => {
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.name || "N/A"}</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.quantity || "0"}</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">₹ {Number(item.item?.rate || 0).toLocaleString('en-IN')}</td>
-                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.item?.tax || "0"}%</td>
+                  <td className="p-2 sm:p-3 text-gray-900 border border-gray-300">{item.tax || "0"}%</td>
                   <td className="p-2 sm:p-3 text-gray-900 border border-gray-300 font-semibold">
-                    ₹ {Number(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ₹ {Number(item.quantity * item.item?.rate * (1 + item.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                 </tr>
               ))}
@@ -331,26 +357,16 @@ const Invoice = () => {
         </div>
 
         {/* Terms & Conditions */}
-        <div className="border border-gray-300 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
-          <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2 border-b border-gray-300 pb-1">Terms & Conditions</h3>
-          <ul className="list-disc list-outside pl-3 sm:pl-4 text-xs text-gray-700 space-y-0.5 sm:space-y-1">
-            <li className="leading-relaxed">
-              Goods once sold will not be taken back.
-            </li>
-            <li className="leading-relaxed">
-              Bill hard copy is mandatory with the product in case of any warranty-related matter or replacement to the service centre.
-            </li>
-            <li className="leading-relaxed">
-              No bank transfer will be accepted without prior intimation to us.
-            </li>
-            <li className="leading-relaxed">
-              Service to product may take a minimum of 15 to 20 days, even for new products (CPU, Laptop, DVR/Cameras, or HDD).
-            </li>
-            <li className="leading-relaxed">
-              An advance payment of 70% of the total project cost is required to initiate the work. The remaining 30% will be due upon completion or as per the agreed-upon payment schedule. Work will commence only after the advance payment has been received.
-            </li>
-          </ul>
-        </div>
+        
+        {/* Invoice Instructions */}
+        {invoiceInstructions && (
+          <div className="border border-gray-300 p-2 sm:p-3 mb-3 sm:mb-4 rounded">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2 border-b border-gray-300 pb-1">Instructions</h3>
+            <div className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">
+              {invoiceInstructions}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4 mt-4 sm:mt-6">

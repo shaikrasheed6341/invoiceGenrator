@@ -45,6 +45,11 @@ function Sidebar({ onCollapseChange }) {
       label: "✏️ Edit Business", 
       icon: <Edit className="w-4 h-4" />
     },
+    { 
+      to: "/invoice-instructions", 
+      label: "📋 Invoice Instructions", 
+      icon: <FileText className="w-4 h-4" />
+    },
   ];
 
   const customersItems = [

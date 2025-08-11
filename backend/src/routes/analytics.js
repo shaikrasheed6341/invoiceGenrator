@@ -102,7 +102,7 @@ router.get("/dashboard", async (req, res) => {
     // Calculate total revenue from ALL quotations for this owner
     const totalRevenue = allQuotations.reduce((sum, q) => {
       return sum + q.items.reduce((itemSum, qi) => {
-        return itemSum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
+        return itemSum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100));
       }, 0);
     }, 0);
 
@@ -241,7 +241,7 @@ router.get("/revenue", async (req, res) => {
     // Calculate revenue metrics
     const revenueData = quotations.map(q => {
       const totalAmount = q.items.reduce((sum, qi) => {
-        return sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
+        return sum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100));
       }, 0);
 
       return {
@@ -422,7 +422,7 @@ router.get("/monthly/:year/:month", async (req, res) => {
         total: quotations.length,
         revenue: quotations.reduce((sum, q) => {
           return sum + q.items.reduce((itemSum, qi) => {
-            return itemSum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
+            return itemSum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100));
           }, 0);
         }, 0),
         paid: quotations.filter(q => q.payment?.status === 'PAID').length,
@@ -806,7 +806,7 @@ router.patch("/update-payment-status", async (req, res) => {
 
     // Calculate total amount
     const totalAmount = quotation.items.reduce((sum, qi) => {
-      return sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100));
+      return sum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100));
     }, 0);
 
     // Update or create payment record

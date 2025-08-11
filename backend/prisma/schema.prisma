@@ -43,6 +43,9 @@ model Owner {
   
   compneyname String
   
+  // Invoice instructions - customizable by each owner
+  invoiceInstructions String? @db.Text // Multi-line text for invoice instructions
+  
   userId      String      @unique
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   customers   Customer[]
@@ -119,7 +122,6 @@ model Item {
   brand      String
   quantity   Int?
   rate       Float
-  tax        Float
   
   // Many items belong to one owner
   ownerId    String
@@ -141,6 +143,7 @@ model QuotationItem {
   quotationId String
   itemId      String
   quantity    Int
+  tax         Float     @default(0) // Tax percentage for this item in this quotation
   
   // Relations
   item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)

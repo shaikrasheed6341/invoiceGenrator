@@ -414,7 +414,7 @@ const OwnerDashboard = () => {
                         <div className="text-right">
                           <div className="font-medium">
                             {formatCurrency(quotation.items.reduce((sum, qi) => 
-                              sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100)), 0
+                              sum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100)), 0
                             ))}
                           </div>
                           <div className={`text-sm ${
@@ -719,7 +719,7 @@ const ActivityTab = ({ dashboardData, formatDate }) => {
                 <div className="text-right">
                   <div className="font-medium">
                     ₹{quotation.items.reduce((sum, qi) => 
-                      sum + (qi.item.rate * qi.quantity * (1 + qi.item.tax / 100)), 0
+                      sum + (qi.item.rate * qi.quantity * (1 + qi.tax / 100)), 0
                     ).toFixed(0)}
                   </div>
                   <div className={`text-sm ${

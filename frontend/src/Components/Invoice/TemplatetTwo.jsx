@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import converter from 'number-to-words'
+import axios from "axios";
+import Cookies from "js-cookie";
+
+const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 // Utility function to convert number to words (Indian English)
 
@@ -8,6 +12,28 @@ const TemplateTwo = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const quotation = location.state?.quotation;
+    const [invoiceInstructions, setInvoiceInstructions] = useState("");
+
+    useEffect(() => {
+        if (quotation) {
+            fetchInvoiceInstructions();
+        }
+    }, [quotation]);
+
+    const fetchInvoiceInstructions = async () => {
+        try {
+            const token = Cookies.get('token');
+            const response = await axios.get(`${BACKENDURL}/owners/invoice-instructions`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data.success) {
+                setInvoiceInstructions(response.data.invoiceInstructions || "");
+            }
+        } catch (error) {
+            console.error("Error fetching invoice instructions:", error);
+        }
+    };
 
     if (!quotation) {
         return (
@@ -23,7 +49,7 @@ const TemplateTwo = () => {
     const calculateTotalAmount = (items) => {
         return (
             items?.reduce((total, item) => {
-                return total + item.quantity * item.item.rate * (1 + item.item.tax / 100);
+                return total + item.quantity * item.item.rate * (1 + item.tax / 100);
             }, 0).toFixed(2) || "0.00"
         );
     };
@@ -294,9 +320,9 @@ const TemplateTwo = () => {
                                     <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900 font-medium">{item.item?.name || "N/A"}</td>
                                     <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900">{item.quantity || "0"}</td>
                                     <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900">₹ {item.item?.rate || "0"}</td>
-                                    <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900">{item.item?.tax || "0"}%</td>
+                                    <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900">{item.tax || "0"}%</td>
                                     <td className="p-1 sm:p-1.5 lg:p-2 text-gray-900 font-bold">
-                                        ₹ {(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toFixed(2)}
+                                        ₹ {(item.quantity * item.item?.rate * (1 + item.tax / 100)).toFixed(2)}
                                     </td>
                                 </tr>
                             ))}
@@ -378,6 +404,16 @@ const TemplateTwo = () => {
                         </li>
                     </ul>
                 </div>
+
+                {/* Invoice Instructions */}
+                {invoiceInstructions && (
+                    <div className="bg-white p-1 sm:p-1.5 lg:p-2 rounded-lg shadow-lg border-l-4 border-blue-500 mb-2 sm:mb-3 lg:mb-4">
+                        <h3 className="text-xs font-bold text-gray-700 mb-0.5 sm:mb-1">Instructions</h3>
+                        <div className="text-xs text-gray-700 whitespace-pre-wrap leading-tight">
+                            {invoiceInstructions}
+                        </div>
+                    </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row justify-center space-y-1.5 sm:space-y-0 sm:space-x-3 mb-2 mt-2 sm:mt-3 lg:mt-4">

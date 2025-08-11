@@ -39,6 +39,65 @@ router.get("/myowner", async (req, res) => {
   }
 });
 
+// Get invoice instructions for the current owner
+router.get("/invoice-instructions", async (req, res) => {
+  try {
+    const userId = req.userId;
+    
+    const owner = await prisma.owner.findUnique({
+      where: { userId },
+      select: { id: true, invoiceInstructions: true }
+    });
+
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found for this user" });
+    }
+
+    return res.json({ 
+      success: true,
+      invoiceInstructions: owner.invoiceInstructions || "" 
+    });
+  } catch (error) {
+    console.error("Error fetching invoice instructions:", error);
+    return res.status(500).json({ message: "Error fetching invoice instructions", error: error.message });
+  }
+});
+
+// Update invoice instructions for the current owner
+router.put("/invoice-instructions", async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { invoiceInstructions } = req.body;
+
+    if (invoiceInstructions === undefined) {
+      return res.status(400).json({ message: "Invoice instructions are required" });
+    }
+
+    const owner = await prisma.owner.findUnique({
+      where: { userId }
+    });
+
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found for this user" });
+    }
+
+    const updatedOwner = await prisma.owner.update({
+      where: { userId },
+      data: { invoiceInstructions },
+      select: { id: true, invoiceInstructions: true }
+    });
+
+    return res.json({ 
+      success: true,
+      message: "Invoice instructions updated successfully",
+      invoiceInstructions: updatedOwner.invoiceInstructions 
+    });
+  } catch (error) {
+    console.error("Error updating invoice instructions:", error);
+    return res.status(500).json({ message: "Error updating invoice instructions", error: error.message });
+  }
+});
+
 router.post("/insertownerdata", async (req, res) => {
   try {
     const { 

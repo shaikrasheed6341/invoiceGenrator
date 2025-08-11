@@ -24,7 +24,7 @@ const TemplateTwoPreview = ({ quotation }) => {
   const calculateTotalTax = (items) => {
     return (
       items?.reduce((total, item) => {
-        return total + (item.quantity * item.item.rate * (item.item.tax / 100));
+        return total + (item.quantity * item.item.rate * (item.tax / 100));
       }, 0).toFixed(2) || "0.00"
     );
   };
@@ -32,7 +32,7 @@ const TemplateTwoPreview = ({ quotation }) => {
   const calculateTotalAmount = (items) => {
     return (
       items?.reduce((total, item) => {
-        return total + item.quantity * item.item.rate * (1 + item.item.tax / 100);
+        return total + item.quantity * item.item.rate * (1 + item.tax / 100);
       }, 0).toFixed(2) || "0.00"
     );
   };
@@ -116,9 +116,9 @@ const TemplateTwoPreview = ({ quotation }) => {
                     <td className="p-2 text-md text-zinc-800 truncate">{item.item?.name || "N/A"}</td>
                     <td className="p-2 text-md text-zinc-800">{item.quantity || "0"}</td>
                     <td className="p-2 text-md text-zinc-800">₹ {Number(item.item?.rate || 0).toLocaleString('en-IN')}</td>
-                    <td className="p-2 text-md text-zinc-800">{item.item?.tax || "0"}%</td>
+                    <td className="p-2 text-md text-zinc-800">{item.tax || "0"}%</td>
                     <td className="p-2 text-md text-zinc-800">
-                      ₹ {Number(item.quantity * item.item?.rate * (1 + item.item?.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      ₹ {Number(item.quantity * item.item?.rate * (1 + item.tax / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                   </tr>
                 ))
