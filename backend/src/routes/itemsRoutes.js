@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import authmiddle from './authmiddleware.js';
 import { validate } from '../middleware/validation.js';
 import { idParamSchema } from '../validations/schemas.js';
+import encryptionService from '../services/workingDecryptionService.js';
 
 const prisma = new PrismaClient();
 
@@ -63,17 +64,26 @@ router.post("/datas", authmiddle, async (req, res) => {
             return res.status(400).json({ message: "Rate must be a valid number" });
         }
 
+        // Encrypt sensitive data before storing
+        const encryptedData = encryptionService.encryptObject({
+            name,
+            brand
+        }, ['name', 'brand']);
+
         const item = await prisma.item.create({
             data: {
-                name,
-                brand,
+                name: encryptedData.name,
+                brand: encryptedData.brand,
                 quantity: null, // Always set to null as quantity is hidden
                 rate: rateValue,
                 ownerId: owner.id // Link to the owner
             },
         });
 
-        return res.status(200).json(item);
+        // Decrypt data before sending response
+        const decryptedItem = encryptionService.decryptObject(item, ['name', 'brand']);
+        
+        return res.status(200).json(decryptedItem);
     } catch (err) {
         console.error("Error creating item:", err);
         return res.status(500).json({ message: `Something went wrong: ${err.message}` });
@@ -98,7 +108,12 @@ router.get("/getalliteamdata", authmiddle, async (req, res) => {
             where: { ownerId: owner.id }
         });
         
-        return res.json(result);
+        // Decrypt sensitive data before sending
+        const decryptedItems = result.map(item => 
+            encryptionService.decryptObject(item, ['name', 'brand'])
+        );
+        
+        return res.json(decryptedItems);
     } catch (err) {
         console.log(err);
         return res.json({ message: "Unable to fetch data", err });
@@ -133,11 +148,16 @@ router.get("/viewproducts", authmiddle, async (req, res) => {
             }
         });
         
+        // Decrypt sensitive data before sending
+        const decryptedProducts = products.map(product => 
+            encryptionService.decryptObject(product, ['name', 'brand'])
+        );
+        
         return res.json({
             success: true,
             message: "Products fetched successfully",
-            data: products,
-            total: products.length
+            data: decryptedProducts,
+            total: decryptedProducts.length
         });
     } catch (err) {
         console.error("Error fetching products:", err);

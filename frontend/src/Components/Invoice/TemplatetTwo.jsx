@@ -370,6 +370,8 @@ const TemplateTwo = () => {
                     </div>
                 </div>
 
+
+
                 {/* Signature */}
                 <div className="flex justify-end mb-2 sm:mb-3 lg:mb-4">
                     <div className="bg-white p-1 sm:p-2 lg:p-3 rounded-lg shadow-lg border-l-4 border-gray-400 w-full sm:w-36 lg:w-1/2  ">

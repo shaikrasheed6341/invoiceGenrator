@@ -1,6 +1,7 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import authmiddle from "./authmiddleware.js";
+import encryptionService from "../services/workingDecryptionService.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -32,7 +33,10 @@ router.get("/myowner", async (req, res) => {
       return res.status(404).json({ message: "Owner not found for this user" });
     }
 
-    return res.json({ owner });
+    // Decrypt sensitive data before sending
+    const decryptedOwner = encryptionService.decryptOwnerDetails(owner);
+    
+    return res.json({ owner: decryptedOwner });
   } catch (error) {
     console.error("Error fetching owner data:", error);
     return res.status(500).json({ message: "Error fetching owner data", error: error.message });
@@ -128,21 +132,37 @@ router.post("/insertownerdata", async (req, res) => {
       return res.status(400).json({ message: "Owner already exists for this user" });
     }
 
+    // Encrypt sensitive data before storing
+    const encryptedData = encryptionService.encryptOwnerDetails({
+      name, 
+      email, 
+      phone, 
+      gstNumber, 
+      compneyname, 
+      recipientName,
+      houseNumber,
+      streetName,
+      locality,
+      city,
+      pinCode,
+      state
+    });
+
     // Create owner and link to user
     const owner = await prisma.owner.create({
       data: { 
-        name, 
-        email, 
-        phone, 
-        gstNumber, 
-        compneyname, 
-        recipientName,
-        houseNumber,
-        streetName,
-        locality,
-        city,
-        pinCode,
-        state,
+        name: encryptedData.name, 
+        email: encryptedData.email, 
+        phone: encryptedData.phone, 
+        gstNumber: encryptedData.gstNumber, 
+        compneyname: encryptedData.compneyname, 
+        recipientName: encryptedData.recipientName,
+        houseNumber: encryptedData.houseNumber,
+        streetName: encryptedData.streetName,
+        locality: encryptedData.locality,
+        city: encryptedData.city,
+        pinCode: encryptedData.pinCode,
+        state: encryptedData.state,
         userId 
       },
     });
@@ -187,28 +207,47 @@ router.put("/updateowner", async (req, res) => {
       return res.status(404).json({ message: "Owner not found for this user" });
     }
 
+    // Encrypt sensitive data before updating
+    const encryptedData = encryptionService.encryptOwnerDetails({
+      name, 
+      email, 
+      phone, 
+      gstNumber, 
+      compneyname, 
+      recipientName,
+      houseNumber,
+      streetName,
+      locality,
+      city,
+      pinCode,
+      state
+    });
+
     // Update owner data
     const updatedOwner = await prisma.owner.update({
       where: { userId },
       data: { 
-        name, 
-        email, 
-        phone, 
-        gstNumber, 
-        compneyname, 
-        recipientName,
-        houseNumber,
-        streetName,
-        locality,
-        city,
-        pinCode,
-        state
+        name: encryptedData.name, 
+        email: encryptedData.email, 
+        phone: encryptedData.phone, 
+        gstNumber: encryptedData.gstNumber, 
+        compneyname: encryptedData.compneyname, 
+        recipientName: encryptedData.recipientName,
+        houseNumber: encryptedData.houseNumber,
+        streetName: encryptedData.streetName,
+        locality: encryptedData.locality,
+        city: encryptedData.city,
+        pinCode: encryptedData.pinCode,
+        state: encryptedData.state
       },
     });
 
+    // Decrypt sensitive data before sending
+    const decryptedOwner = encryptionService.decryptOwnerDetails(updatedOwner);
+    
     return res.json({ 
       message: "Owner details updated successfully", 
-      owner: updatedOwner 
+      owner: decryptedOwner 
     });
   } catch (error) {
     console.error("Error updating owner:", error);

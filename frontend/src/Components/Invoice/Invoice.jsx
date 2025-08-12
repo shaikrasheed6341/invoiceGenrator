@@ -356,6 +356,8 @@ const Invoice = () => {
           </div>
         </div>
 
+
+
         {/* Terms & Conditions */}
         
         {/* Invoice Instructions */}

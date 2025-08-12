@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import authmiddle from './authmiddleware.js';
+import encryptionService from '../services/workingDecryptionService.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -43,19 +44,34 @@ router.put('/update/:phone', authmiddle, async (req, res) => {
             return res.status(404).json({ message: "Customer not found or you don't have permission to update this customer." });
         }
 
+        // Encrypt sensitive data before updating
+        const encryptedData = encryptionService.encryptCustomerDetails({
+            name,
+            phone,
+            gstnumber,
+            pannumber,
+            recipientName,
+            houseNumber,
+            streetName,
+            locality,
+            city,
+            pinCode,
+            state
+        });
+
         const updatedCustomer = await prisma.customer.update({
             where: { id: existingCustomer.id },
             data: { 
-                name, 
-                gstnumber,
-                pannumber,
-                recipientName,
-                houseNumber,
-                streetName,
-                locality,
-                city,
-                pinCode,
-                state
+                name: encryptedData.name, 
+                gstnumber: encryptedData.gstnumber,
+                pannumber: encryptedData.pannumber,
+                recipientName: encryptedData.recipientName,
+                houseNumber: encryptedData.houseNumber,
+                streetName: encryptedData.streetName,
+                locality: encryptedData.locality,
+                city: encryptedData.city,
+                pinCode: encryptedData.pinCode,
+                state: encryptedData.state
             }
         });
         
@@ -155,19 +171,34 @@ router.post("/custmor", authmiddle, async (req, res) => {
             return res.status(404).json({ message: "Owner not found. Please register your business first." });
         }
 
+        // Encrypt sensitive data before storing
+        const encryptedData = encryptionService.encryptCustomerDetails({
+            name,
+            phone,
+            gstnumber,
+            pannumber,
+            recipientName,
+            houseNumber,
+            streetName,
+            locality,
+            city,
+            pinCode,
+            state
+        });
+
         const customer = await prisma.customer.create({
             data: {
-                name,
-                phone,
-                gstnumber,
-                pannumber,
-                recipientName,
-                houseNumber,
-                streetName,
-                locality,
-                city,
-                pinCode,
-                state,
+                name: encryptedData.name,
+                phone: encryptedData.phone,
+                gstnumber: encryptedData.gstnumber,
+                pannumber: encryptedData.pannumber,
+                recipientName: encryptedData.recipientName,
+                houseNumber: encryptedData.houseNumber,
+                streetName: encryptedData.streetName,
+                locality: encryptedData.locality,
+                city: encryptedData.city,
+                pinCode: encryptedData.pinCode,
+                state: encryptedData.state,
                 ownerId: owner.id // Link to the owner
             }
         });
@@ -206,7 +237,10 @@ router.get("/get/:phone", authmiddle, async (req, res) => {
             return res.status(404).json({ message: "Customer not found" });
         }
 
-       return res.status(200).json(customer);
+        // Decrypt sensitive data before sending
+        const decryptedCustomer = encryptionService.decryptCustomerDetails(customer);
+
+       return res.status(200).json(decryptedCustomer);
 
     } catch (err) {
         console.error("Error fetching customer:", err);
@@ -226,7 +260,10 @@ router.get("/:phone", async (req, res) => {
             return res.status(404).json({ message: "Customer is not found" });
         }
 
-       return res.status(200).json(customer);
+        // Decrypt sensitive data before sending
+        const decryptedCustomer = encryptionService.decryptCustomerDetails(customer);
+
+       return res.status(200).json(decryptedCustomer);
 
     } catch (err) {
         console.error("Error fetching customer:", err);
@@ -252,7 +289,12 @@ router.get("/", authmiddle, async (req, res) => {
             where: { ownerId: owner.id }
         });
         
-        return res.json(customers);
+        // Decrypt sensitive data for all customers before sending
+        const decryptedCustomers = customers.map(customer => 
+            encryptionService.decryptCustomerDetails(customer)
+        );
+        
+        return res.json(decryptedCustomers);
     } catch (err) {
         console.error("Error fetching customers:", err);
         return res.status(500).json({ message: "Server error" });

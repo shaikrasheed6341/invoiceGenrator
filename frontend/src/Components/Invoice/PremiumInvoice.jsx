@@ -360,6 +360,8 @@ const PremiumInvoice = () => {
                 {quotation.bankdetails.upid && (
                   <p className="text-gray-700"><span className="font-semibold">UPI:</span> {quotation.bankdetails.upid}</p>
                 )}
+                
+
               </div>
             </div>
           )}

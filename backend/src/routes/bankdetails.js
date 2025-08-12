@@ -1,6 +1,7 @@
 import express from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
 import authmiddle from "./authmiddleware.js";
+import encryptionService from "../services/workingDecryptionService.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -91,18 +92,28 @@ router.get("/bankdetails", authmiddle, async (req, res) => {
 
                 console.log("✅ Updated bank details count:", updatedOwner.bankDetails.length);
 
+                // Decrypt sensitive data before sending
+                const decryptedBankDetails = updatedOwner.bankDetails.map(bankDetail => 
+                    encryptionService.decryptBankDetails(bankDetail)
+                );
+
                 return res.json({
                     message: "Bank details retrieved successfully",
-                    bankDetails: updatedOwner.bankDetails
+                    bankDetails: decryptedBankDetails
                 });
             }
         }
 
         console.log("✅ Returning bank details:", owner.bankDetails.length);
 
+        // Decrypt sensitive data before sending
+        const decryptedBankDetails = owner.bankDetails.map(bankDetail => 
+            encryptionService.decryptBankDetails(bankDetail)
+        );
+
         return res.json({
             message: "Bank details retrieved successfully",
-            bankDetails: owner.bankDetails
+            bankDetails: decryptedBankDetails
         });
 
     } catch (err) {
@@ -132,22 +143,36 @@ router.post("/bankdetails", authmiddle, async (req, res) => {
             return res.status(404).json({ message: "Owner not found. Please register your business first." });
         }
 
+        // Encrypt sensitive data before storing
+        const encryptedData = encryptionService.encryptBankDetails({
+            name,
+            ifsccode,
+            accountno,
+            bank,
+            upid,
+            upidname
+        });
+
         const result = await prisma.bankDetails.create({
             data: {
-                name,
-                ifsccode,
-                accountno,
-                bank,
-                upid,
-                upidname,
+                name: encryptedData.name,
+                ifsccode: encryptedData.ifsccode,
+                accountno: encryptedData.accountno,
+                bank: encryptedData.bank,
+                upid: encryptedData.upid,
+                upidname: encryptedData.upidname,
                 ownerId: owner.id // Link to the owner
             }
         });
 
         console.log(result);
+        
+        // Decrypt data before sending response
+        const decryptedResult = encryptionService.decryptBankDetails(result);
+        
         return res.json({
             message: "Bank details created successfully",
-            bankDetails: result
+            bankDetails: decryptedResult
         });
 
     } catch (err) {
@@ -181,13 +206,33 @@ router.put("/bankdetails/:id", authmiddle, async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this bank detail." });
     }
 
+    // Encrypt sensitive data before updating
+    const encryptedData = encryptionService.encryptBankDetails({
+      name,
+      ifsccode,
+      accountno,
+      bank,
+      upid,
+      upidname
+    });
+
     // Update the bank detail
     const updated = await prisma.bankDetails.update({
       where: { id },
-      data: { name, ifsccode, accountno, bank, upid, upidname }
+      data: { 
+        name: encryptedData.name, 
+        ifsccode: encryptedData.ifsccode, 
+        accountno: encryptedData.accountno, 
+        bank: encryptedData.bank, 
+        upid: encryptedData.upid, 
+        upidname: encryptedData.upidname 
+      }
     });
 
-    return res.json({ message: "Bank detail updated successfully", bankDetails: updated });
+    // Decrypt data before sending response
+    const decryptedUpdated = encryptionService.decryptBankDetails(updated);
+    
+    return res.json({ message: "Bank detail updated successfully", bankDetails: decryptedUpdated });
   } catch (err) {
     console.error("Error updating bank detail:", err);
     return res.status(500).json({ message: "Error updating bank detail", error: err.message });

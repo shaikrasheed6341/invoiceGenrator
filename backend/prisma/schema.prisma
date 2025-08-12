@@ -165,6 +165,8 @@ model BankDetails {
   upid       String
   upidname   String?
   
+
+  
   // Many bank details belong to one owner
   ownerId    String
   owner      Owner       @relation(fields: [ownerId], references: [id], onDelete: Cascade)

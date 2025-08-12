@@ -154,15 +154,12 @@ const InvoicePreview = ({ quotation }) => {
           </div>
         )}
 
-        {/* Payment Details & QR Code */}
-        <div className="bg-gray-50 p-2 rounded-xl flex items-center justify-between mb-4">
+        {/* Payment Details */}
+        <div className="bg-gray-50 p-2 rounded-xl mb-4">
           <div className="space-y-1">
             <h3 className="text-md font-semibold my-1 text-zinc-800">Payment Details</h3>
             <p className="text-sm mt-0.5 text-zinc-700"><strong>UPI ID:</strong> {quotation.bankdetails?.upid || "N/A"}</p>
             <p className="text-sm mt-0.5 text-zinc-700"><strong>UPI Name:</strong> {quotation.bankdetails?.upidname || "N/A"}</p>
-          </div>
-          <div className="flex mr-90">
-            <img src="./qrcode.png" alt="QR Code" className="w-20 h-20" />
           </div>
         </div>
 

@@ -275,6 +275,16 @@ const StreamlinedQuotation = () => {
         itemTaxes: validItems.map(item => item.tax || 0)
       };
 
+      // Debug logging
+      console.log("=== FRONTEND: SENDING QUOTATION DATA ===");
+      console.log("quotationData:", quotationData);
+      console.log("owner:", owner);
+      console.log("selectedCustomer:", selectedCustomer);
+      console.log("selectedBankDetails:", selectedBankDetails);
+      console.log("validItems:", validItems);
+      console.log("BACKENDURL:", BACKENDURL);
+      console.log("token exists:", !!token);
+
       const response = await axios.post(`${BACKENDURL}/quotation/data`, quotationData, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -302,6 +312,13 @@ const StreamlinedQuotation = () => {
       }
 
     } catch (error) {
+      console.error("=== FRONTEND: ERROR DETAILS ===");
+      console.error("Full error object:", error);
+      console.error("Error response:", error.response);
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
+      console.error("Error message:", error.response?.data?.message);
+      
       toast.error(error.response?.data?.message || "Error creating quotation", {
         position: "top-right",
         autoClose: 2000,

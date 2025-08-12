@@ -2,7 +2,7 @@ import React from "react";
 import { FlipWords } from "../ui/flip-words";
 
 export function FlipWordsDemo() {
-  const words = ["Quotation Builder", "Quotation Creator", "Billing System", "Quotation Builder"];
+  const words = [  "Billing System","Data Encryption","Data Security","Full Privacy","Quotation Builder"];
 
   return (
     <div className="h-[40rem] flex justify-center items-center px-4">

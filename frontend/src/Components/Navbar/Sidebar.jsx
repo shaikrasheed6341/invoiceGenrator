@@ -17,7 +17,8 @@ import {
   ChevronDown,
   ChevronRight,
   Menu,
-  X
+  X,
+
 } from 'lucide-react';
 
 function Sidebar({ onCollapseChange }) {
@@ -112,6 +113,7 @@ function Sidebar({ onCollapseChange }) {
       label: "✏️ Edit Bank Details", 
       icon: <Edit className="w-4 h-4" />
     },
+
   ];
 
   const handleLogout = async () => {

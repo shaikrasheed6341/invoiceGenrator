@@ -27,6 +27,7 @@ import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext';
 import InvoiceInstructions from './Components/Ownerdata/InvoiceInstructions';
 
+
 // Analytics Components
 import OwnerDashboard from './Components/Dashboard/OwnerDashboard';
 import PaymentTracking from './Components/Dashboard/PaymentTracking';
@@ -108,6 +109,7 @@ function AppRoutes() {
           <Layout><BankDetailsList /></Layout>
         </ProtectedRoute>
       } />
+
       <Route path="/postquation" element={
         <ProtectedRoute>
           <Layout><PostQuotation /></Layout>

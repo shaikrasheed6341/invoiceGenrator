@@ -11,6 +11,8 @@ import quotationRoutes from "./src/routes/qutation.js";
 import bankDetailsRoutes from "./src/routes/bankdetails.js";
 import googleAuthRoutes from "./src/routes/googleAuth.js";
 import analyticsRoutes from "./src/routes/analytics.js";
+
+import ownerImageUploadRoutes from "./src/routes/ownerImageUpload.js";
 import passport from "./src/config/googleAuth.js";
 
 dotenv.config();
@@ -45,6 +47,8 @@ app.use("/iteam", itemsRoutes);
 app.use("/bank", bankDetailsRoutes);
 app.use("/auth", googleAuthRoutes);
 app.use("/analytics", analyticsRoutes);
+
+app.use("/owner-images", ownerImageUploadRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server running on port ${port}`));

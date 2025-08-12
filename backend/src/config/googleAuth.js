@@ -2,16 +2,29 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const prisma = new PrismaClient();
 const secretkey = "shaikraheed";
 
-// Google OAuth Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${process.env.BACKEND_URL || 'http://localhost:5000'}/auth/google/callback`
-}, async (accessToken, refreshToken, profile, done) => {
+// Create Google OAuth Strategy lazily
+const createGoogleStrategy = () => {
+    const clientID = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    
+    if (!clientID || !clientSecret) {
+        console.warn('⚠️  Google OAuth not configured - missing environment variables');
+        return null;
+    }
+    
+    return new GoogleStrategy({
+        clientID: clientID,
+        clientSecret: clientSecret,
+        callbackURL: `${process.env.BACKEND_URL || 'http://localhost:5000'}/auth/google/callback`
+    }, async (accessToken, refreshToken, profile, done) => {
     try {
         // Check if user already exists by googleId
         let user = await prisma.user.findUnique({
@@ -52,7 +65,17 @@ passport.use(new GoogleStrategy({
         console.error('Google OAuth error:', error);
         return done(error, null);
     }
-}));
+});
+};
+
+// Initialize Google OAuth strategy if environment variables are available
+const googleStrategy = createGoogleStrategy();
+if (googleStrategy) {
+    passport.use(googleStrategy);
+    console.log('✅ Google OAuth strategy initialized');
+} else {
+    console.log('ℹ️  Google OAuth strategy not initialized - missing environment variables');
+}
 
 // Serialize user for session
 passport.serializeUser((user, done) => {
