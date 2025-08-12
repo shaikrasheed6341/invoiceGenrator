@@ -11,6 +11,7 @@ import quotationRoutes from "./src/routes/qutation.js";
 import bankDetailsRoutes from "./src/routes/bankdetails.js";
 import googleAuthRoutes from "./src/routes/googleAuth.js";
 import analyticsRoutes from "./src/routes/analytics.js";
+import healthRoutes from "./health.js";
 
 import ownerImageUploadRoutes from "./src/routes/ownerImageUpload.js";
 import passport from "./src/config/googleAuth.js";
@@ -40,6 +41,9 @@ app.use(session({
 // Initialize passport
 app.use(passport.initialize());
 
+// Health check routes (for monitoring)
+app.use("/", healthRoutes);
+
 app.use("/quotation", quotationRoutes);
 app.use("/customer", customerRoutes);
 app.use("/owners", ownerRoutes);
@@ -51,6 +55,22 @@ app.use("/analytics", analyticsRoutes);
 app.use("/owner-images", ownerImageUploadRoutes);
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+app.listen(port, host, () => {
+    console.log(`Server running on ${host}:${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    process.exit(0);
+});
+
+process.on('SIGINT', () => {
+    console.log('SIGINT received, shutting down gracefully');
+    process.exit(0);
+});
 
 export default app;
