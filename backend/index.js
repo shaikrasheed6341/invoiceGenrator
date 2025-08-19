@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import session from 'express-session';
-
 import ownerRoutes from "./src/routes/ownerRoutes.js";
 import customerRoutes from "./src/routes/custmorRoutes.js";
 import itemsRoutes from "./src/routes/itemsRoutes.js";
