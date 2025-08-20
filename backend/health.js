@@ -4,6 +4,15 @@ import { PrismaClient } from '@prisma/client';
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// Simple ping endpoint for external services (like Render)
+router.get('/ping', (req, res) => {
+    res.status(200).json({
+        message: 'pong',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
 // Health check endpoint
 router.get('/health', async (req, res) => {
     try {

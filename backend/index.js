@@ -11,6 +11,7 @@ import bankDetailsRoutes from "./src/routes/bankdetails.js";
 import googleAuthRoutes from "./src/routes/googleAuth.js";
 import analyticsRoutes from "./src/routes/analytics.js";
 import healthRoutes from "./health.js";
+import PingService from "./src/services/pingService.js";
 
 import ownerImageUploadRoutes from "./src/routes/ownerImageUpload.js";
 import passport from "./src/config/googleAuth.js";
@@ -59,16 +60,31 @@ const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 app.listen(port, host, () => {
     console.log(`Server running on ${host}:${port}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Start ping service to keep server alive on Render free tier
+    if (process.env.NODE_ENV === 'production') {
+        const pingService = new PingService();
+        pingService.start();
+        
+        // Store reference for graceful shutdown
+        app.locals.pingService = pingService;
+    }
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM received, shutting down gracefully');
+    if (app.locals.pingService) {
+        app.locals.pingService.stop();
+    }
     process.exit(0);
 });
 
 process.on('SIGINT', () => {
     console.log('SIGINT received, shutting down gracefully');
+    if (app.locals.pingService) {
+        app.locals.pingService.stop();
+    }
     process.exit(0);
 });
 
