@@ -24,10 +24,10 @@ const createGoogleStrategy = () => {
     let callbackURL;
     if (process.env.NODE_ENV === 'production') {
         // In production, use RENDER_EXTERNAL_URL or fallback to the known production URL
-        callbackURL = `${process.env.RENDER_EXTERNAL_URL || 'https://invoicegenrator.onrender.com'}/auth/google/callback`;
+        callbackURL = `${process.env.BACKEND_URL || 'https://invoicegenrator.onrender.com'}/auth/google/callback`;
     } else {
         // In development, use localhost
-        callbackURL = 'http://localhost:5000/auth/google/callback';
+        callbackURL = 'https://invoicegenrator.onrender.com/auth/google/callback';
     }
     
     console.log('🔗 Google OAuth callback URL:', callbackURL);
