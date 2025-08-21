@@ -20,10 +20,22 @@ const createGoogleStrategy = () => {
         return null;
     }
     
+    // Determine the correct callback URL based on environment
+    let callbackURL;
+    if (process.env.NODE_ENV === 'production') {
+        // In production, use RENDER_EXTERNAL_URL or fallback to the known production URL
+        callbackURL = `${process.env.RENDER_EXTERNAL_URL || 'https://invoicegenrator.onrender.com'}/auth/google/callback`;
+    } else {
+        // In development, use localhost
+        callbackURL = 'http://localhost:5000/auth/google/callback';
+    }
+    
+    console.log('🔗 Google OAuth callback URL:', callbackURL);
+    
     return new GoogleStrategy({
         clientID: clientID,
         clientSecret: clientSecret,
-        callbackURL: `${process.env.BACKEND_URL || 'http://localhost:5000'}/auth/google/callback`
+        callbackURL: callbackURL
     }, async (accessToken, refreshToken, profile, done) => {
     try {
         // Check if user already exists by googleId
@@ -73,6 +85,8 @@ const googleStrategy = createGoogleStrategy();
 if (googleStrategy) {
     passport.use(googleStrategy);
     console.log('✅ Google OAuth strategy initialized');
+    console.log('🌍 Environment:', process.env.NODE_ENV || 'development');
+    console.log('🔗 Render URL:', process.env.BACKEND_URL || 'Not set');
 } else {
     console.log('ℹ️  Google OAuth strategy not initialized - missing environment variables');
 }
