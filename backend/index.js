@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import session from 'express-session';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import compression from 'compression';
+import morgan from 'morgan';
 import ownerRoutes from "./src/routes/ownerRoutes.js";
 import customerRoutes from "./src/routes/custmorRoutes.js";
 import itemsRoutes from "./src/routes/itemsRoutes.js";
@@ -24,7 +28,29 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(express.json());
+// Production security middleware
+if (process.env.NODE_ENV === 'production') {
+    // Security headers
+    app.use(helmet());
+    
+    // Rate limiting
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later.'
+    });
+    app.use('/api/', limiter);
+    
+    // Compression
+    app.use(compression());
+    
+    // Request logging
+    app.use(morgan('combined'));
+}
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 // CORS configuration for development and production
 let corsOptions;
 
