@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const Bankdetails = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Bankdetails = () => {
     e.preventDefault();
  
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const result = await axios.post(
         `${BACKENDURL}/bank/bankdetails`, 
         formData,

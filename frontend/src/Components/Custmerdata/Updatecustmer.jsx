@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -73,7 +73,7 @@ const UpdateCustomer = () => {
 
     setIsSearching(true);
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       if (!token) {
         toast.error("Please login first", {
           position: "top-right",
@@ -153,7 +153,7 @@ const UpdateCustomer = () => {
       return;
     }
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       if (!token) {
         toast.error("Please login first", {
           position: "top-right",

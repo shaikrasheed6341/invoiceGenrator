@@ -22,6 +22,7 @@ import Landingpage from './Components/Landingpage/Landingpage.jsx';
 import TemplatetTwo from './Components/Invoice/TemplatetTwo.jsx';
 import PremiumInvoice from './Components/Invoice/PremiumInvoice.jsx';
 import Login from './Components/Singnup/Login.jsx';
+import Register from './Components/Singnup/Register.jsx';
 import AuthCallback from './Components/Singnup/AuthCallback.jsx';
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext';
@@ -33,6 +34,7 @@ import OwnerDashboard from './Components/Dashboard/OwnerDashboard';
 import PaymentTracking from './Components/Dashboard/PaymentTracking';
 import MonthlyAnalytics from './Components/Dashboard/MonthlyAnalytics';
 import RevenueTracking from './Components/Dashboard/RevenueTracking';
+import OnboardingFlow from './Components/Dashboard/OnboardingFlow';
 
 
 function AppRoutes() {
@@ -45,12 +47,18 @@ function AppRoutes() {
         isAuthenticated ? <Navigate to="/dashboard" replace /> : <Layout><Landingpage /></Layout>
       } />
       <Route path="/login" element={<Layout><Login /></Layout>} />
+      <Route path="/register" element={<Layout><Register /></Layout>} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       
       {/* Protected Routes */}
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <Layout><Dashboard /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/onboarding" element={
+        <ProtectedRoute>
+          <Layout><OnboardingFlow /></Layout>
         </ProtectedRoute>
       } />
       <Route path='/Landinpage' element={

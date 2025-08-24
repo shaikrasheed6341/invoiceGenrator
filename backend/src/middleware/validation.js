@@ -57,11 +57,13 @@ export const validate = (schema, target = 'body') => {
     } catch (error) {
       if (error instanceof ZodError) {
         // Format Zod validation errors
-        const formattedErrors = error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-          code: err.code
-        }));
+        const formattedErrors = error.errors && Array.isArray(error.errors) 
+          ? error.errors.map(err => ({
+              field: err.path.join('.'),
+              message: err.message,
+              code: err.code
+            }))
+          : [{ field: 'unknown', message: 'Validation failed', code: 'VALIDATION_ERROR' }];
 
         return res.status(400).json({
           success: false,
@@ -166,11 +168,13 @@ export const sanitizeAndValidate = (schema, sanitizer = null) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const formattedErrors = error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-          code: err.code
-        }));
+        const formattedErrors = error.errors && Array.isArray(error.errors) 
+          ? error.errors.map(err => ({
+              field: err.path.join('.'),
+              message: err.message,
+              code: err.code
+            }))
+          : [{ field: 'unknown', message: 'Data validation failed', code: 'VALIDATION_ERROR' }];
 
         return res.status(400).json({
           success: false,

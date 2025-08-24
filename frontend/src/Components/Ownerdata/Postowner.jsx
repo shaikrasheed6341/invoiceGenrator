@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import BusinessDetailsCard from "../Dashboard/BusinessDetailsCard";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -37,7 +37,7 @@ const SubmitOwnerData = () => {
 
   const checkExistingOwner = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/owners/myowner`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -64,7 +64,7 @@ const SubmitOwnerData = () => {
     console.log("BACKENDURL:", BACKENDURL);
     console.log("Sending data:", formData);
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const result = await axios.post(
         `${BACKENDURL}/owners/insertownerdata`,
         formData,
@@ -87,6 +87,21 @@ const SubmitOwnerData = () => {
       
       // Refresh owner data after successful registration
       await checkExistingOwner();
+      
+      // Redirect to dashboard after successful owner creation
+      toast.success("Owner profile created successfully! Redirecting to dashboard...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+      });
+      
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
     } catch (err) {
       console.error("Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Something went wrong!", {
@@ -101,9 +116,7 @@ const SubmitOwnerData = () => {
     }
   };
 
-  const handleEdit = () => {
-    navigate('/updateowner');
-  };
+
 
   if (loading) {
     return (
@@ -128,7 +141,6 @@ const SubmitOwnerData = () => {
           
           <BusinessDetailsCard 
             ownerData={ownerData} 
-            onEdit={handleEdit}
           />
           
           <div className="mt-6 flex justify-center">
@@ -156,8 +168,13 @@ const SubmitOwnerData = () => {
               <Building2 className="w-6 h-6 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-zinc-900">Owner Registration</CardTitle>
-          <p className="text-sm text-zinc-600 mt-2">Provide your business details</p>
+          <CardTitle className="text-2xl text-zinc-900">Welcome to ITPARTNER! 🎉</CardTitle>
+          <p className="text-sm text-zinc-600 mt-2">Let's set up your business profile to get started</p>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-700 text-xs">
+              ✨ This is your first time here! Complete your business profile to access the full dashboard.
+            </p>
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -254,7 +271,7 @@ const SubmitOwnerData = () => {
 
             <Button
               type="submit"
-              className="w-full bg-zinc-900 hover:bg-zinc-800"
+              className="w-full text-white bg-zinc-900 hover:bg-zinc-800"
             >
               <Plus className="w-4 h-4 mr-2" />
               Register Now

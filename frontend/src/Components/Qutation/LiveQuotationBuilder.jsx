@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import InvoicePreview from "../Invoice/InvoicePreview";
 import TemplateTwoPreview from "../Invoice/TemplateTwoPreview";
 
@@ -63,7 +63,7 @@ const LiveQuotationBuilder = () => {
 
   const fetchInitialData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       // Fetch owner data
       const ownerResponse = await axios.get(`${BACKENDURL}/owners/myowner`, {
@@ -238,7 +238,7 @@ const LiveQuotationBuilder = () => {
     }
 
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       const quotationData = {
         number: formData.quotationNumber,

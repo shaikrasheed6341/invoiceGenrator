@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -32,7 +32,7 @@ const Postcustmer = () => {
   const Custmerhandledata = async (e) => {
     e.preventDefault();
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       if (!token) {
         toast.error("Please login first", {
           position: "top-right",

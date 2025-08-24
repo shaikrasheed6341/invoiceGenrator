@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Edit, Trash2, Plus, Package, Search } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from 'js-cookie';
+import tokenManager from '../../utils/tokenManager';
 
 const ViewProducts = () => {
     const [products, setProducts] = useState([]);
@@ -20,7 +20,7 @@ const ViewProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get('http://localhost:5000/iteam/viewproducts', {
         headers: {
           Authorization: `Bearer ${token}`
@@ -44,7 +44,7 @@ const ViewProducts = () => {
   const handleDelete = async (productId, productName) => {
     if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
       try {
-        const token = Cookies.get('token');
+        const token = tokenManager.getToken();
         const response = await axios.delete(`http://localhost:5000/iteam/delete/${productId}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -73,7 +73,7 @@ const ViewProducts = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       await axios.put(`http://localhost:5000/iteam/update/${editingProduct.name}`, {
         brand: editingProduct.brand,
         rate: editingProduct.rate,

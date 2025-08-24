@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import converter from 'number-to-words'
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -22,7 +22,7 @@ const TemplateTwo = () => {
 
     const fetchInvoiceInstructions = async () => {
         try {
-            const token = Cookies.get('token');
+            const token = tokenManager.getToken();
             const response = await axios.get(`${BACKENDURL}/owners/invoice-instructions`, {
                 headers: { Authorization: `Bearer ${token}` }
             });

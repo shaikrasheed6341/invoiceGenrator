@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import BusinessDetailsCard from "../Dashboard/BusinessDetailsCard";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -38,7 +38,7 @@ const UpdateOwner = () => {
 
   const fetchOwnerData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/owners/myowner`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -102,7 +102,7 @@ const UpdateOwner = () => {
     e.preventDefault();
     
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.put(
         `${BACKENDURL}/owners/updateowner`,
         formData,
@@ -336,7 +336,6 @@ const UpdateOwner = () => {
           <div className="space-y-6">
             <BusinessDetailsCard 
               ownerData={ownerData} 
-              onEdit={handleEdit}
             />
             
             {/* Additional Info Card */}

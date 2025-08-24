@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card, CardContent } from "../ui/card";
@@ -63,7 +63,7 @@ const RevenueTracking = () => {
 
   const fetchRevenueData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       console.log("Fetching revenue data...");
       
       const response = await axios.get(`${BACKENDURL}/analytics/revenue`, {

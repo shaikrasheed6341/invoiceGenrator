@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -21,7 +21,7 @@ const InsertItems = () => {
   // Fetch existing products to check for duplicates
   const fetchExistingProducts = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/iteam/getalliteamdata`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -72,7 +72,7 @@ const InsertItems = () => {
 
     setIsChecking(true);
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       await axios.post(`${BACKENDURL}/iteam/datas`, formData, {
         headers: {
           Authorization: `Bearer ${token}`

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Building2, User, Mail, Phone, Landmark, MapPin, Edit } from 'lucide-react';
 
-const BusinessDetailsCard = ({ ownerData, onEdit }) => {
+import { Badge } from '../ui/badge';
+import { Building2, User, Mail, Phone, Landmark, MapPin } from 'lucide-react';
+
+const BusinessDetailsCard = ({ ownerData }) => {
   // Helper function to format and validate data
   const formatValue = (value) => {
     if (!value || value === 'na' || value === 'NA' || value === '') {
@@ -13,13 +13,7 @@ const BusinessDetailsCard = ({ ownerData, onEdit }) => {
     return value;
   };
 
-  const handleEdit = () => {
-    if (onEdit) {
-      onEdit();
-    } else {
-      window.location.href = '/updateowner';
-    }
-  };
+
 
   return (
     <Card className="border-0 shadow-xl bg-gradient-to-br from-white via-zinc-50/50 to-white overflow-hidden relative">
@@ -40,15 +34,6 @@ const BusinessDetailsCard = ({ ownerData, onEdit }) => {
             </div>
             <div className="flex items-center space-x-3">
               <Badge variant="success" className="text-xs font-medium">Active</Badge>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleEdit}
-                className="border-zinc-200 hover:bg-zinc-50 shadow-sm transition-all duration-200 hover:shadow-md text-xs"
-              >
-                <Edit className="w-3 h-3 mr-1" />
-                Edit
-              </Button>
             </div>
           </div>
         </CardHeader>

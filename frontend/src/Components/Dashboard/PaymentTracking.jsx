@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card, CardContent } from "../ui/card";
@@ -34,7 +34,7 @@ const PaymentTracking = () => {
 
   const fetchPaymentData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       console.log("Fetching payment data...");
       
       const [paymentsRes, remindersRes] = await Promise.all([
@@ -116,7 +116,7 @@ const PaymentTracking = () => {
 
   const sendReminder = async (paymentId) => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       await axios.post(`${BACKENDURL}/analytics/send-reminder`, {
         paymentId
       }, {

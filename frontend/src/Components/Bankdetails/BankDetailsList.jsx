@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import tokenManager from '../../utils/tokenManager';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,7 +29,7 @@ const BankDetailsList = () => {
 
   const fetchBankAccounts = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/bank/bankdetails`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -66,7 +66,7 @@ const BankDetailsList = () => {
   const handleDeleteBankAccount = async (accountId) => {
     if (window.confirm('Are you sure you want to delete this bank account?')) {
       try {
-        const token = Cookies.get('token');
+        const token = tokenManager.getToken();
         await axios.delete(`${BACKENDURL}/bank/bankdetails/${accountId}`, {
           headers: {
             Authorization: `Bearer ${token}`

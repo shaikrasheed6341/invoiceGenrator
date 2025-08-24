@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { motion } from "framer-motion";
 import Landingpage from "../Landingpage/Landingpage";
 import { useAuth } from "../../context/AuthContext";
+import { useAuthActions } from "../../hooks/useAuthActions";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
@@ -11,47 +12,26 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, loginWithGoogle } = useAuth();
+  const { loginWithGoogle } = useAuth();
+  const { handleLogin } = useAuthActions();
 
-  const handleLogin = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await handleLogin(email, password);
       
       if (result.success) {
-        toast.success("🎉 Successfully Logged In!", {
-          position: "top-right",
-          autoClose: 3000,
-          theme: "dark",
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        setTimeout(() => navigate("/"), 3000);
-      } else {
-        toast.error(result.error || "❌ Invalid Credentials", {
-          position: "top-right",
-          autoClose: 4000,
-          theme: "dark",
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        if (result.hasOwner) {
+          // User has complete business profile - redirect to dashboard
+          navigate("/dashboard");
+        } else {
+          // User logged in but needs to complete business profile - redirect to setup
+          navigate("/submitownerdata");
+        }
       }
-    } catch (error) {
-      toast.error("❌ Login failed. Please try again.", {
-        position: "top-right",
-        autoClose: 4000,
-        theme: "dark",
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      // Error handling is done in the useAuthActions hook
     } finally {
       setLoading(false);
     }
@@ -79,7 +59,7 @@ const Login = () => {
             Sign in to continue your journey 🚀
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={onSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-900 mb-1">
                 Email
@@ -158,6 +138,16 @@ const Login = () => {
           </motion.button>
 
             <p className="text-center text-slate-900 mt-6">
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="text-slate-600 hover:text-slate-800 font-semibold underline"
+            >
+              Create account
+            </button>
+          </p>
+          
+          <p className="text-center text-slate-900 mt-4 text-sm">
             Welcome to ITPARTNER - Your Invoice Management Solution
           </p>
         </motion.div>

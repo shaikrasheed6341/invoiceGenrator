@@ -12,9 +12,15 @@ model User {
   firstname String
   lastname  String
   email     String @unique
-  password  String?
-  googleId  String? @unique
-  avatar    String?
+  password  String // Required for manual authentication
+  
+  // User status and tracking
+  isActive        Boolean @default(true)
+  lastLoginAt    DateTime?
+  loginAttempts  Int     @default(0)
+  lockedUntil    DateTime?
+  
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   

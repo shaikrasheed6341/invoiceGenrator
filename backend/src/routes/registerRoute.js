@@ -11,9 +11,12 @@ const router = express.Router();
 router.post('/signup', validate(userRegistrationSchema), async(req,res)=>{
     const{firstname,lastname,email,password} = req.body;
     
+    console.log('📝 Registration attempt for:', email);
+    
     try{ 
          const hashedpassword  = await bcrypt.hash(password,10);
-         console.log(hashedpassword);
+         console.log('🔐 Password hashed successfully');
+         
          const userdata = await prisma.user.create({
              data:{
                 firstname,
@@ -22,12 +25,28 @@ router.post('/signup', validate(userRegistrationSchema), async(req,res)=>{
                 password:hashedpassword
              }
           })
-         console.log(userdata)
-         return res.status(200).json({message:"you succes fully regesterd"})
+         
+         console.log('✅ User created successfully:', userdata.id);
+         return res.status(200).json({
+           message: "Successfully registered!",
+           user: {
+             id: userdata.id,
+             firstname: userdata.firstname,
+             lastname: userdata.lastname,
+             email: userdata.email
+           }
+         })
 
 
    }catch(err){
-     return res.status(404).json({message:`something went wrong ${err}`})
+     console.error('Registration error:', err);
+     
+     // Handle duplicate email error
+     if (err.code === 'P2002' && err.meta?.target?.includes('email')) {
+       return res.status(409).json({message: "Email already exists. Please use a different email or login."});
+     }
+     
+     return res.status(500).json({message: "Registration failed. Please try again."});
    }
 
 

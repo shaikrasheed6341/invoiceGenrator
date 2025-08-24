@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
-const secretkey = "shaikraheed";
+const secretkey = process.env.JWT_SECRET || "shaikraheed";
 
 // Google OAuth login route
 router.get('/google', passport.authenticate('google', {
@@ -23,7 +23,7 @@ router.get('/google/callback',
             const token = jwt.sign(
                 { id: user.id, email: user.email }, 
                 secretkey, 
-                { expiresIn: "365d" }
+                { expiresIn: "120d" }
             );
 
             // Redirect to frontend with token

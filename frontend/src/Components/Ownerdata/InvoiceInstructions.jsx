@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -18,7 +18,7 @@ const InvoiceInstructions = () => {
   const fetchInstructions = async () => {
     try {
       setLoading(true);
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/owners/invoice-instructions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -45,7 +45,7 @@ const InvoiceInstructions = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.put(`${BACKENDURL}/owners/invoice-instructions`, 
         { invoiceInstructions: instructions },
         { headers: { Authorization: `Bearer ${token}` } }

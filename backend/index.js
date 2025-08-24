@@ -14,6 +14,9 @@ import healthRoutes from "./health.js";
 import PingService from "./src/services/pingService.js";
 
 import ownerImageUploadRoutes from "./src/routes/ownerImageUpload.js";
+import loginRoutes from "./src/routes/loginRoute.js";
+import registerRoutes from "./src/routes/registerRoute.js";
+import authVerificationRoutes from "./src/routes/authVerification.js";
 import passport from "./src/config/googleAuth.js";
 
 dotenv.config();
@@ -22,10 +25,40 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true
-}));
+// CORS configuration for development and production
+let corsOptions;
+
+if (process.env.NODE_ENV === 'production') {
+    // Production CORS - specific origins only
+    corsOptions = {
+        origin: [
+            'https://invoice-genrator-ruddy.vercel.app',
+            'https://invoicegenrator.onrender.com',
+            process.env.FRONTEND_URL
+        ].filter(Boolean),
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with']
+    };
+} else {
+    // Development CORS - allow local development
+    corsOptions = {
+        origin: [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://127.0.0.1:5173',
+            'http://127.0.0.1:3000'
+        ],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with']
+    };
+}
+
+console.log('🌐 CORS configured for:', process.env.NODE_ENV || 'development');
+console.log('📍 Allowed origins:', corsOptions.origin);
+
+app.use(cors(corsOptions));
 
 // Session middleware
 app.use(session({
@@ -44,12 +77,17 @@ app.use(passport.initialize());
 // Health check routes (for monitoring)
 app.use("/", healthRoutes);
 
+// Authentication routes
+app.use("/login", loginRoutes);
+app.use("/register", registerRoutes);
+
 app.use("/quotation", quotationRoutes);
 app.use("/customer", customerRoutes);
 app.use("/owners", ownerRoutes);
 app.use("/iteam", itemsRoutes);
 app.use("/bank", bankDetailsRoutes);
 app.use("/auth", googleAuthRoutes);
+app.use("/auth", authVerificationRoutes);
 app.use("/analytics", analyticsRoutes);
 
 app.use("/owner-images", ownerImageUploadRoutes);
@@ -58,16 +96,20 @@ const port = process.env.PORT || 5000;
 const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 app.listen(port, host, () => {
-    console.log(`Server running on ${host}:${port}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🚀 Server running on ${host}:${port}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? 'Set' : 'Using default'}`);
     
     // Start ping service to keep server alive on Render free tier
     if (process.env.NODE_ENV === 'production') {
+        console.log('🏗️ Production mode: Starting ping service...');
         const pingService = new PingService();
         pingService.start();
         
         // Store reference for graceful shutdown
         app.locals.pingService = pingService;
+    } else {
+        console.log('💻 Development mode: Ping service disabled');
     }
 });
 

@@ -22,8 +22,7 @@ router.get("/myowner", async (req, res) => {
             id: true,
             firstname: true,
             lastname: true,
-            email: true,
-            avatar: true
+            email: true
           }
         }
       }

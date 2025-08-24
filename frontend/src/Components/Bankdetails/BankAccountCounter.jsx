@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import tokenManager from '../../utils/tokenManager';
 import { Card, CardContent } from '../ui/card';
 import { Building2 } from 'lucide-react';
 
@@ -16,7 +16,7 @@ const BankAccountCounter = () => {
 
   const fetchBankAccountCount = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/bank/bankdetails/count`, {
         headers: {
           Authorization: `Bearer ${token}`

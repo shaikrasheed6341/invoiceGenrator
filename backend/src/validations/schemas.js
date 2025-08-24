@@ -15,7 +15,7 @@ export const userRegistrationSchema = z.object({
     .min(5, "Email must be at least 5 characters")
     .max(100, "Email must be less than 100 characters"),
   password: z.string()
-    .min(8, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 6 characters")
     .max(100, "Password must be less than 100 characters")
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number")
 });

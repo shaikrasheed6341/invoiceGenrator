@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import { Edit, Trash2, User, Phone, MapPin, Building2, FileText } from "lucide-react";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -18,7 +18,7 @@ const CustomerList = () => {
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       if (!token) {
         toast.error("Please login first");
@@ -51,7 +51,7 @@ const CustomerList = () => {
     }
 
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       const response = await axios.delete(`${BACKENDURL}/customer/${customerId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,

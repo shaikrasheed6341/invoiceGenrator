@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const prisma = new PrismaClient();
-const secretkey = "shaikraheed";
+const secretkey = process.env.JWT_SECRET || "shaikraheed";
 
 // Create Google OAuth Strategy lazily
 const createGoogleStrategy = () => {
@@ -24,10 +24,10 @@ const createGoogleStrategy = () => {
     let callbackURL;
     if (process.env.NODE_ENV === 'production') {
         // In production, use RENDER_EXTERNAL_URL or fallback to the known production URL
-        callbackURL = `${process.env.BACKEND_URL || 'https://invoicegenrator.onrender.com'}/auth/google/callback`;
+        callbackURL = `${process.env.RENDER_EXTERNAL_URL || 'https://invoicegenrator.onrender.com'}/auth/google/callback`;
     } else {
         // In development, use localhost
-        callbackURL = 'https://invoicegenrator.onrender.com/auth/google/callback';
+        callbackURL = 'http://localhost:5000/auth/google/callback' || 'https://invoicegenrator.onrender.com/auth/google/callback';
     }
     
     console.log('🔗 Google OAuth callback URL:', callbackURL);
@@ -86,7 +86,7 @@ if (googleStrategy) {
     passport.use(googleStrategy);
     console.log('✅ Google OAuth strategy initialized');
     console.log('🌍 Environment:', process.env.NODE_ENV || 'development');
-    console.log('🔗 Render URL:', process.env.BACKEND_URL || 'Not set');
+    console.log('🔗 Render URL:', process.env.RENDER_EXTERNAL_URL || 'Not set');
 } else {
     console.log('ℹ️  Google OAuth strategy not initialized - missing environment variables');
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const FetchQuotation = () => {
@@ -29,7 +29,7 @@ const FetchQuotation = () => {
     setError("");
 
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       console.log("Fetching quotation number:", number);
       
       const response = await fetch(`${BACKENDURL}/quotation/getdata/${number}`, {

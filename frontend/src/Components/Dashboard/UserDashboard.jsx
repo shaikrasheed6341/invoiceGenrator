@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
+import { useTokenValidation } from "../../hooks/useTokenValidation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card, CardContent } from "../ui/card";
+import LoadingSpinner from "../ui/LoadingSpinner";
 import { 
   Users, 
   Package, 
@@ -13,14 +15,19 @@ import {
   BarChart3,
   DollarSign,
   TrendingUp,
-  Activity
+  Activity,
+  AlertTriangle,
+  CheckCircle
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import OnboardingFlow from "./OnboardingFlow";
+import TokenInfo from "../ui/TokenInfo";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 const UserDashboard = () => {
-  const { user } = useAuth();
+  const { user, authError, clearAuthError, refreshOwnerData } = useAuth();
+  const { validateToken } = useTokenValidation();
   const [ownerData, setOwnerData] = useState(null);
   const [stats, setStats] = useState({
     customers: 0,
@@ -29,15 +36,34 @@ const UserDashboard = () => {
     bankDetails: 0
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchOwnerData();
-  }, []);
+    if (user) {
+      if (user.owner) {
+        setOwnerData(user.owner);
+        fetchStats();
+        setLoading(false);
+      } else {
+        // No owner data in user context, try to fetch it
+        fetchOwnerData();
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchOwnerData = async () => {
     try {
-      const token = Cookies.get('token');
+      setError(null);
+      
+      // Validate token before making API calls
+      if (!validateToken()) {
+        return;
+      }
+      
+      const token = tokenManager.getToken();
       const response = await axios.get(`${BACKENDURL}/owners/myowner`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -46,11 +72,26 @@ const UserDashboard = () => {
       
       if (response.data.owner) {
         setOwnerData(response.data.owner);
+        // Update user context with owner data
+        await refreshOwnerData();
         fetchStats();
+      } else {
+        // No owner data found - user needs to create owner profile
+        console.log("No owner data found, redirecting to owner creation");
+        navigate("/submitownerdata");
+        return;
       }
     } catch (error) {
       console.error("Error fetching owner data:", error);
-      // If owner not found, that's okay - user might not have registered yet
+      if (error.response?.status === 401) {
+        // Unauthorized - redirect to login
+        navigate("/login");
+        return;
+      }
+      setError("Failed to load business profile. Please try again.");
+      // If error occurs, redirect to owner creation
+      navigate("/submitownerdata");
+      return;
     } finally {
       setLoading(false);
     }
@@ -58,7 +99,12 @@ const UserDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const token = Cookies.get('token');
+      // Validate token before making API calls
+      if (!validateToken()) {
+        return;
+      }
+      
+      const token = tokenManager.getToken();
       
       // Get owner first to ensure we have the owner ID
       const ownerResponse = await axios.get(`${BACKENDURL}/owners/myowner`, {
@@ -94,29 +140,28 @@ const UserDashboard = () => {
         })
       ]);
 
-      console.log("Stats responses:", {
-        customers: customersRes,
-        items: itemsRes,
-        quotations: quotationsRes,
-        bankDetails: bankDetailsRes
+      // Process results and handle errors gracefully
+      const newStats = {
+        customers: customersRes.status === 'fulfilled' ? customersRes.value.data.length : 0,
+        items: itemsRes.status === 'fulfilled' ? (itemsRes.value.data.data ? itemsRes.value.data.data.length : 0) : 0,
+        quotations: quotationsRes.status === 'fulfilled' ? quotationsRes.value.data.length : 0,
+        bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.data.count : 0
+      };
+
+      // Debug logging for troubleshooting
+      console.log('API Responses:', {
+        customers: customersRes.status === 'fulfilled' ? customersRes.value.data : 'failed',
+        items: itemsRes.status === 'fulfilled' ? itemsRes.value.data : 'failed',
+        quotations: quotationsRes.status === 'fulfilled' ? quotationsRes.value.data : 'failed',
+        bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.data : 'failed'
       });
       
-      // Log the bank details count specifically
-      if (bankDetailsRes.status === 'fulfilled') {
-        console.log("🏦 Bank Details Count Response:", bankDetailsRes.value.data);
-        console.log("🏦 Bank Details Count:", bankDetailsRes.value.data?.count || 0);
-        console.log("🏦 Full Response:", bankDetailsRes.value);
-      }
+      console.log('Processed Stats:', newStats);
 
-      setStats({
-        customers: customersRes.status === 'fulfilled' ? customersRes.value.data.length : 0,
-        items: itemsRes.status === 'fulfilled' ? itemsRes.value.data.total || itemsRes.value.data.length : 0,
-        quotations: quotationsRes.status === 'fulfilled' ? quotationsRes.value.data.length : 0,
-        bankDetails: bankDetailsRes.status === 'fulfilled' ? bankDetailsRes.value.data?.count || 0 : 0
-      });
+      setStats(newStats);
     } catch (error) {
       console.error("Error fetching stats:", error);
-      // Fallback to placeholder data
+      // Don't show error for stats, just set to 0
       setStats({
         customers: 0,
         items: 0,
@@ -139,20 +184,19 @@ const UserDashboard = () => {
     };
   }, []);
 
-  const handleEditOwner = () => {
-    // Navigate to owner update page
-    window.location.href = '/updateowner';
-  };
+
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-600 mx-auto"></div>
-          <p className="mt-4 text-zinc-600">Loading your dashboard...</p>
-        </div>
+        <LoadingSpinner size="lg" text="Loading your dashboard..." />
       </div>
     );
+  }
+
+  // If no owner data exists, show onboarding flow
+  if (!ownerData) {
+    return <OnboardingFlow />;
   }
 
   return (
@@ -173,7 +217,90 @@ const UserDashboard = () => {
           </div>
         </div>
 
+        {/* Error Display */}
+        {(authError || error) && (
+          <div className="mb-6">
+            <div className={`p-4 rounded-lg border ${
+              authError ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'
+            }`}>
+              <div className="flex items-start space-x-3">
+                <div className={`p-1 rounded-full ${
+                  authError ? 'bg-red-100' : 'bg-yellow-100'
+                }`}>
+                  {authError ? (
+                    <AlertTriangle className={`w-5 h-5 ${
+                      authError ? 'text-red-600' : 'text-yellow-600'
+                    }`} />
+                  ) : (
+                    <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className={`text-sm font-medium ${
+                    authError ? 'text-red-800' : 'text-yellow-800'
+                  }`}>
+                    {authError ? 'Authentication Issue' : 'Business Profile Issue'}
+                  </h3>
+                  <p className={`text-sm mt-1 ${
+                    authError ? 'text-red-700' : 'text-yellow-700'
+                  }`}>
+                    {authError || error}
+                  </p>
+                  <div className="mt-3 flex space-x-2">
+                    {authError && (
+                      <button
+                        onClick={clearAuthError}
+                        className="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2 py-1 rounded"
+                      >
+                        Dismiss
+                      </button>
+                    )}
+                    {error && (
+                      <button
+                        onClick={() => setError(null)}
+                        className="text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-2 py-1 rounded"
+                      >
+                        Dismiss
+                      </button>
+                    )}
+                    <button
+                      onClick={refreshOwnerData}
+                      className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-2 py-1 rounded"
+                    >
+                      Refresh Data
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
+        {/* Business Profile Status */}
+        {ownerData && (
+          <div className="mb-6">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-1 bg-green-100 rounded-full">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-green-800">
+                    Business Profile Complete
+                  </h3>
+                  <p className="text-sm text-green-700 mt-1">
+                    {ownerData.compneyname} • {ownerData.name}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Token Information (for debugging) */}
+        <div className="mb-6">
+          <TokenInfo />
+        </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

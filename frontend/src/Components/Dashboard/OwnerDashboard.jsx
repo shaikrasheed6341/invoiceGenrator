@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Card, CardContent } from "../ui/card";
@@ -59,7 +59,7 @@ const OwnerDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       console.log("Fetching dashboard data...");
       console.log("Token:", token);
       console.log("Backend URL:", BACKENDURL);
@@ -84,7 +84,7 @@ const OwnerDashboard = () => {
   const updatePaymentStatus = async (quotationId, newStatus) => {
     try {
       setUpdatingStatus(quotationId);
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       const response = await axios.patch(`${BACKENDURL}/analytics/update-payment-status`, {
         quotationId,

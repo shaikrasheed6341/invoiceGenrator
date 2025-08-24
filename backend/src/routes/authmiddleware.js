@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-const secretkey = "shaikraheed";
+const secretkey = process.env.JWT_SECRET || "shaikraheed";
 
 const authmiddle = async (req, res, next) => {
   try {

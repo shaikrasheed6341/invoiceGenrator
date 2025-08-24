@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import tokenManager from "../../utils/tokenManager";
 
 const BACKENDURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -55,7 +55,7 @@ const StreamlinedQuotation = () => {
 
   const fetchInitialData = async () => {
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       // Fetch owner data
       const ownerResponse = await axios.get(`${BACKENDURL}/owners/myowner`, {
@@ -263,7 +263,7 @@ const StreamlinedQuotation = () => {
     }
 
     try {
-      const token = Cookies.get('token');
+      const token = tokenManager.getToken();
       
       const quotationData = {
         number: quotationNumber,
